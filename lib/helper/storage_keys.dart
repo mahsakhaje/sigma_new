@@ -1,0 +1,11 @@
+const String SeenPreLogin = 'SeenPreLogin';
+const String ISLOGEDIN = 'ISLOGEDIN';
+const String HASSEENINTRO = 'HASSEENINTRO';
+const String phoneNumberKey = 'phoneNumberKey';
+const String SHORTTOKENKEY = 'SHORTTOKENKEY';
+const String NameKEY = 'NameKEY';
+const String ISSEENGUIDE = 'ISSEENGUIDE';
+const String TokenKEY = 'TokenKEY';
+const String OrderKey = 'OrderKey';
+const String hasSeenBannerKey = 'hasSeenBannerKey';
+const String BannerKey = 'BannerKey';
