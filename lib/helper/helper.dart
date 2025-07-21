@@ -35,7 +35,10 @@ void showToast(ToastState state, String msg, {bool isIos = false}) {
             : state == ToastState.INFO
             ? "linear-gradient(to right, #c5c8c9, #c5c8c9)"
             : Colors.blueGrey,
-        textColor: Colors.white);
+        textColor: Colors.white,
+
+    fontSize: 14
+    );
     return;
 
   var cancel = BotToast.showAttachedWidget(
@@ -213,24 +216,64 @@ String separateThousand(int amount) {
   return _numberFormat.format(amount);
 }
 
+
+class PersianLettersFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+
+    // Filter to only allow Persian letters and space
+    String filteredText = newValue.text.replaceAll(RegExp(r'[^آ-ی\s]'), '');
+
+    return newValue.copyWith(
+      text: filteredText,
+      selection: TextSelection.collapsed(offset: filteredText.length),
+    );
+  }
+}
+
+// Alternative version with more complete Persian character support
+class PersianLettersFormatterExtended extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+
+    // More comprehensive Persian character range including additional characters
+    String filteredText = newValue.text.replaceAll(
+        RegExp(r'[^ابپتثجچحخدذرزژسشصضطظعغفقکگلمنوهیئءآأإؤة\s]'),
+        ''
+    );
+
+    return newValue.copyWith(
+      text: filteredText,
+      selection: TextSelection.collapsed(offset: filteredText.length),
+    );
+  }
+}
 class PersianFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
       TextEditingValue oldValue, TextEditingValue newValue) {
-    String newEng = englishToPersian(newValue.text);
-    if (newValue.text.isEmpty) {
+
+    // First, filter to only allow digits (both English and Persian)
+    String filteredText = newValue.text.replaceAll(RegExp(r'[^0-9۰-۹]'), '');
+
+    if (filteredText.isEmpty) {
       return newValue.copyWith(text: '');
-    } else if (newValue.text == '0') {
-      return newValue.copyWith(text: '0');
-    } else {
-      return newValue.copyWith(text: newEng);
     }
+
+    // Convert English digits to Persian
+    String convertedText = englishToPersian(filteredText);
+
+    return newValue.copyWith(
+      text: convertedText,
+      selection: TextSelection.collapsed(offset: convertedText.length),
+    );
   }
 }
 
 String englishToPersian(String text) {
-  RegExp englishNumberRegex =
-  RegExp(r'[0-9]'); // regular expression to match English numbers
+  RegExp englishNumberRegex = RegExp(r'[0-9]');
 
   String convertedText = text.replaceAllMapped(englishNumberRegex, (match) {
     int persianCodePoint = (match.group(0)?.codeUnitAt(0) ?? 0) + 1728;

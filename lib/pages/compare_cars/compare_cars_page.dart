@@ -166,16 +166,20 @@ class _InfoCard extends StatelessWidget {
   Widget _buildDeleteButton() {
     return InkWell(
       onTap: onDelete,
-      child: Container(
-        padding: const EdgeInsets.all(4),
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(color: Colors.white),
-        ),
-        child: const Icon(
-          Icons.close,
-          color: Colors.white,
-          size: 14,
+      child: Center(
+        child: Container(
+         // padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.white),
+          ),
+          child: Center(
+            child: const Icon(
+              Icons.close,
+              color: Colors.white,
+              size: 16,
+            ),
+          ),
         ),
       ),
     );

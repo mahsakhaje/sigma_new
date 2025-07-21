@@ -85,7 +85,7 @@ class MyBuyOrdersController extends GetxController {
 
   Future<void> onProposalsPressed(PurchaseOrders order) async {
     CustomBottomSheet.show(
-        initialChildSize: 0.3,
+        initialChildSize: 0.2,
         context: Get.context!,
         child: Padding(
           padding: const EdgeInsets.all(16.0),

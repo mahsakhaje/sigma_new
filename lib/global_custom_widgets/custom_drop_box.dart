@@ -13,13 +13,14 @@ Widget CustomDropdown({
   bool isEng = false,
   bool largeFont = false,
   bool isFullLine = false,
+  bool isDark=false
 }) {
   return Container(
     decoration: isTurn
         ? BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(9),
             border: Border.all(
-              color: Colors.white,
+              color: isDark?Colors.black:Colors.white,
               width: 1,
             ),
           )
@@ -28,10 +29,13 @@ Widget CustomDropdown({
       textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
       child: DropdownButtonHideUnderline(
         child: DropdownButton2<String>(
-          hint: CustomText(hint, color: Colors.white, size: 14),
+          hint: CustomText(hint, color:isDark?Colors.black: Colors.white, size: 14),
           alignment: Alignment.center,
           isExpanded: true,
-          buttonStyleData: _decoration(),
+          iconStyleData: const IconStyleData(
+            icon: SizedBox.shrink(), // This removes the icon completely
+          ),
+          buttonStyleData: _decoration(isDark),
           style: const TextStyle(color: Colors.black87),
           value: value,
           items: items.entries.map((entry) {
@@ -54,7 +58,7 @@ Widget CustomDropdown({
                 alignment: Alignment.center,
                 child: CustomText(
                   isEng ? entry.value : entry.value.usePersianNumbers(),
-                  color: Colors.white, // white for selected item
+                  color: isDark?Colors.black:Colors.white, // white for selected item
                   isRtl: isRtl,
                   size: largeFont ? 15 : 12,
                 ),
@@ -102,11 +106,11 @@ Widget _buildDropdownItem(
       isRtl: isRtl, size: largeFont ? 15 : 12, color: Colors.black87);
 }
 
-ButtonStyleData _decoration() {
+ButtonStyleData _decoration(bool isDark) {
   return ButtonStyleData(
     decoration: BoxDecoration(
       shape: BoxShape.rectangle,
-      border: Border.all(color: Colors.white),
+      border: Border.all(color:isDark?Colors.black: Colors.white),
       borderRadius: BorderRadius.circular(8),
     ),
   );

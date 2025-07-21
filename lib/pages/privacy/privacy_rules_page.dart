@@ -35,7 +35,7 @@ class PrivacyRulesPage extends StatelessWidget {
           child: Directionality(
             textDirection: TextDirection.rtl,
             child: HtmlWidget(
-              controller.response?.manaRule?.description ?? '',
+              (   controller.response?.manaRule?.description ?? '').usePersianNumbers(),
               textStyle: const TextStyle(
                 color: Colors.white,
                 fontFamily: 'Peyda'

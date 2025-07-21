@@ -28,6 +28,7 @@ import 'package:sigma/pages/reserve_showroom/reserve_showroom_page.dart';
 import 'package:sigma/pages/rules/rules_page.dart';
 import 'package:sigma/pages/sell/sell_page.dart';
 import 'package:sigma/pages/splash/splash_page.dart';
+import 'package:sigma/pages/suggestions/suggestions_page.dart';
 import 'package:sigma/pages/track_orders/track_page.dart';
 import 'package:sigma/pages/transactions/all_transactions_page.dart';
 
@@ -208,6 +209,12 @@ class AppRoutes {
           transition: Transition.native,
         ),
         GetPage(
+          name: RouteName.suggestions,
+          page: () => SuggestionPage(),
+          transitionDuration: const Duration(milliseconds: 10),
+          transition: Transition.native,
+        ),
+        GetPage(
           name: RouteName.myShowRooms,
           page: () => const MyReservationsPage(),
           transitionDuration: const Duration(milliseconds: 10),
@@ -218,15 +225,18 @@ class AppRoutes {
           page: () => CarDetailPage(),
           transitionDuration: const Duration(milliseconds: 10),
           transition: Transition.native,
-        ),   GetPage(
-          name: RouteName.chat,
-          page: () => ChatPage(),
-          transitionDuration: const Duration(milliseconds: 10),
-          transition: Transition.native,
         ),
+        // ),
+
+        // GetPage(
+        //   name: RouteName.chat,
+        //   page: () => ChatPage(),
+        //   transitionDuration: const Duration(milliseconds: 10),
+        //   transition: Transition.native,
+        // ),
         GetPage(
           name: RouteName.reserveShowRoom,
-          page: () =>  ReserveShowRoom(),
+          page: () => ReserveShowRoom(),
           transitionDuration: const Duration(milliseconds: 10),
           transition: Transition.native,
         ),

@@ -65,10 +65,10 @@ class _MoneyFormState extends State<MoneyForm> {
     return Container(
       decoration: widget.isTurn
           ? BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color: Colors.white,
-          width: 3, // Border width
+          width:1.5, // Border width
         ),
       )
           : BoxDecoration(),
@@ -114,7 +114,7 @@ class _MoneyFormState extends State<MoneyForm> {
             borderRadius: BorderRadius.circular(8.0),
             borderSide: BorderSide(color: Colors.white, width: 1.0),
           ),
-          hintStyle: TextStyle(color: Colors.white,fontSize: 12,fontFamily: 'Peyda',),
+          hintStyle: TextStyle(color: Colors.white,fontSize: 14,fontFamily: 'Peyda',),
           counterText: "",
           // focusColor: colors.textColorDark,
           // hoverColor: colors.textColorDark,

@@ -16,12 +16,16 @@ class TrackingSalesOrderController extends GetxController {
   // Reactive variables
   final _orderStep = 0.obs;
   final _loading = true.obs;
-  final Rx<TrackingSalesOrderResponse?> _trackingSalesOrderResponse = Rx<TrackingSalesOrderResponse?>(null);
+  final Rx<TrackingSalesOrderResponse?> _trackingSalesOrderResponse =
+      Rx<TrackingSalesOrderResponse?>(null);
 
   // Getters
   int get orderStep => _orderStep.value;
+
   bool get loading => _loading.value;
-  TrackingSalesOrderResponse? get trackingSalesOrderResponse => _trackingSalesOrderResponse.value;
+
+  TrackingSalesOrderResponse? get trackingSalesOrderResponse =>
+      _trackingSalesOrderResponse.value;
 
   @override
   void onInit() {
@@ -32,8 +36,10 @@ class TrackingSalesOrderController extends GetxController {
   Future<void> _loadTrackingData() async {
     try {
       _loading.value = true;
-      _trackingSalesOrderResponse.value = await DioClient.instance.trackSalesOrder(id: orderId);
-      _orderStep.value = int.tryParse(_trackingSalesOrderResponse.value?.step ?? '0') ?? 0;
+      _trackingSalesOrderResponse.value =
+          await DioClient.instance.trackSalesOrder(id: orderId);
+      _orderStep.value =
+          int.tryParse(_trackingSalesOrderResponse.value?.step ?? '0') ?? 0;
     } catch (e) {
       // Handle error
       Get.snackbar('خطا', 'خطا در بارگذاری اطلاعات');
@@ -42,12 +48,18 @@ class TrackingSalesOrderController extends GetxController {
     }
   }
 
-  Future<void> downloadExpertReport() async {
+  Future<void> downloadExpertReport({bool isContract = false}) async {
     try {
-      var response = await DioClient.instance.getExpertReportInTracking(
-          _trackingSalesOrderResponse.value?.expertOrderId ?? ""
-      );
+      var response;
+      showToast(ToastState.SUCCESS, 'درحال دانلود فایل');
 
+      if (isContract) {
+        response = await DioClient.instance.getContractReportInTracking(
+            _trackingSalesOrderResponse.value?.orderNumber ?? "");
+      } else {
+        response = await DioClient.instance.getExpertReportInTracking(
+            _trackingSalesOrderResponse.value?.expertOrderId ?? "");
+      }
       if (response != null) {
         if (response.contains('فایل')) {
           showToast(ToastState.ERROR, 'خطا در نمایش فایل');
@@ -99,7 +111,8 @@ class TrackingSalesOrderController extends GetxController {
         title = 'قیمت گذاری';
         details = [
           MapEntry('تاریخ قیمت گذاری', response.expertPriceDate),
-          MapEntry('قیمت', (response.expertPriceAmount?.seRagham()??'0')+'تومان'),
+          MapEntry('قیمت',
+              (response.expertPriceAmount?.seRagham() ?? '0') + 'تومان'),
         ];
         break;
       case 5:
@@ -107,7 +120,8 @@ class TrackingSalesOrderController extends GetxController {
         details = [
           MapEntry('تاریخ ثبت آگهی', response.advertiseDate),
           MapEntry('ساعت ثبت آگهی', response.advertiseTime),
-          MapEntry('قیمت آگهی', (response.advertiseAmount?.seRagham()??'0')+'تومان'),
+          MapEntry('قیمت آگهی',
+              (response.advertiseAmount?.seRagham() ?? '0') + 'تومان'),
         ];
         break;
       case 6:
@@ -115,7 +129,8 @@ class TrackingSalesOrderController extends GetxController {
         details = [
           MapEntry('تاریخ ثبت قرارداد', response.contractDate),
           MapEntry('ساعت ثبت قرارداد', response.contractTime),
-          MapEntry('قیمت توافق شده', (response.contractAmount?.seRagham()??'0')+'تومان'),
+          MapEntry('قیمت توافق شده',
+              (response.contractAmount?.seRagham() ?? '0') + 'تومان'),
           MapEntry('محل پارک خودرو', response.contractParkingAddress),
         ];
         break;
@@ -149,17 +164,26 @@ class TrackingSalesOrderController extends GetxController {
           children: [
             Divider(color: Colors.black),
             SizedBox(height: 10),
-            ...details.where((detail) => detail.key.isNotEmpty && detail.value != null)
+            ...details
+                .where(
+                    (detail) => detail.key.isNotEmpty && detail.value != null)
                 .map((detail) => _buildDetailRow(detail.key, detail.value!)),
             SizedBox(height: 10),
             if (title == 'کارشناسی')
               ConfirmButton(
-                    () async {
+                () async {
                   Get.back(); // Close dialog first
                   await downloadExpertReport();
                 },
                 'مشاهده گزارش',
-
+              ),
+            if (title == 'ثبت قرارداد')
+              ConfirmButton(
+                () async {
+                  Get.back(); // Close dialog first
+                  await downloadExpertReport(isContract: true);
+                },
+                'مشاهده قرارداد',
               ),
           ],
         ),
@@ -168,30 +192,36 @@ class TrackingSalesOrderController extends GetxController {
   }
 
   Widget _buildDetailRow(String title, String desc) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Expanded(
-          child: Container(
-            constraints: BoxConstraints(minHeight: 30),
-            child: CustomText(
-              desc.usePersianNumbers(),
-              color: Colors.black,
-              maxLine: 4,
-              isRtl: true
+    return Container(
+      height: title == 'محل مراجعه' ? 70 : 30,
+      child: Column(
+        children: [
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: Container(
+                    constraints: BoxConstraints(minHeight: 30),
+                    child: CustomText(desc.usePersianNumbers(),
+                        color: Colors.black, maxLine: 4, isRtl: true,textAlign: TextAlign.justify),
+                  ),
+                ),
+                SizedBox(
+                  height: title == 'محل مراجعه' ? 70 : 30,
+
+                  width: 10,
+                  child: CustomText(' : ', color: Colors.black),
+                ),
+                SizedBox(
+                  height: title == 'محل مراجعه' ? 70 : 30,
+                  child: CustomText(title, color: Colors.black,textAlign: TextAlign.justify),
+                ),
+              ],
             ),
           ),
-        ),
-        SizedBox(
-          height: 30,
-          width: 8,
-          child: CustomText(':', color: Colors.black),
-        ),
-        SizedBox(
-          height: 30,
-          child: CustomText(title, color: Colors.black),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

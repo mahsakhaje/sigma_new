@@ -8,7 +8,7 @@ Widget NoContent(){
     children: [
       CustomText('موردی یافت نشد!', isRtl: true,size: 16),
       Padding(
-        padding: const EdgeInsets.all(26.0),
+        padding: const EdgeInsets.all(22.0),
         child: SvgPicture.asset('assets/empty.svg'),
       )
 

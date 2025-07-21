@@ -17,11 +17,18 @@ class BuyMenuPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Get.find<MenuControllerDefault>().setMenuItems([
-      drawerIcon(path: 'assets/buy_new.svg', route: RouteName.buy, arg: BuyState.NEW.name),
       drawerIcon(
-          path: 'assets/buy_used.svg', route: RouteName.buy, arg: BuyState.USED.name),
+          path: 'assets/buy_order.svg',
+          route: RouteName.buy,
+          arg: BuyState.NORMAL.name),
       drawerIcon(
-          path: 'assets/buy_order.svg', route: RouteName.buy, arg: BuyState.NORMAL.name),
+          path: 'assets/buy_new.svg',
+          route: RouteName.advertise,
+          arg: BuyState.NEW.name),
+      drawerIcon(
+          path: 'assets/buy_used.svg',
+          route: RouteName.advertise,
+          arg: BuyState.USED.name),
       drawerIcon(path: 'assets/loan.svg', route: RouteName.loan)
     ]);
     return ParentMenuWidget(child: Center(), title: Strings.buyCar);

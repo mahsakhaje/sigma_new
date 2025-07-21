@@ -127,6 +127,7 @@ class URLs {
   static const String EstimatePriceItemsUrl = '/configurations/getAllCarPrices';
   static const String TrackingSalesOrderUrl = '/salesorders/trackingSalesOrder';
   static const String ExpertOrderPrintUrl = '/reports/expertOrderPrint';
+  static const String ContractPrintUrl = '/reports/draftContractPrint';
   static const String GetAvailableAccountManagersUrl =
       '/salesorders/getAvailableAccountManagers';
   static const String GetHasActiveOrderWithChassisNumberUrl =

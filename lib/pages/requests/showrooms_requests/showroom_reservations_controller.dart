@@ -200,7 +200,7 @@ class MyReservationsController extends GetxController {
   onProposalsPressed(Reservations order) async{
 
    var shouldChange=await CustomBottomSheet.show(
-        initialChildSize: 0.3,
+        initialChildSize: 0.25,
         context: Get.context!,
         child: Padding(
           padding: const EdgeInsets.all(16.0),

@@ -1,13 +1,17 @@
-import 'package:flutter/foundation.dart';
+
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:sigma/helper/dio_repository.dart';
 import 'package:sigma/helper/route_names.dart';
 import 'package:sigma/models/all_cars_json_model.dart';
+import 'package:sigma/models/banners_response.dart';
 import 'package:sigma/models/color_response_model.dart';
 import 'package:sigma/models/sigma_rales_response_model.dart';
 import 'package:sigma/models/trim_color_response.dart';
+import 'package:sigma/pages/buy_menu/buy_menu_page.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 import '../compare_cars/compare_cars_controller.dart';
@@ -32,6 +36,17 @@ class TimeValue {
 enum MultiSelectListType { Brand, Model, Type, Color, City, None }
 
 class AdvertiseController extends GetxController {
+  AdvertiseController(dynamic state) {
+    if (state == BuyState.NEW) {
+      orderState = 'NEW';
+    }
+    if (state == BuyState.USED) {
+      orderState = 'USED';
+    } else {
+      orderState = '';
+    }
+  }
+
   final RxList<SalesOrders> orders = <SalesOrders>[].obs;
   final RxBool isLoading = false.obs;
   final RxBool filterLoading = false.obs;
@@ -39,7 +54,7 @@ class AdvertiseController extends GetxController {
   final RxBool showFilterModal = false.obs;
   final RxString compareCarId = ''.obs;
   final RxBool isCompareMode = false.obs;
-
+  String orderState = '';
   final Rx<AdvertisePageState> pageState = AdvertisePageState.list.obs;
   final TextEditingController searchController = TextEditingController();
 
@@ -73,7 +88,10 @@ class AdvertiseController extends GetxController {
   final RxString brandId = ''.obs;
   final RxString modelId = ''.obs;
   final RxString typeId = ''.obs;
-
+  final currentPage = 0.obs;
+  final banners = <Banners>[].obs;
+  Timer? _timer;
+  late PageController pageController;
   final Rx<SfRangeValues> priceValues = SfRangeValues(200.0, 9000.0).obs;
   final Rx<SfRangeValues> yearValues = SfRangeValues(1380, 1404).obs;
 
@@ -104,7 +122,7 @@ class AdvertiseController extends GetxController {
     TimeValue(1403, '1403'),
     TimeValue(1404, '1404'),
   ].obs;
-  var isFetchingMore = false;
+  var isFetchingMore = false.obs;
 
   @override
   void onInit() {
@@ -119,15 +137,19 @@ class AdvertiseController extends GetxController {
         isCompareMode.value = true;
       }
     }
-    loadInitialData();
     scrollController.addListener(() {
+      print((scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent).toString()+'**************************************');
       if (scrollController.position.pixels ==
               scrollController.position.maxScrollExtent &&
           hasMore.value &&
-          !isFetchingMore) {
+          !isFetchingMore.value) {
         getOrders();
+        print('called end of list');
       }
     });
+    loadInitialData();
+
   }
 
   void handleCarItemTap(String carId) {
@@ -153,6 +175,8 @@ class AdvertiseController extends GetxController {
       // if (!kIsWeb) {
       //   await FirebaseAnalytics.instance.logEvent(name: advertise_key);
       // }
+      pageController = PageController(initialPage: 0);
+       fetchBanners();
     } catch (e) {
     } finally {
       isLoading.value = false;
@@ -201,12 +225,13 @@ class AdvertiseController extends GetxController {
     String? fromYear,
     String? toYear,
   }) async {
+    print('isfeching more'+isFetchingMore.toString());
     try {
-      if (isFetchingMore) return;
-      isFetchingMore = true;
+      if (isFetchingMore.value) return;
+      isFetchingMore.value = true;
       isLoading.value = true;
       pn.value++;
-
+print('get data');
       var response = await DioClient.instance.getSalesOrdersWithFilter(
         brandId: brandId,
         carModelId: carModelId,
@@ -217,6 +242,7 @@ class AdvertiseController extends GetxController {
         toAmount: toAmount ?? '',
         cityIds: cityIds,
         cityId: cityId,
+        state: orderState,
         fromYear: fromYear ?? '',
         toYear: toYear ?? '',
         pl: pl.value,
@@ -236,11 +262,10 @@ class AdvertiseController extends GetxController {
         hasMore.value = (orders.length) != total.value;
       }
     } catch (e) {
-      print('Error getting orders: $e');
     } finally {
       isLoading.value = false;
       filterLoading.value = false;
-      isFetchingMore = false;
+      isFetchingMore.value = false;
     }
   }
 
@@ -458,7 +483,54 @@ class AdvertiseController extends GetxController {
     }
     update();
   }
+  Future<void> fetchBanners() async {
+    try {
 
+      var response = await DioClient.instance.getBanners();
+
+      if (response != null && response.message == 'OK') {
+        banners.value = response.banners ?? [];
+
+        startAutoSlide();
+      } else {
+        banners.value = [];
+      }
+    } catch (e) {
+      banners.value = [];
+      print('Error fetching banners: $e');
+    } finally {
+    }
+  }
+
+  void startAutoSlide() {
+    if (banners.isNotEmpty) {
+      _timer = Timer.periodic(Duration(seconds: 4), (Timer timer) {
+        if (currentPage.value < banners.length - 1) {
+          currentPage.value++;
+        } else {
+          currentPage.value = 0;
+        }
+
+        pageController.animateToPage(
+          currentPage.value,
+          duration: Duration(milliseconds: 2000),
+          curve: Curves.linear,
+        );
+      });
+    }
+  }
+
+
+
+  void onPageChanged(int page) {
+    currentPage.value = page;
+  }
+  @override
+  void onClose() {
+    pageController.dispose();
+
+    super.onClose();
+  }
   void resetFilters() {
     selectedBrands.clear();
     selectedModels.clear();
@@ -480,6 +552,8 @@ class AdvertiseController extends GetxController {
     disabledFilter.value = true;
     closeAllExpansionTiles();
     reset();
+    getOrders();
+
   }
 
   void reset() {
@@ -487,7 +561,6 @@ class AdvertiseController extends GetxController {
     orders.clear();
     hasMore.value = true;
   }
-
 
   Future<void> applyFilters() async {
     showFilterModal.value = false;

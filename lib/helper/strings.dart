@@ -17,8 +17,8 @@ class Strings {
   static const lastName = 'نام خانوادگی';
   static const mobileNumber = 'شماره موبایل';
   static const nationalCode = 'کدملی';
-  static const province = '           استان';
-  static const city = '             شهر';
+  static const province = 'استان';
+  static const city = 'شهر';
   static const email = 'ایمیل';
   static const password = 'رمز عبور        ';
   static const repeatPassword = 'تکرار رمز عبور         ';

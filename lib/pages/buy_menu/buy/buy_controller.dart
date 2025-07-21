@@ -36,7 +36,7 @@ class BuyController extends GetxController {
   var selectedFromYear = Rx<String?>(null);
   var selectedToYear = Rx<String?>(null);
   var selectedKiloMeterFrom = Rx<String?>(null);
-  var selectedKiloMeteTo =Rx<String?>(null);
+  var selectedKiloMeteTo = Rx<String?>(null);
   var selectedColors = Rx<String?>(null);
   var selectedTrimColors = Rx<String?>(null);
 
@@ -284,7 +284,6 @@ class BuyController extends GetxController {
     selectedKiloMeteTo.value = null;
     selectedKiloMeterFrom.value = null;
 
-
     turn.value = 6;
   }
 
@@ -379,7 +378,7 @@ class BuyController extends GetxController {
     // Validate form
     if (!_validateForm(formKey)) {
       showToast(ToastState.INFO,
-          'لطفا تمامی موارد را مقداردهی کنید و مجددا درخواست\n  خودرا ثبت نمایید');
+          'لطفا تمامی موارد را مقداردهی کنید و مجددا درخواست\n  خود را ثبت نمایید');
       return;
     }
 
@@ -425,14 +424,6 @@ class BuyController extends GetxController {
   }
 
   bool _validateForm(GlobalKey<FormState> formKey) {
-    print((selectedCity.value?.isNotEmpty ?? false) &&
-        (selectedKiloMeterFrom.value?.isNotEmpty ?? false) &&
-        (selectedKiloMeteTo.value?.isNotEmpty ?? false) &&
-        (selectedBrand.value?.isNotEmpty ?? false) &&
-        (selectedToYear.value?.isNotEmpty ?? false) &&
-        (selectedFromYear.value?.isNotEmpty ?? false) &&
-        formKey.currentState!.validate() &&
-        (amountController.text.isNotEmpty));
     return (selectedCity.value?.isNotEmpty ?? false) &&
         (selectedKiloMeterFrom.value?.isNotEmpty ?? false) &&
         (selectedKiloMeteTo.value?.isNotEmpty ?? false) &&
@@ -453,13 +444,12 @@ class BuyController extends GetxController {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   CustomText(
-                    'درخواست شما با موفقیت ثبت شد، کارشناسان ما در اسرع وقت با شما تماس می‌گیرند.'
-                        .usePersianNumbers(),
-                    textAlign: TextAlign.center,
-                    isRtl: true,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold
-                  ),
+                      'درخواست شما با موفقیت ثبت شد، کارشناسان ما در اسرع وقت با شما تماس می‌گیرند.'
+                          .usePersianNumbers(),
+                      textAlign: TextAlign.center,
+                      isRtl: true,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold),
                   SizedBox(height: 12),
                   _buildOrderNumberBox(response),
                   SizedBox(height: 16),
@@ -493,11 +483,8 @@ class BuyController extends GetxController {
                     ),
                   ),
                 SizedBox(width: 8),
-                CustomText(
-                    response?.purchaseOrder?.orderNumber ??
-                        '',
-                    color: Colors.black87,
-                    fontWeight: FontWeight.bold),
+                CustomText(response?.purchaseOrder?.orderNumber ?? '',
+                    color: Colors.black87, fontWeight: FontWeight.bold),
               ],
             ),
             CustomText('کد رهگیری:',

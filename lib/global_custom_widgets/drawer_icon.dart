@@ -18,8 +18,13 @@ Widget drawerIcon(
         await logOut();
         return;
       }
+      if(route==RouteName.chat){
+        launchUrl(Uri.parse('https://www.goftino.com/c/j2kPkF'), mode: LaunchMode.inAppWebView);
+        return;
+      }
       if (route == RouteName.social) {
         CustomBottomSheet.show(
+
             context: Get.context!,
             child: Column(
               children: [
@@ -31,9 +36,9 @@ Widget drawerIcon(
                       Expanded(
                           child: InkWell(
                         onTap: () {
-                          launchUrl(Uri.parse(GlobalAppData().aparat));
+                          launchUrl(Uri.parse(GlobalAppData().aparat),mode: LaunchMode.platformDefault);
                         },
-                        child: SvgPicture.asset('assets/telegram.svg'),
+                        child: SvgPicture.asset('assets/aparat.svg'),
                       )),
                       Expanded(
                           child: InkWell(
@@ -54,7 +59,7 @@ Widget drawerIcon(
                 ),
               ],
             ),
-            initialChildSize: 0.25);
+            initialChildSize: 0.20);
         return;
       }
       Get.toNamed(route, arguments: arg);

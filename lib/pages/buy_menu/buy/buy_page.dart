@@ -45,7 +45,7 @@ class BuyPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             CustomText(Strings.enterOrderDetail,
-                size: 16, fontWeight: FontWeight.w500,isRtl: true),
+                size: 16, fontWeight: FontWeight.w500, isRtl: true),
           ],
         ),
         const SizedBox(height: 18),
@@ -231,7 +231,9 @@ class BuyPage extends StatelessWidget {
                   : AutovalidateMode.disabled,
               hintText: 'بودجه به تومان',
               onEditingComplete: () {
+                _formKey.currentState!.validate();
                 hideKeyboard(context);
+
               },
               onChanged: (str) => controller.onBudgetChanged(),
               isTurn: controller.turn.value == 10,
@@ -276,6 +278,7 @@ class BuyPage extends StatelessWidget {
               Obx(() => CustomCheckBox(
                   value: controller.showSimilar.value,
                   isDark: true,
+                  isBlue: true,
                   onChanged: (val) => controller.toggleShowSimilar(val)))
             ],
           ),
@@ -293,6 +296,7 @@ class BuyPage extends StatelessWidget {
               Obx(() => CustomCheckBox(
                   isDark: true,
                   value: controller.wantsLoan.value,
+                  isBlue: true,
                   onChanged: (val) => controller.toggleWantsLoan(val)))
             ],
           ),
@@ -309,6 +313,7 @@ class BuyPage extends StatelessWidget {
               const SizedBox(width: 8),
               Obx(() => CustomCheckBox(
                   isDark: true,
+                  isBlue: true,
                   value: controller.isSwap.value,
                   onChanged: (val) => controller.toggleIsSwap(val)))
             ],

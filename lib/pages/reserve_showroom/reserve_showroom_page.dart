@@ -59,11 +59,11 @@ class ReserveShowRoom extends StatelessWidget {
 
   Widget _buildAddressContainer(ReserveShowRoomController controller) {
     return Container(
-      margin: EdgeInsets.all(16),
-      padding: EdgeInsets.all(8),
+      margin: EdgeInsets.all(15),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
           color: AppColors.lightGrey,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(6),
           ),
       child: Directionality(
         textDirection: TextDirection.rtl,
@@ -73,6 +73,7 @@ class ReserveShowRoom extends StatelessWidget {
                   .usePersianNumbers(),
               maxLine: 3,
               isRtl: true,
+              textAlign: TextAlign.justify,
               size: 15),
         ]),
       ),

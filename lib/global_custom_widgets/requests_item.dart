@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sigma/global_custom_widgets/badge.dart';
 import 'package:sigma/global_custom_widgets/custom_text.dart';
 import 'package:sigma/helper/colors.dart';
 
@@ -43,20 +44,7 @@ class RequestCard extends StatelessWidget {
                      radius: 12,child: Icon(Icons.more_horiz_rounded),backgroundColor: AppColors.lightGrey,),
                ),
                 const SizedBox(width: 8),
-                status.length> 1?    Container(
-                 padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: AppColors.darkGrey,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: CustomText(
-                    status,
-                      color: AppColors.orange,
-                      fontWeight: FontWeight.bold,
-                      isRtl: true),
-
-                ):SizedBox(),
+                badge(status),
                 const Spacer(),
                 CustomText(trackingCode.length>16?'شماره شاسی :':'کد رهگیری:',
                     color: Colors.black87,
@@ -126,4 +114,6 @@ class RequestCard extends StatelessWidget {
       ),
     );
   }
+
+
 }

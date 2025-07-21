@@ -146,6 +146,7 @@ class _HomePgeState extends State<HomePge> {
         hoverColor: Colors.transparent,
         highlightColor: Colors.transparent,
         splashColor: Colors.transparent,
+        splashFactory: NoSplash.splashFactory,
         onTap: _closeDrawers,
         child: Stack(
           fit: StackFit.expand,
@@ -178,9 +179,9 @@ class _HomePgeState extends State<HomePge> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       CustomText(version.usePersianNumbers(),
-                          fontWeight: FontWeight.bold, size: 16),
-                      CustomText('       نسخه:    ',
-                          isRtl: true, fontWeight: FontWeight.bold, size: 16),
+                          fontWeight: FontWeight.bold, size: 12,color: AppColors.grey),
+                      CustomText('       نسخه    ',
+                          isRtl: true, fontWeight: FontWeight.bold, size: 12,color: AppColors.grey),
                     ],
                   ),
                 )),
@@ -257,11 +258,13 @@ class _HomePgeState extends State<HomePge> {
                         drawerIcon(
                             path: 'assets/ghavanin.svg',
                             route: RouteName.rules),
-                        drawerIcon(
-                            path: 'assets/ghavanin.svg',
-                            route: RouteName.chat),
+                        // drawerIcon(
+                        //     path: 'assets/ghavanin.svg',
+                        //     route: RouteName.chat),
                         drawerIcon(
                             path: 'assets/social.svg', route: RouteName.social),
+                        drawerIcon(
+                            path: 'assets/chat.svg', route: RouteName.chat),
                       ],
                     ),
                     drawerIcon(path: 'assets/exit.svg', route: 'exit')

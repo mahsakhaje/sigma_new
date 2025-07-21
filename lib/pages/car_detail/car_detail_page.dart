@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:sigma/global_custom_widgets/badge.dart';
 import 'package:sigma/global_custom_widgets/bottom_sheet.dart';
 import 'package:sigma/global_custom_widgets/confirm_button.dart';
 import 'package:sigma/global_custom_widgets/custom_text.dart';
@@ -123,15 +124,18 @@ class _CarDetailContent extends StatelessWidget {
               'مقایسه آگهی',
               controller.navigateToComparison,
             ),
-            Divider(color: Colors.grey,),
+            Divider(
+              color: Colors.grey,
+            ),
             Obx(() => _buildBottomSheetItem(
                   'assets/expert.svg',
                   'برگه کارشناسی',
                   controller.downloadExpertPdf,
                   isLoading: controller.isExpertLoading.value,
                 )),
-            Divider(color: Colors.grey,),
-
+            Divider(
+              color: Colors.grey,
+            ),
             Obx(() => _buildBottomSheetItem(
                   'assets/download.svg',
                   'دانلود کاتالوگ',
@@ -166,9 +170,15 @@ class _CarDetailContent extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              CustomText(title,color: Colors.black,fontWeight: FontWeight.bold,size: 14),
-              SizedBox(width: 8,),
-              SvgPicture.asset(iconPath,color: Colors.black,)
+              CustomText(title,
+                  color: Colors.black, fontWeight: FontWeight.bold, size: 14),
+              SizedBox(
+                width: 8,
+              ),
+              SvgPicture.asset(
+                iconPath,
+                color: Colors.black,
+              )
             ],
           ),
         ),
@@ -209,6 +219,10 @@ class _CarDetailContent extends StatelessWidget {
               // if (controller.saleOrder.value?.justSwap == '1')
               //   _buildBadge('فقط\nتعویض', isOrange: true),
               Positioned(
+                  top: 10,
+                  left: 10,
+                  child: _buildOwnershipInfo()),
+              Positioned(
                 bottom: 20,
                 left: 0,
                 right: 0,
@@ -225,24 +239,7 @@ class _CarDetailContent extends StatelessWidget {
     );
   }
 
-  Widget _buildBadge(String text, {bool isOrange = false}) {
-    return Positioned(
-      top: 16,
-      right: 16,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        decoration: BoxDecoration(
-          color: isOrange ? Colors.orange : Colors.blue,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Text(
-          text,
-          style: const TextStyle(color: Colors.white, fontSize: 12),
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
-  }
+
 
   List<Widget> _buildIndicators(int length, int current) {
     if (length < 2) return [];
@@ -264,7 +261,7 @@ class _CarDetailContent extends StatelessWidget {
       children: [
         const SizedBox(height: 8),
         _buildCarTitle(order),
-        _buildOwnershipInfo(),
+       // _buildOwnershipInfo(),
         const SizedBox(height: 8),
         Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -305,15 +302,11 @@ class _CarDetailContent extends StatelessWidget {
   }
 
   Widget _buildOwnershipInfo() {
-    // return Obx(() => Row(
-    //   mainAxisAlignment: MainAxisAlignment.end,
-    //   children: [
-    //     CustomText(
-    //       controller.saleOrder.value?.owner == '1' ? 'خودرو مانا' : 'خودرو امانی',
-    //     ),
-    //   ],
-    // ));
-    return SizedBox();
+    return Obx(() => badge(controller.saleOrder.value?.justSwap == '1'
+        ? 'فقط تعویض'
+        : controller.saleOrder.value?.owner == '1'
+            ? 'خودرو مانا'
+            : 'خودرو امانی'));
   }
 
   Widget _buildDetailRows(SalesOrder order) {

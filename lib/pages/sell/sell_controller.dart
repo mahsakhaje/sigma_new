@@ -39,7 +39,7 @@ class SellPageController extends GetxController {
   final useCredit = false.obs;
   final isSwap = false.obs;
   final otherWillTakeCar = false.obs;
-  var selectedColorIndex = 0.obs;
+  var selectedColorIndex = 8.obs;
 
   // --- Form Controllers ---
   final searchController = TextEditingController();
@@ -255,7 +255,7 @@ class SellPageController extends GetxController {
       await insertRequest();
       await requestTogetTarefe();
       // Navigate to next step if needed
-      step.value = SellPageStep.showTarefe;
+      //step.value = SellPageStep.showTarefe;
     } catch (e) {
       showToast(ToastState.ERROR, 'خطا در ثبت درخواست');
     } finally {
@@ -359,7 +359,7 @@ class SellPageController extends GetxController {
     update();
 
     final response = await DioClient.instance.insertOrderData(
-      referredId: showRoomId.value,
+      referredId: selectedAddress.value ?? '',
       accountManagerId: selectedKarshenas.value?.replaceAll('.', ''),
       isSwap: isSwap.value ? '1' : '0',
       commentSwap: swapCommentController.text,
@@ -380,9 +380,14 @@ class SellPageController extends GetxController {
           ? account?.nationalId
           : englishToPersian(nationalCodeController.text),
       mileage: englishToPersian(kilometerController.text.replaceAll(',', ''))
-          .replaceAll('٬', ''),
+              .replaceAll('٬', '')
+              .isEmpty
+          ? '0'
+          : englishToPersian(kilometerController.text.replaceAll(',', ''))
+              .replaceAll('٬', ''),
     );
-
+    print(response?.toJson());
+    print(response?.toJson());
     isLoading.value = false;
     update();
 
@@ -401,8 +406,13 @@ class SellPageController extends GetxController {
       discountPrice.value = '0';
       paidPrice.value = totalPrice.value;
       dargahAmount.value = paidPrice.value;
-      step.value = SellPageStep.showTarefe;
-      // controller.step.value = SellPageStep.showPaymentResult;
+      var confRes =
+          await DioClient.instance.confirmPayment(orderId: order?.id ?? '');
+      if (confRes?.message == 'OK') {
+        step.value = SellPageStep.showPaymentResult;
+      } else {
+        showToast(ToastState.ERROR, 'خطا در ثبت اطلاعات');
+      }
     } else {
       showToast(ToastState.ERROR, 'خطا در ثبت اطلاعات');
     }

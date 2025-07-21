@@ -1,6 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:sigma/global_custom_widgets/bottom_sheet.dart';
 import 'package:sigma/global_custom_widgets/loading.dart';
 import 'package:sigma/global_custom_widgets/confirm_button.dart';
@@ -19,10 +22,10 @@ import 'package:sigma/pages/advertise/advertise_controller.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 class AdvertisePage extends StatelessWidget {
-  final AdvertiseController controller = Get.put(AdvertiseController());
-
   @override
   Widget build(BuildContext context) {
+    final args = Get.arguments;
+    AdvertiseController controller = Get.put(AdvertiseController(args));
     ever(controller.showFilterModal, (bool show) {
       if (show && controller.pageState.value == AdvertisePageState.list) {
         // Use Future.delayed to avoid calling during build
@@ -30,190 +33,337 @@ class AdvertisePage extends StatelessWidget {
           CustomBottomSheet.show(
             context: Get.context!,
             initialChildSize: 0.8,
-            child: Obx(() => _buildFilterWidget()),
+            child: Obx(() => _buildFilterWidget(controller)),
           ).then((_) {
             controller.showFilterModal.value = false;
           });
         });
       } else {
         // Close the modal if it's open
-        if (Navigator.canPop(Get.context!)) {
-          Navigator.pop(Get.context!);
-        }
+        // if (Navigator.canPop(Get.context!)) {
+        //   Navigator.pop(Get.context!);
+        // }
       }
     });
     return DarkBackgroundWidget(
       title: controller.isCompareMode.value
           ? 'انتخاب برای مقایسه'
           : Strings.advertises,
-      child: Obx(() => buildBody()),
+      child: Obx(() => buildBody(controller)),
     );
   }
 
-  Widget buildBody() {
-    return Stack(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(18.0),
-          child: Column(
-            children: [
-              Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                GestureDetector(
-                  onTap: controller.togglePageState,
-                  child: SvgPicture.asset('assets/filter.svg'),
-                )
-              ]),
-              Expanded(
-                child: controller.filterLoading.value
-                    ? Center(child: loading())
-                    : _buildListWidget(),
-              ),
-            ],
+  Widget buildBody(AdvertiseController controller) {
+    return controller.filterLoading.value
+        ? Center(child: loading())
+        : _buildListWidget(controller);
+  }
+
+  Widget _buildListWidget(AdvertiseController controller) {
+
+
+    return CustomScrollView(
+      controller: controller.scrollController,
+      slivers: [
+        /// ویجت اول
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+              GestureDetector(
+                onTap: controller.togglePageState,
+                child: SvgPicture.asset('assets/filter.svg'),
+              )
+            ]),
           ),
         ),
-        // if (controller.isLoading.value && controller.orders.isEmpty)
-        //   Center(child: loading()),
-      ],
-    );
-  }
 
-  Widget _buildListWidget() {
-    if (controller.orders.isEmpty && !controller.isLoading.value) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          NoContent(),
-          SizedBox(height: 24),
-          CustomText(
-            'در صورتی که خودرو موردنظر خود را پیدا نکردید میتوانید سفارش خرید خود راثبت نمایید',
-            isRtl: true,
-            size: 14,
-            textAlign: TextAlign.center,
+        /// ویجت دوم
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: BannerWidget(controller),
           ),
-          SizedBox(height: 12),
-          SizedBox(
-            width: 160,
-            height: 50,
-            child: ConfirmButton(
-              () => Get.toNamed(RouteName.buy),
-              'ثبت سفارش خرید',
+        ),
+
+        /// GridView (SliverGrid)
+    (controller.orders.isEmpty && !controller.isLoading.value) ?  SliverToBoxAdapter(
+      child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(14.0),
+                  child: SizedBox(
+                      width: 70,
+                      height: 70,
+                      child: NoContent()),
+                ),
+                CustomText(
+                  'در صورتی که خودرو موردنظر خود را پیدا نکردید میتوانید سفارش خرید خود را ثبت نمایید.',
+                  isRtl: true,
+                  size: 16,
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                SizedBox(
+                  width: 160,
+                  height: 50,
+                  child: ConfirmButton(
+                        () => Get.toNamed(RouteName.buy),
+                    'ثبت سفارش خرید',
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
+    ):  SliverPadding(
+          padding: const EdgeInsets.all(8.0),
+          sliver: SliverGrid(
+            delegate: SliverChildBuilderDelegate(
+              (ctx, index) {
+                if (index == 0 && controller.orders.isEmpty) {
+                  return SizedBox();
+                }
+                if (index == controller.orders.length &&
+                    controller.hasMore.value &&
+                    index > 0) {
+                  return loading();
+                }
+
+                final order = controller.orders[index];
+                return advertiseItem(order, () async {
+                  await controller.changeLike(order.id ?? '');
+                }, controller);
+              },
+              childCount: controller.hasMore.value
+                  ? controller.orders.length + 1
+                  : controller.orders.length,
+            ),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 8.0,
+              mainAxisSpacing: 8.0,
+              childAspectRatio: 0.66,
+            ),
+          ),
+        ),
+      ],
+    );
+
+    //  GridView.builder(
+    //  controller: controller.scrollController,
+    //  //shrinkWrap: true,
+    // physics: ScrollPhysics(),
+    //  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+    //    crossAxisCount: 2, // Number of columns
+    //    crossAxisSpacing: 8.0, // Spacing between columns
+    //    mainAxisSpacing: 8.0, // Spacing between rows
+    //    childAspectRatio: 0.66, // Width to height ratio of grid items
+    //  ),
+    //  itemCount: controller.hasMore.value
+    //      ? controller.orders.length + 1
+    //      : controller.orders.length,
+    //
+    //  // controller: controller.scrollController,
+    //  itemBuilder: (ctx, index) {
+    //    if (index == 0 && controller.orders.isEmpty) {
+    //      return Center(child: loading());
+    //    }
+    //    if (index == controller.orders.length &&
+    //        controller.hasMore.value &&
+    //        index > 0) {
+    //      return Center(child: loading());
+    //    }
+    //    return advertiseItem(controller.orders[index], () async {
+    //      await controller.changeLike(controller.orders[index].id ?? '');
+    //    }, controller);
+    //  },
+  }
+
+  Widget BannerWidget(AdvertiseController controller) {
+    return Obx(() {
+      // Show shimmer loading for non-web platforms
+      if (controller.isLoading.value && !kIsWeb) {
+        return _buildShimmerLoading();
+      }
+
+      // Show nothing for web while loading or if no banners
+      if ((controller.isLoading.value && kIsWeb) ||
+          controller.banners.isEmpty) {
+        return SizedBox();
+      }
+
+      return Container(
+        height: 180,
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(4)),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            PageView.builder(
+              reverse: true,
+              controller: controller.pageController,
+              onPageChanged: controller.onPageChanged,
+              itemCount: controller.banners.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Container(
+                  margin: EdgeInsets.all(2),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: Image.network(
+                      '${URLs.imageLinks}${controller.banners[index].docId}',
+                      width: 340,
+                      fit: BoxFit.fill,
+                      loadingBuilder: (BuildContext context, Widget image,
+                          ImageChunkEvent? loadingProgress) {
+                        if (loadingProgress == null) return image;
+                        return SizedBox(
+                          height: 60,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes!
+                                  : null,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                );
+              },
+            ),
+            // Uncomment if you want page indicators
+            Positioned(
+              bottom: 20,
+              left: 0,
+              right: 0,
+              child: Directionality(
+                textDirection: TextDirection.rtl,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: _buildIndicators(controller),
+                ),
+              ),
+            ),
+          ],
+        ),
       );
-    }
+    });
+  }
 
-    return GridView.builder(
-      controller: controller.scrollController,
-
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2, // Number of columns
-        crossAxisSpacing: 8.0, // Spacing between columns
-        mainAxisSpacing: 8.0, // Spacing between rows
-        childAspectRatio: 0.66, // Width to height ratio of grid items
+  Widget _buildShimmerLoading() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey,
+      highlightColor: Colors.white,
+      enabled: true,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(4),
+        child: Container(
+          height: 180,
+          color: Colors.grey,
+        ),
       ),
-      itemCount: controller.hasMore.value
-          ? controller.orders.length + 1
-          : controller.orders.length,
-      // controller: controller.scrollController,
-      itemBuilder: (ctx, index) {
-        if (index == 0 && controller.orders.isEmpty) {
-          return Center(child: loading());
-        }
-        if (index == controller.orders.length &&
-            controller.hasMore.value &&
-            index > 0) {
-          return Center(child: loading());
-        }
-        return advertiseItem(controller.orders[index], () async {
-          await controller.changeLike(controller.orders[index].id ?? '');
-        }, controller);
-      },
     );
   }
 
-  Widget _buildFilterWidget() {
-    return Container(
-      padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: AppColors.modalGrey,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          buildExpandable(
+  List<Widget> _buildIndicators(AdvertiseController controller) {
+    return List<Widget>.generate(controller.banners.length, (index) {
+      return Obx(() => Container(
+            margin: EdgeInsets.all(3),
+            width: 10,
+            height: 10,
+            decoration: BoxDecoration(
+              color: controller.currentPage.value == index
+                  ? AppColors.blue // Replace with your color
+                  : Colors.white,
+              shape: BoxShape.circle,
+            ),
+          ));
+    });
+  }
+
+  Widget _buildFilterWidget(AdvertiseController controller) {
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        buildExpandable(
             'شهر',
             ListView(
               physics: const ScrollPhysics(),
               padding: EdgeInsets.all(8.0),
               children: controller.cities
-                  .map((timeValue) =>
-                      multiSelectWidget(timeValue, MultiSelectListType.City))
+                  .map((timeValue) => multiSelectWidget(
+                      timeValue, MultiSelectListType.City, controller))
                   .toList(),
             ),
             controller.cities.length * 58,
             0,
             MultiSelectListType.City,
-          ),
-          buildExpandable(
+            controller),
+        buildExpandable(
             'برند',
             ListView(
               physics: const ScrollPhysics(),
               padding: EdgeInsets.all(8.0),
               children: controller.brands
-                  .map((timeValue) =>
-                      multiSelectWidget(timeValue, MultiSelectListType.Brand))
+                  .map((timeValue) => multiSelectWidget(
+                      timeValue, MultiSelectListType.Brand, controller))
                   .toList(),
             ),
             controller.brands.length * 58,
             1,
             MultiSelectListType.Brand,
-          ),
-          buildExpandable(
+            controller),
+        buildExpandable(
             'مدل خودرو',
             ListView(
               physics: const ScrollPhysics(),
               padding: EdgeInsets.all(8.0),
               children: controller.carModels
-                  .map((timeValue) =>
-                      multiSelectWidget(timeValue, MultiSelectListType.Model))
+                  .map((timeValue) => multiSelectWidget(
+                      timeValue, MultiSelectListType.Model, controller))
                   .toList(),
             ),
             controller.carModels.length * 54,
             2,
             MultiSelectListType.Model,
-          ),
-          buildExpandable(
+            controller),
+        buildExpandable(
             'تیپ خودرو',
             ListView(
               physics: const ScrollPhysics(),
               padding: EdgeInsets.all(8.0),
               children: controller.carTypes
-                  .map((timeValue) =>
-                      multiSelectWidget(timeValue, MultiSelectListType.Type))
+                  .map((timeValue) => multiSelectWidget(
+                      timeValue, MultiSelectListType.Type, controller))
                   .toList(),
             ),
             controller.carTypes.length * 54,
             3,
             MultiSelectListType.Type,
-          ),
-          buildExpandable(
+            controller),
+        buildExpandable(
             'رنگ بدنه',
             ListView(
               physics: const ScrollPhysics(),
               padding: EdgeInsets.all(8.0),
               children: controller.colorsCars
-                  .map((timeValue) =>
-                      multiSelectWidget(timeValue, MultiSelectListType.Color))
+                  .map((timeValue) => multiSelectWidget(
+                      timeValue, MultiSelectListType.Color, controller))
                   .toList(),
             ),
             controller.colorsCars.length * 36,
             4,
             MultiSelectListType.Color,
-          ),
-          buildExpandable(
+            controller),
+        buildExpandable(
             'قیمت',
             SizedBox(
               width: Get.width,
@@ -281,9 +431,9 @@ class AdvertisePage extends StatelessWidget {
             140,
             5,
             MultiSelectListType.None,
-          ),
-          if (controller.fromYears.isNotEmpty)
-            buildExpandable(
+            controller),
+        if (controller.fromYears.isNotEmpty)
+          buildExpandable(
               'سال ساخت',
               SizedBox(
                 width: Get.width,
@@ -352,31 +502,29 @@ class AdvertisePage extends StatelessWidget {
               240,
               6,
               MultiSelectListType.None,
-            ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Expanded(
-                    child: customOutlinedButton(
-                        controller.resetFilters, 'حذف همه',
-                        borderColorolor: Colors.black,
-                        txtColor: Colors.black)),
-                SizedBox(
-                  width: 10,
-                ),
-                Expanded(
-                    child: ConfirmButton(
-                        controller.applyFilters, 'اعمال فیلتر')),
-              ],
-            ),
-          )
-        ],
-      ),
+              controller),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Expanded(
+                  child: customOutlinedButton(
+                      controller.resetFilters, 'حذف همه',
+                      borderColorolor: Colors.black, txtColor: Colors.black)),
+              SizedBox(
+                width: 10,
+              ),
+              Expanded(
+                  child: ConfirmButton(controller.applyFilters, 'اعمال فیلتر')),
+            ],
+          ),
+        )
+      ],
     );
   }
 
-  Widget multiSelectWidget(TimeValue value, MultiSelectListType listType) {
+  Widget multiSelectWidget(TimeValue value, MultiSelectListType listType,
+      AdvertiseController controller) {
     return Obx(() => Row(
           children: [
             Checkbox(
@@ -406,18 +554,13 @@ class AdvertisePage extends StatelessWidget {
                 }
               },
             ),
-            CustomText(value.value,color: Colors.black),
+            CustomText(value.value, color: Colors.black),
           ],
         ));
   }
 
-  Directionality buildExpandable(
-    String title,
-    Widget body,
-    double len,
-    int index,
-    MultiSelectListType type,
-  ) {
+  Directionality buildExpandable(String title, Widget body, double len,
+      int index, MultiSelectListType type, AdvertiseController controller) {
     String subtitle = controller.getSubtitleOfSections(type);
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -437,7 +580,7 @@ class AdvertisePage extends StatelessWidget {
           initiallyExpanded: controller.isExpandedList[index],
           childrenPadding: EdgeInsets.zero,
           tilePadding: EdgeInsets.symmetric(vertical: 0, horizontal: 8),
-          title: Row(
+          title: Wrap(
             children: [
               CustomText(
                 title,
@@ -448,7 +591,8 @@ class AdvertisePage extends StatelessWidget {
               CustomText(subtitle == "[]" ? '' : subtitle,
                   // color: colors.disableColor,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.darkGrey),
+                  color: AppColors.darkGrey,
+                  isRtl: true),
             ],
           ),
           children: [
@@ -542,82 +686,87 @@ class advertiseItem extends StatelessWidget {
             ),
 
             // ... بقیه کد موجود بدون تغییر ...
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      CustomText(
-                        order.brandDescription ?? '',
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                        size: 16,
-                      ),
-
-                      SizedBox(width: 4),
-                      CustomText(
-                        order.carModelDescription ?? '',
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                        size: 16,
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CustomText(
-                        (order.persianYear ?? '').usePersianNumbers() + ' مدل ',
-                        color: Colors.black87,
-                        size: 11,
-                      ),
-                      SizedBox(width: 4),
-                      CustomText(
-                        order.colorDescription ?? '',
-                        color: Colors.black87,
-                        size: 11,
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 6),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      CustomText('تومان', color: Colors.black87),
-                      SizedBox(width: 2),
-                      Flexible(
-                        child: CustomText(
-                          NumberUtils.separateThousand(
-                                  int.tryParse(order.advertiseAmount ?? '0') ??
-                                      0)
-                              .usePersianNumbers(),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        CustomText(
+                          order.brandDescription ?? '',
+                          fontWeight: FontWeight.bold,
                           color: Colors.black87,
+                          size: 16,
                         ),
-                      ),
-                      SizedBox(width: 4),
-                      CustomText('قیمت', color: Colors.black87),
-                    ],
-                  ),
-                  SizedBox(height: 6),
-                  Row(
-                    children: [
-                      InkWell(
-                        onTap: onTap,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: (order.favCount != null &&
-                                  (int.tryParse(order.favCount!) ?? 0) == 1)
-                              ? SvgPicture.asset('assets/red_heart.svg')
-                              : SvgPicture.asset('assets/heart.svg'),
+                        SizedBox(width: 4),
+                        CustomText(
+                          order.carModelDescription ?? '',
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                          size: 16,
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CustomText(
+                          (order.persianYear ?? '').usePersianNumbers() +
+                              ' مدل ',
+                          color: Colors.black87,
+                          size: 11,
+                        ),
+                        SizedBox(width: 4),
+                        CustomText(
+                          order.colorDescription ?? '',
+                          color: Colors.black87,
+                          size: 11,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 6),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        CustomText('تومان', color: Colors.black87),
+                        SizedBox(width: 2),
+                        Flexible(
+                          child: CustomText(
+                            NumberUtils.separateThousand(int.tryParse(
+                                        order.advertiseAmount ?? '0') ??
+                                    0)
+                                .usePersianNumbers(),
+                            color: Colors.black87,
+                          ),
+                        ),
+                        SizedBox(width: 4),
+                        CustomText('قیمت', color: Colors.black87),
+                      ],
+                    ),
+                    Expanded(child: SizedBox(height: 6)),
+                    Divider(
+                      color: Colors.grey.shade400,
+                    ),
+                    Row(
+                      children: [
+                        InkWell(
+                          onTap: onTap,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: (order.favCount != null &&
+                                    (int.tryParse(order.favCount!) ?? 0) == 1)
+                                ? SvgPicture.asset('assets/red_heart.svg')
+                                : SvgPicture.asset('assets/heart.svg'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

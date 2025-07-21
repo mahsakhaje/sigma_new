@@ -16,7 +16,7 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    Get.find<MenuControllerDefault>().setMenuItems([drawerIcon(path: 'assets/edit_profile.svg', route: RouteName.editProfile), drawerIcon(path: 'assets/favorites.svg', route: RouteName.favourites), drawerIcon(path: 'assets/my_cars.svg', route: RouteName.myCars)]);
+    Get.find<MenuControllerDefault>().setMenuItems([drawerIcon(path: 'assets/edit_profile.svg', route: RouteName.editProfile), drawerIcon(path: 'assets/favorites.svg', route: RouteName.favourites), drawerIcon(path: 'assets/my_cars.svg', route: RouteName.myCars), drawerIcon(path: 'assets/suggestions.svg', route: RouteName.suggestions)]);
     return ParentMenuWidget(child: Center(), title: Strings.profile);
   }
 }

@@ -29,112 +29,116 @@ class CalculateLoanPage extends StatelessWidget {
           return  Center(child: loading());
         }
 
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CustomText(
-                      'مبلغ تسهیلات باید بین 50 تا 300 میلیون تومان باشد.'
-                          .usePersianNumbers(),
-                      size: 16,
-                      isRtl: true
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 32,
-                ),
-                const SizedBox(height: 8),
-                Form(
-                  key: controller.formKey,
-                  child: Directionality(
-                    textDirection: TextDirection.rtl,
-                    child: MoneyForm(
-                      controller.moneyController,
-                      maxLen: 11,
-                      onChanged: controller.onMoneyChanged,
-                      min: 50000000,
-                      max: 300000000,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 10,),
-                GetBuilder<CalculateLoanController>(
-                  builder: (controller) => Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Flexible(
-                        child: CustomText(
-                          controller.moneyController.text.toWord() +
-                              " " +
-                              ((controller.moneyController.text.isNotEmpty)
-                                  ? 'تومان'
-                                  : ''),
-                          isRtl: true,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-                const SizedBox(height: 8),
-                Obx(() => CustomDropdown(
-                      hint: 'مدت بازپرداخت اقساط',
-                      value: controller.selectedDuration.value.isEmpty
-                          ? null
-                          : controller.selectedDuration.value,
-                      items: controller.durations,
-                      onChanged: controller.onDurationChanged,
-                    )),
-                SizedBox(
-                  height: 16,
-                ),
-                TextButton(
-                  onPressed: controller.openPdfLink,
-                  child: Row(
+        return SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: 50,),
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       CustomText(
-                        'شرایط و مراحل دریافت وام',
-                        size: 14,
-                        fontWeight: FontWeight.bold,
+                        'مبلغ تسهیلات باید بین 50 تا 300 میلیون تومان باشد.'
+                            .usePersianNumbers(),
+                        size: 16,
+                        isRtl: true,
+                        fontWeight: FontWeight.bold
                       ),
-                      SizedBox(width: 8,),
-                      SvgPicture.asset('assets/download.svg'),
-
                     ],
                   ),
-                ),
-                const SizedBox(height: 72),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Obx(() => controller.isCallingApi.value
-                          ?  Center(child: loading())
-                          : ConfirmButton(
-                              controller.calculateLoanPayments,
-                              'محاسبه اقساط',
-                            )),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Expanded(
-                      child: customOutlinedButton(
-                        controller.navigateToBuyOrder,
-                        'ثبت سفارش خرید',
+                  SizedBox(
+                    height: 32,
+                  ),
+                  const SizedBox(height: 8),
+                  Form(
+                    key: controller.formKey,
+                    child: Directionality(
+                      textDirection: TextDirection.rtl,
+                      child: MoneyForm(
+                        controller.moneyController,
+                        maxLen: 11,
+                        onChanged: controller.onMoneyChanged,
+                        min: 50000000,
+                        max: 300000000,
                       ),
                     ),
-                  ],
-                ),
-              ],
+                  ),
+                  SizedBox(height: 10,),
+                  GetBuilder<CalculateLoanController>(
+                    builder: (controller) => Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Flexible(
+                          child: CustomText(
+                            controller.moneyController.text.toWord() +
+                                " " +
+                                ((controller.moneyController.text.isNotEmpty)
+                                    ? 'تومان'
+                                    : ''),
+                            isRtl: true,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  const SizedBox(height: 8),
+                  Obx(() => CustomDropdown(
+                        hint: 'مدت بازپرداخت اقساط',
+                        value: controller.selectedDuration.value.isEmpty
+                            ? null
+                            : controller.selectedDuration.value,
+                        items: controller.durations,
+                        onChanged: controller.onDurationChanged,
+                      )),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  TextButton(
+                    onPressed: controller.openPdfLink,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CustomText(
+                          'شرایط و مراحل دریافت وام',
+                          size: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        SizedBox(width: 8,),
+                        SvgPicture.asset('assets/download.svg'),
+          
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 72),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Obx(() => controller.isCallingApi.value
+                            ?  Center(child: loading())
+                            : ConfirmButton(
+                                controller.calculateLoanPayments,
+                                'محاسبه اقساط',
+                              )),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: customOutlinedButton(
+                          controller.navigateToBuyOrder,
+                          'ثبت سفارش خرید',
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         );

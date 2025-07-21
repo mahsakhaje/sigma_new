@@ -44,7 +44,7 @@ class SellPageView extends StatelessWidget {
             case SellPageStep.uploadPhoto:
               return UploadPhotoForm();
             case SellPageStep.showPaymentResult:
-              return ShowTarefeStep();
+              return PaymentResultStep();
             default:
               return const Center(child: Text('در حال توسعه...'));
           }
@@ -139,7 +139,6 @@ class SellPageView extends StatelessWidget {
         Expanded(
           child: Obx(() => ListView.builder(
                 padding: EdgeInsets.all(8),
-                controller: controller.scrollController,
                 itemCount: controller.cars.length,
                 itemBuilder: (context, index) {
                   final car = controller.cars[index];
@@ -174,8 +173,9 @@ class SellPageView extends StatelessWidget {
                                 controller.carId.value.toString());
                         if (response?.status == 0) {
                           controller.step.value = SellPageStep.getMilage;
-                        }else{
-                          showToast(ToastState.ERROR, "شما یک سفارش فعال با شماره شاسی وارد شده دارید!");
+                        } else {
+                          showToast(ToastState.ERROR,
+                              "شما یک سفارش فعال با شماره شاسی وارد شده دارید!");
                         }
                       },
                 'ادامه',
@@ -269,6 +269,8 @@ class GetMilageStep extends StatelessWidget {
                             child: CustomTextFormField(
                               controller.kilometerController,
                               hintText: 'کارکرد را وارد نمایید',
+                              isOnlyNumber: true,
+
                             ),
                           )
                         : SizedBox(),
@@ -297,289 +299,295 @@ class UploadPhotoForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              CustomText('لطفا جزئیات خودروی مورد نظر را وارد کنید',
-                  size: 14, fontWeight: FontWeight.w500),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [CustomText('چه کسی خودرو را برای کارشناسی خواهد برد؟ ')],
-          ),
-          Obx(() => Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  controller.otherWillTakeCar.value
-                      ? InkWell(
-                          onTap: () {
-                            showGetOtherInfoDialog(context);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                                padding: const EdgeInsets.all(8.0),
-                                decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.white),
-                                    borderRadius: BorderRadius.circular(8)),
-                                child: SvgPicture.asset(
-                                  'assets/white_pen.svg',
-                                  height: 18,
-                                )),
-                          ),
-                        )
-                      : SizedBox(),
-                  SizedBox(
-                    width: 8,
-                  ),
-                  CustomCheckBox(
-                      value: !controller.otherWillTakeCar.value,
-                      onChanged: (value) {
-                        controller.otherWillTakeCar.value = !(value ?? true);
-                      }),
-                  CustomText('خودم'),
-                  SizedBox(
-                    width: 24,
-                  ),
-                  CustomCheckBox(
-                      value: controller.otherWillTakeCar.value,
-                      onChanged: (value) async {
-                        var changed =
-                            await showGetOtherInfoDialog(context) ?? false;
-                        if (changed) {
-                          controller.otherWillTakeCar.value = true;
-                        }
-                      }),
-                  CustomText('سایر'),
-                ],
-              )),
-
-          SizedBox(
-            height: 8,
-          ),
-          Obx(() => CustomDropdown(
-              hint: 'شهر         ',
-              largeFont: true,
-              value: controller.selectedCity.value,
-              items: controller.cities,
-              isRtl: true,
-              isTurn: controller.step.value == SellPageStep.uploadPhoto,
-              onChanged: (String? str) => controller.onCitySelected(str))),
-          SizedBox(
-            height: 8,
-          ),
-          Obx(() => CustomDropdown(
-              hint: 'آدرس نمایندگی',
-              value: controller.selectedAddress.value,
-              items: controller.addresses,
-              isTurn: controller.selectedCity.value != null,
-              isFullLine: true,
-              isRtl: true,
-              onChanged: (String? str) => controller.onAddressSelected(str))),
-
-          SizedBox(
-            height: 8,
-          ),
-          Obx(() => CustomDropdown(
-              hint: 'کارشناس راهنما',
-              value: controller.selectedKarshenas.value,
-              items: controller.karshenasList,
-              isRtl: true,
-              isTurn: controller.selectedAddress.value != null,
-              onChanged: (String? str) => controller.onKarshenasSelected(str))),
-          SizedBox(
-            height: 8,
-          ),
-          MoneyForm(
-            controller.amountController,
-            hintText: 'قیمت اظهاری به تومان',
-            maxLen: 15,
-            autovalidateMode: AutovalidateMode.disabled,
-          ),
-          SizedBox(
-            height: 8,
-          ),
-          CustomTextFormField(controller.commentController,
-              autovalidateMode: AutovalidateMode.disabled,
-              maxLen: 200,
-              hintText: 'توضیحات شما'),
-
-          SizedBox(
-            height: 8,
-          ),
-          InkWell(
-            onTap: () => controller.pickImages(),
-            child: Container(
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.white)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SvgPicture.asset(
-                      'assets/share.svg',
-                      color: Colors.grey.shade700,
-                      height: 24,
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                CustomText('لطفا جزئیات خودروی مورد نظر را وارد کنید.',
+                    size: 16, fontWeight: FontWeight.w500,isRtl: true),
+              ],
+            ),
+            SizedBox(height: 45,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [CustomText('چه کسی خودرو را برای کارشناسی خواهد برد؟ ')],
+            ),
+            Obx(() => Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    controller.otherWillTakeCar.value
+                        ? InkWell(
+                            onTap: () {
+                              showGetOtherInfoDialog(context);
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                  padding: const EdgeInsets.all(8.0),
+                                  decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.white),
+                                      borderRadius: BorderRadius.circular(8)),
+                                  child: SvgPicture.asset(
+                                    'assets/edit.svg',
+                                    height: 18,
+                                    color: Colors.white,
+                                  )),
+                            ),
+                          )
+                        : SizedBox(),
+                    SizedBox(
+                      width: 8,
                     ),
-                  ),
-                  SizedBox(
-                    width: 4,
-                  ),
-                  Obx(() => controller.images.isNotEmpty &&
-                          controller.base64Images.isNotEmpty
-                      ? Expanded(
-                          child: SizedBox(
-                            height: 40,
-                            child: ListView.builder(
-                                shrinkWrap: true,
-                                reverse: true,
-                                physics: const AlwaysScrollableScrollPhysics(),
-                                scrollDirection: Axis.horizontal,
-                                itemCount: controller.images.length.clamp(0, 5),
-                                itemBuilder: (ctx, index) {
-                                  return Chip(
-                                    backgroundColor: Colors.white,
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 0, vertical: 0),
-                                    label: SizedBox(
-                                        width: 20,
-                                        height: 20,
-                                        child: imageFromBase64String(
-                                            controller.base64Images[index]!,
-                                            20)),
-                                    onDeleted: () =>
-                                        controller.removeImage(index),
-                                    deleteIcon: Icon(
-                                      Icons.close,
-                                      size: 14,
-                                      color: Colors.black,
-                                    ),
-                                  );
-                                }),
-                          ),
-                        )
-                      : Center(
-                          child: CustomText('بارگزاری عکس',
-                              color: Colors.white,
-                              fontWeight: FontWeight.w400,
-                              size: 14),
+                    CustomCheckBox(
+                        value: !controller.otherWillTakeCar.value,
+                        onChanged: (value) {
+                          controller.otherWillTakeCar.value = !(value ?? true);
+                        }),
+                    CustomText('خودم'),
+                    SizedBox(
+                      width: 24,
+                    ),
+                    CustomCheckBox(
+                        value: controller.otherWillTakeCar.value,
+                        onChanged: (value) async {
+                          var changed =
+                              await showGetOtherInfoDialog(context) ?? false;
+                          if (changed) {
+                            controller.otherWillTakeCar.value = true;
+                          }
+                        }),
+                    CustomText('سایر'),
+                  ],
+                )),
+      
+            SizedBox(
+              height: 8,
+            ),
+            Obx(() => CustomDropdown(
+                hint: 'شهر         ',
+                largeFont: true,
+                value: controller.selectedCity.value,
+                items: controller.cities,
+                isRtl: true,
+                isTurn: controller.step.value == SellPageStep.uploadPhoto,
+                onChanged: (String? str) => controller.onCitySelected(str))),
+            SizedBox(
+              height: 8,
+            ),
+            Obx(() => CustomDropdown(
+                hint: 'آدرس نمایندگی',
+                value: controller.selectedAddress.value,
+                items: controller.addresses,
+                isTurn: controller.selectedCity.value != null,
+                isFullLine: true,
+                isRtl: true,
+                onChanged: (String? str) => controller.onAddressSelected(str))),
+      
+            SizedBox(
+              height: 8,
+            ),
+            Obx(() => CustomDropdown(
+                hint: 'کارشناس راهنما',
+                value: controller.selectedKarshenas.value,
+                items: controller.karshenasList,
+                isRtl: true,
+                isTurn: controller.selectedAddress.value != null,
+                onChanged: (String? str) => controller.onKarshenasSelected(str))),
+            SizedBox(
+              height: 8,
+            ),
+            MoneyForm(
+              controller.amountController,
+              hintText: 'قیمت اظهاری به تومان',
+              maxLen: 15,
+              autovalidateMode: AutovalidateMode.disabled,
+            ),
+            SizedBox(
+              height: 8,
+            ),
+            CustomTextFormField(controller.commentController,
+                autovalidateMode: AutovalidateMode.disabled,
+                maxLen: 200,
+                hintText: 'توضیحات شما'),
+      
+            SizedBox(
+              height: 8,
+            ),
+            InkWell(
+              onTap: () => controller.pickImages(),
+              child: Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.white)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: SvgPicture.asset(
+                        'assets/share.svg',
+                        height: 23,
+                        color: Colors.white,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 4,
+                    ),
+                    Obx(() => controller.images.isNotEmpty &&
+                            controller.base64Images.isNotEmpty
+                        ? Expanded(
+                            child: SizedBox(
+                              height: 40,
+                              child: ListView.builder(
+                                  shrinkWrap: true,
+                                  reverse: true,
+                                  physics: const AlwaysScrollableScrollPhysics(),
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: controller.images.length.clamp(0, 5),
+                                  itemBuilder: (ctx, index) {
+                                    return Chip(
+                                      backgroundColor: Colors.white,
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 0, vertical: 0),
+                                      label: SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: imageFromBase64String(
+                                              controller.base64Images[index]!,
+                                              20)),
+                                      onDeleted: () =>
+                                          controller.removeImage(index),
+                                      deleteIcon: Icon(
+                                        Icons.close,
+                                        size: 14,
+                                        color: Colors.black,
+                                      ),
+                                    );
+                                  }),
+                            ),
+                          )
+                        : Expanded(
+                          child: Center(
+                              child: CustomText('                           بارگزاری عکس',
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w400,
+                                  size: 14),
+                            ),
                         )),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          Obx(() => controller.isSwap.value
-              ? Column(
-                  children: [
-                    SizedBox(
-                      height: 8,
+            Obx(() => controller.isSwap.value
+                ? Column(
+                    children: [
+                      SizedBox(
+                        height: 8,
+                      ),
+                      CustomTextFormField(
+                        controller.swapCommentController,
+                        maxLen: 200,
+                        hintText: 'توضیحات تعویض',
+                      ),
+                    ],
+                  )
+                : SizedBox()),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Obx(() => CustomCheckBox(
+                    value: controller.isSwap.value,
+                    onChanged: (val) => controller.isSwap.value = val ?? false)),
+                SizedBox(
+                  width: 8,
+                ),
+                CustomText('مایل به تعویض هستم.', isRtl: true),
+              ],
+            ),
+            SizedBox(
+              height: 8,
+            ),
+            Obx(() => controller.isLoading.value
+                ? Center(
+                    child: SizedBox(
+                      width: 60,
+                      height: 60,
+                      child: loading(),
                     ),
-                    CustomTextFormField(
-                      controller.swapCommentController,
-                      maxLen: 200,
-                      hintText:
-                          'لطفا جهت تعویض خودرو مشخصات خودرو مورد نظر خود را وارد نمائید.',
-                    ),
-                  ],
-                )
-              : SizedBox()),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              CustomText('مایل به تعویض هستم.', isRtl: true),
-              SizedBox(
-                width: 8,
-              ),
-              Obx(() => CustomCheckBox(
-                  value: controller.isSwap.value,
-                  onChanged: (val) => controller.isSwap.value = val ?? false))
-            ],
-          ),
-          SizedBox(
-            height: 8,
-          ),
-          Obx(() => controller.isLoading.value
-              ? Center(
-                  child: SizedBox(
-                    width: 60,
-                    height: 60,
-                    child: loading(),
-                  ),
-                )
-              : ConfirmButton(
-                  () => controller.submitRequest(),
-                  'ادامه ',
-                  borderRadius: 8,
-                  txtColor: Colors.white,
-                )),
-          SizedBox(
-            height: 8,
-          ),
-          //CancelButton(context),
-        ],
+                  )
+                : ConfirmButton(
+                    () => controller.submitRequest(),
+                    'ادامه ',
+                    borderRadius: 8,
+                    txtColor: Colors.white,
+                  )),
+            SizedBox(
+              height: 8,
+            ),
+            //CancelButton(context),
+          ],
+        ),
       ),
     );
   }
 
   Future<bool?> showGetOtherInfoDialog(BuildContext context) async {
-    return CustomBottomSheet.show(
-        context: Get.context!,
-        initialChildSize: 0.4,
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Form(
-            key: _otherInfoFormKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CustomTextFormField(controller.nameController,
-                    maxLen: 20,
-                    isDark: true,
-                    autovalidateMode: AutovalidateMode.disabled,
-                    hintText: 'نام مراجعه کننده'),
-                SizedBox(
-                  height: 8,
-                ),
-                CustomTextFormField(controller.lastNameController,
-                    maxLen: 30,
-                    isDark: true,
-                    autovalidateMode: AutovalidateMode.disabled,
-                    hintText: 'نام خانوادگی مراجعه کننده'),
-                SizedBox(
-                  height: 8,
-                ),
-                CustomTextFormField(controller.nationalCodeController,
-                    maxLen: 10,
-                    autovalidateMode: AutovalidateMode.disabled,
-                    isNationalId: true,
-                    isDark: true,
-                    hintText: 'کدملی مراجعه کننده'),
-                SizedBox(
-                  height: 8,
-                ),
-                ConfirmButton(
-                  () {
-                    if (_otherInfoFormKey.currentState!.validate()) {
-                      controller.otherWillTakeCar.value = true;
-                      Navigator.of(context).pop(true);
-                    }
-                  },
-                  'تایید',
-                  txtColor: Colors.white,
-                )
-              ],
-            ),
+    return CustomBottomSheetAnimated.show(
+      context: context, // Use the passed context instead of Get.context!
+      initialChildSize: 0.4,
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Form(
+          key: _otherInfoFormKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CustomTextFormField(
+                controller.nameController,
+                maxLen: 20,
+                isDark: true,
+                autovalidateMode: AutovalidateMode.disabled,
+                hintText: 'نام مراجعه کننده',
+              ),
+              const SizedBox(height: 8),
+              CustomTextFormField(
+                controller.lastNameController,
+                maxLen: 30,
+                isDark: true,
+                autovalidateMode: AutovalidateMode.disabled,
+                hintText: 'نام خانوادگی مراجعه کننده',
+              ),
+              const SizedBox(height: 8),
+              CustomTextFormField(
+                controller.nationalCodeController,
+                maxLen: 10,
+                autovalidateMode: AutovalidateMode.disabled,
+                isNationalId: true,
+                isDark: true,
+                hintText: 'کدملی مراجعه کننده',
+              ),
+              const SizedBox(height: 8),
+              ConfirmButton(
+                () {
+                  if (_otherInfoFormKey.currentState!.validate()) {
+                    controller.otherWillTakeCar.value = true;
+                    Navigator.of(context).pop(true);
+                  }
+                },
+                'تایید',
+                txtColor: Colors.white,
+              )
+            ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 }
 
@@ -627,22 +635,48 @@ class PaymentResultStep extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.find<SellPageController>();
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.check_circle_outline, size: 80, color: Colors.green),
-          const SizedBox(height: 16),
-          CustomText('سفارش شما با موفقیت ثبت شد', fontWeight: FontWeight.bold),
-          const SizedBox(height: 8),
-          Obx(() => CustomText('کد پیگیری: ${controller.orderNumber.value}')),
-          const SizedBox(height: 24),
-          ConfirmButton(
-            () => Get.back(),
-            'بازگشت',
-            color: Colors.blue,
-            txtColor: Colors.white,
-          )
-        ],
+      child: Container(
+        padding: EdgeInsets.all(20),
+        margin: EdgeInsets.all(16),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10), color: Colors.grey.shade800),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SvgPicture.asset('assets/ok.svg'),
+            const SizedBox(height: 16),
+            CustomText('سفارش شما با موفقیت ثبت شد!',
+                fontWeight: FontWeight.bold, isRtl: true),
+            const SizedBox(height: 16),
+            CustomText(
+                'کارشناسان ما جهت هماهنگی در اسرع وقت با شما تماس خواهند گرفت.',
+                isRtl: true),
+            const SizedBox(height: 16),
+            const SizedBox(height: 8),
+            CustomText('کد رهگیری :',isRtl: true,size: 14),
+            const SizedBox(height: 8),
+
+            Obx(() => Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    padding: EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.white)),
+                      child:
+                          Center(child: CustomText('${controller.orderNumber.value}'.usePersianNumbers(),size: 14))),
+                ),
+              ],
+            )),
+            const SizedBox(height: 24),
+            ConfirmButton(
+              () => Get.back(),
+              'بازگشت',
+            )
+          ],
+        ),
       ),
     );
   }
@@ -677,13 +711,19 @@ class KhodEzhariStep extends StatelessWidget {
         textDirection: TextDirection.rtl,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
+
           children: [
-            CustomText('لطفا قسمت‌های آسیب‌دیده خودرو را مشخص نمایید',
+            CustomText('لطفا قسمت‌های آسیب‌دیده خودرو را مشخص نمایید.',
                 size: 16, isRtl: true, fontWeight: FontWeight.w500),
-            const SizedBox(height: 12),
+            const SizedBox(height: 42),
             GestureDetector(
               onTapDown: (details) {
                 // Check if a color is selected
+                if(controller.selectedColorIndex.value==8){
+                  showToast(ToastState.INFO,
+                      'ابتدا نوع آسیب دیدگی را با انتخاب رنگ متناسب با آن مشخص کنید.');
+                  return;
+                }
                 if (controller.selectedColorIndex.value >= 0) {
                   final selectedColor =
                       damageColors[controller.selectedColorIndex.value];
@@ -691,8 +731,7 @@ class KhodEzhariStep extends StatelessWidget {
                       details.localPosition.dy, selectedColor));
                 } else {
                   // Show toast (implement the toast functionality)
-                  showToast(ToastState.INFO,
-                      'ابتدا نوع آسیب دیدگی را با انتخاب رنگ متناسب با آن مشخص کنید.');
+
                 }
               },
               child: Container(
@@ -779,6 +818,7 @@ class KhodEzhariStep extends StatelessWidget {
       SellPageController controller, String title, Color color, int id) {
     return Obx(() => Container(
           width: 120,
+          height: 40,
           child: InkWell(
             onTap: () => controller.setSelectedColor(id),
             child: Row(

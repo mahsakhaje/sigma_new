@@ -154,18 +154,19 @@ class BranchesPage extends StatelessWidget {
             color: AppColors.lightGrey),
         child: Wrap(
           children: [
+            Icon(
+              Icons.call_outlined,
+              size: 18,
+              color: isLite ? Colors.black : Colors.white,
+            ),
+
+            const SizedBox(width: 8),
             CustomText(
               number.usePersianNumbers(),
               color: isLite ? Colors.black : Colors.white,
               textAlign: TextAlign.left,
               fontWeight: FontWeight.bold,
             ),
-            const SizedBox(width: 8),
-            Icon(
-              Icons.call_outlined,
-              size: 18,
-              color: isLite ? Colors.black : Colors.white,
-            )
           ],
         ),
       ),

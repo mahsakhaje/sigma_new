@@ -48,6 +48,7 @@ import 'package:sigma/models/rules_model.dart';
 import 'package:sigma/models/showrooms_unites_model.dart';
 import 'package:sigma/models/showroos_cities_response.dart';
 import 'package:sigma/models/sigma_rales_response_model.dart';
+import 'package:sigma/models/suggestiontypes_model.dart';
 import 'package:sigma/models/telephone_model.dart';
 import 'package:sigma/models/tracking_sales_model.dart';
 import 'package:sigma/models/user_info_model.dart';
@@ -117,6 +118,61 @@ class DioClient {
     if (response?.statusCode == 200) {
       showMessage(response!.data);
       return BannersResponse.fromJson(response.data);
+    }
+
+    return null;
+  }
+  Future<BaseResponse?> insertSuggestion({
+    required String id,
+    required String comment,
+  }) async {
+    final response = await _makePostRequest(URLs.GetInsertSuggestionUrl, {
+      'suggestion': {
+        'comment': comment,
+        'typeId': id,
+      },
+      'token':  getShortToken(),
+      'version': await getVersion(),
+    });
+
+    if (response?.statusCode == 200) {
+      showMessage(response!.data);
+      return BaseResponse.fromJson(response.data);
+    }
+
+    return null;
+  }
+
+  Future<SuggestionTypesResponse?> getSuggestionTypes() async {
+    final response = await _makePostRequest(URLs.GetSuggestionTypesUrl, {
+      'pn': '1',
+      'pl': '1000',
+      'token':  getShortToken(),
+      'version': await getVersion(),
+    });
+
+    if (response?.statusCode == 200) {
+      showMessage(response!.data);
+      return SuggestionTypesResponse.fromJson(response.data);
+    }
+
+    return null;
+  }
+
+  Future<ConfirmPaymentResponse?> confirmPayment({
+    required String orderId,
+  }) async {
+    final response = await _makePostRequest(URLs.ConfirmPaymentUrl, {
+      'discountCode': '',
+      'orderId': orderId,
+      'payType': 'CREDIT',
+      'token':  getShortToken(),
+      'version': await getVersion(),
+    });
+
+    if (response?.statusCode == 200) {
+      showMessage(response!.data);
+      return ConfirmPaymentResponse.fromJson(response.data);
     }
 
     return null;
@@ -295,6 +351,7 @@ class DioClient {
     String? carTypeIds = '',
     String? colorId = '',
     String? cityId = '',
+    String? state ,
     String? cityIds = '',
     String? fromAmount = '',
     String? fromYear = '',
@@ -313,6 +370,7 @@ class DioClient {
       'fromAmount': fromAmount,
       'fromYear': fromYear,
       'cityId': cityId ?? '',
+      'state': state ?? '',
       'cityIds': cityIds ?? '',
       'toAmount': toAmount,
       'toYear': toYear,
@@ -472,6 +530,21 @@ class DioClient {
 
     if (response?.statusCode == 200) {
       return await saveFile(id, response!.data);
+    }
+
+    return null;
+  }  Future<String?> getContractReportInTracking(String orderNumber) async {
+    final response = await _makePostRequest(
+      URLs.ContractPrintUrl,
+      {
+        'salesOrder': {'orderNumber': orderNumber},
+        'version': await getVersion(),
+      },
+      isBytes: true,
+    );
+
+    if (response?.statusCode == 200) {
+      return await saveFile(orderNumber, response!.data);
     }
 
     return null;
@@ -894,18 +967,7 @@ class DioClient {
         : null;
   }
 
-  Future<ConfirmPaymentResponse?> confirmPayment(
-      String orderId, String discountCode, String payType) async {
-    final response = await _makePostRequest(URLs.ConfirmPaymentUrl, {
-      'discountCode': discountCode,
-      'orderId': orderId,
-      'payType': payType,
-      'token': await _getToken(),
-    });
-    return response?.statusCode == 200
-        ? ConfirmPaymentResponse.fromJson(response?.data)
-        : null;
-  }
+
 
   Future<LoginResponse?> forgetPassword({required String cellNumber}) async {
     return _makePostRequest(URLs.ResetPasswordUrl, {

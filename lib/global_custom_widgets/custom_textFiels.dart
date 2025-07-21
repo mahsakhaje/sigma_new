@@ -21,7 +21,8 @@ class CustomTextFormField extends StatefulWidget {
   Widget? suffixIcon;
   bool isDark = false;
 
-  CustomTextFormField(this.controller, {
+  CustomTextFormField(
+    this.controller, {
     this.onChanged,
     this.onEditingComplete,
     this.enabled = true,
@@ -60,7 +61,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   }
 
   String? _validator(String? value) {
-    if(widget.autovalidateMode==AutovalidateMode.disabled){
+    if (widget.autovalidateMode == AutovalidateMode.disabled) {
       return null;
     }
     value = value?.toEnglishDigit();
@@ -114,7 +115,10 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         enabled: widget.enabled,
         cursorColor: widget.isDark ? Colors.black87 : Colors.white,
         obscureText: _isPasswordField ? !_isPasswordVisible : false,
-        keyboardType: TextInputType.text,
+        inputFormatters: getFormatter(),
+        keyboardType: widget.isNationalId || widget.isOnlyNumber
+            ? TextInputType.number
+            : TextInputType.text,
         textDirection: TextDirection.rtl,
         textAlign: TextAlign.center,
         maxLength: widget.maxLen,
@@ -143,6 +147,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
               width: 1.0,
             ),
           ),
+
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
             borderSide: BorderSide(
@@ -171,20 +176,22 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           counterText: "",
           prefixIcon: _isPasswordField
               ? IconButton(
-            icon: Icon(
-              _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-              color: widget.isDark ? Colors.black87 : Colors.white,
-            ),
-            onPressed: () {
-              setState(() {
-                _isPasswordVisible = !_isPasswordVisible;
-              });
-            },
-          )
+                  icon: Icon(
+                    _isPasswordVisible
+                        ? Icons.visibility
+                        : Icons.visibility_off,
+                    color: widget.isDark ? Colors.black87 : Colors.white,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _isPasswordVisible = !_isPasswordVisible;
+                    });
+                  },
+                )
               : widget.prefixIcon,
           suffixIcon: !_isPasswordField ? widget.suffixIcon : null,
-          contentPadding: const EdgeInsets.only(
-              left: 16, bottom: 16, top: 16, right: 16),
+          contentPadding:
+              const EdgeInsets.only(left: 16, bottom: 16, top: 16, right: 16),
           hintTextDirection: TextDirection.rtl,
           errorStyle: TextStyle(fontFamily: 'Peyda', locale: Locale('Fa')),
         ),
@@ -192,10 +199,9 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
     );
   }
 
-
   List<TextInputFormatter> getFormatter() {
-    if(widget.isOnlyNumber){
-      return [FilteringTextInputFormatter.digitsOnly,PersianFormatter()];
+    if (widget.isOnlyNumber || widget.isNationalId) {
+      return [ PersianFormatter()];
     }
     if ((widget.hintText ?? '').contains('شاسی')) {
       return [
@@ -204,6 +210,9 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         EnglishFormatter()
       ];
     }
-    return [PersianFormatter()];
+    if(widget.hintText!.contains('رمز')){
+      return [];
+    }
+    return [PersianLettersFormatter()];
   }
 }

@@ -14,7 +14,6 @@ import 'package:sigma/pages/profile/edit/edit_profile_controller.dart';
 import 'package:sigma/global_custom_widgets/support_call.dart';
 import 'package:sigma/global_custom_widgets/loading.dart';
 
-
 class EditProfileInfo extends StatelessWidget {
   EditProfileInfo({Key? key}) : super(key: key);
 
@@ -24,113 +23,111 @@ class EditProfileInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     return DarkBackgroundWidget(
       title: Strings.editProfile,
-      child:Obx(() {
-          if (controller.isLoading.value) {
-            return  Center(child: loading());
-          }
+      child: Obx(() {
+        if (controller.isLoading.value) {
+          return Center(child: loading());
+        }
 
-          return Column(
-            children: [
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: ListView(
-                    children: [
-                      const SizedBox(height: 34),
-
-                      _buildProfileHeader(),
-                      const SizedBox(height: 34),
-                      Directionality(
-                        textDirection: TextDirection.rtl,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            buildRadioTile<Gender>(
-                              label: Strings.male,
-                              value: Gender.male,
-                              groupValue: controller.userGender,
-                              onChanged: controller.setUserGender,
-                              values: Gender.values,
-                            ),
-                            const SizedBox(width: 36),
-                            buildRadioTile<Gender>(
-                              label: Strings.female,
-                              value: Gender.female,
-                              groupValue: controller.userGender,
-                              onChanged: controller.setUserGender,
-                              values: Gender.values,
-
-                            ),
-                          ],
-                        ),
+        return Column(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: ListView(
+                  children: [
+                    const SizedBox(height: 34),
+                    _buildProfileHeader(),
+                    const SizedBox(height: 34),
+                    Directionality(
+                      textDirection: TextDirection.rtl,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          buildRadioTile<Gender>(
+                            label: Strings.male,
+                            value: Gender.male,
+                            groupValue: controller.userGender,
+                            onChanged: controller.setUserGender,
+                            values: Gender.values,
+                          ),
+                          const SizedBox(width: 36),
+                          buildRadioTile<Gender>(
+                            label: Strings.female,
+                            value: Gender.female,
+                            groupValue: controller.userGender,
+                            onChanged: controller.setUserGender,
+                            values: Gender.values,
+                          ),
+                        ],
                       ),
-
-                      _buildForm(),
-                      const SizedBox(height: 34),
-                      _buildSubmitButton(),
-                      const SizedBox(height: 24),
-
-                    ],
-                  ),
+                    ),
+                    _buildForm(),
+                    const SizedBox(height: 34),
+                    _buildSubmitButton(),
+                    const SizedBox(height: 24),
+                  ],
                 ),
               ),
-            ],
-          );
-        }),
-
+            ),
+          ],
+        );
+      }),
     );
   }
 
   Widget _buildProfileHeader() {
-    return  Column(
-        children: [
-          const SizedBox(height: 8),
-
-          CustomText(controller.fullName.value, size: 14),
-          const SizedBox(height: 8),
-          Center(child: CustomText(controller.phoneNumber.value!.usePersianNumbers(), size: 14)),
-          const SizedBox(height: 12),
-        ],
-      );
+    return Column(
+      children: [
+        const SizedBox(height: 8),
+        CustomText(controller.fullName.value, size: 14),
+        const SizedBox(height: 8),
+        Center(
+            child: CustomText(controller.phoneNumber.value!.usePersianNumbers(),
+                size: 14)),
+        const SizedBox(height: 12),
+      ],
+    );
   }
 
   Widget _buildProvinceField() {
     return controller.isEnabled.value
         ? CustomDropdown(
-      hint: Strings.province,
-      value: controller.geoNames[controller.selectedProvince.value],
-      items: controller.geoNames,
-      isTurn: false,
-      largeFont: true,
-      onChanged: controller.onProvinceChanged,
-    )
+            hint: Strings.province,
+            value: controller.selectedProvince.value,
+            items: controller.geoNames,
+            isTurn: false,
+            largeFont: true,
+            onChanged: controller.onProvinceChanged,
+          )
         : CustomTextFormField(
-      controller.provinceController,
-      enabled: false,
-      maxLen: 20,
-     // isOnlyLetter: true,
-      hintText: Strings.province,
-    );
+            controller.provinceController,
+            enabled: false,
+            maxLen: 20,
+            // isOnlyLetter: true,
+            hintText: Strings.province,
+          );
   }
 
   Widget _buildCityField() {
+    print(controller.selectedCity.value);
+    print(controller.geoCityNames);
     return controller.isEnabled.value
         ? CustomDropdown(
-      hint: Strings.city,
-      value: controller.geoCityNames[controller.selectedCity.value],
-      largeFont: true,
-      items: controller.geoCityNames,
-      isTurn: false,
-      onChanged: controller.onCityChanged,
-    )
+            hint: Strings.city,
+            value: controller.selectedCity.value,
+            largeFont: true,
+            items: controller.geoCityNames,
+            isTurn: false,
+            onChanged: controller.onCityChanged,
+          )
         : CustomTextFormField(
-      controller.cityController,
-      enabled: false,
-      maxLen: 20,
+            controller.cityController,
+            enabled: false,
+            maxLen: 20,
 
-     // isOnlyLetter: true,
-      hintText: Strings.city,
-    );
+            // isOnlyLetter: true,
+            hintText: Strings.city,
+          );
   }
 
   Widget _buildForm() {
@@ -141,16 +138,14 @@ class EditProfileInfo extends StatelessWidget {
           dualRow(_buildNameField(), _buildLastNameField()),
           dualRow(_buildNationalIdField(), _buildPostalCodeField()),
           dualRow(_buildProvinceField(), _buildCityField()),
-    Padding(
-      padding: const EdgeInsets.all(4.0),
-      child: _buildAddressField(),
-    ),
-    Padding(
-      padding: const EdgeInsets.all(4.0),
-      child: _buildEmailField(),
-    ),
-
-
+          Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: _buildAddressField(),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: _buildEmailField(),
+          ),
         ],
       ),
     );
@@ -171,7 +166,7 @@ class EditProfileInfo extends StatelessWidget {
       controller.lastNameController,
       enabled: controller.isEnabled.value,
       maxLen: 30,
-     // isOnlyLetter: true,
+      // isOnlyLetter: true,
       hintText: Strings.lastName,
     );
   }
@@ -202,8 +197,8 @@ class EditProfileInfo extends StatelessWidget {
       controller.postalCodeController,
       enabled: controller.isEnabled.value,
       maxLen: 10,
-     // isPostalCode: true,
-     // isOnlyNumber: true,
+      // isPostalCode: true,
+      // isOnlyNumber: true,
       hintText: Strings.postalCode,
       autovalidateMode: AutovalidateMode.disabled,
     );
@@ -216,20 +211,18 @@ class EditProfileInfo extends StatelessWidget {
       maxLen: 50,
       autovalidateMode: AutovalidateMode.disabled,
       enabled: controller.isEnabled.value,
-     // isEmail: true,
+      // isEmail: true,
     );
   }
 
   Widget _buildSubmitButton() {
     return controller.isLoading.value
-        ?  Center(child: loading())
+        ? Center(child: loading())
         : ConfirmButton(
-      controller.submitForm,
-      controller.isEnabled.value ? "ثبت" : "ویرایش",
-      color: AppColors.blue,
-      txtColor: Colors.white,
-    );
+            controller.submitForm,
+            controller.isEnabled.value ? "ثبت" : "ویرایش",
+            color: AppColors.blue,
+            txtColor: Colors.white,
+          );
   }
-
-
 }

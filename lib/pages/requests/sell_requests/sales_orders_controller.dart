@@ -23,7 +23,7 @@ class MySalesOrdersController extends GetxController {
   final TextEditingController commentController = TextEditingController();
   final GlobalKey<FormState> commentFormKey = GlobalKey<FormState>();
 
-  final RxInt pn = 1.obs;
+  final RxInt pn = 0.obs;
   final RxInt pl = 10.obs;
   final RxInt total = 0.obs;
   final RxBool hasMore = true.obs;
@@ -78,9 +78,8 @@ class MySalesOrdersController extends GetxController {
               ),
               InkWell(
                 onTap: () async {
-
                   Get.back(result: false);
-                  showMySalesOrdersDialog(Get.context!,order);
+                  showMySalesOrdersDialog(Get.context!, order);
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -117,7 +116,6 @@ class MySalesOrdersController extends GetxController {
             ],
           ),
         ));
-
   }
 
   void showMySalesOrdersDialog(BuildContext context, SalesOrders order) {
@@ -130,7 +128,8 @@ class MySalesOrdersController extends GetxController {
                   detailItem(
                       order.trimColorDescription ?? "", 'رنگ داخل خودرو'),
                   Divider(),
-                  detailItem(order.registerDate ?? " ", 'تاریخ ثبت'),  Divider(),
+                  detailItem(order.registerDate ?? " ", 'تاریخ ثبت'),
+                  Divider(),
                   detailItem(order.chassisNumber ?? " ", 'شماره شاسی'),
                   Divider(),
                   detailItem(order.registerTime ?? " ", 'ساعت ثبت'),
@@ -180,7 +179,7 @@ class MySalesOrdersController extends GetxController {
   }
 
   void reset() {
-    pn.value = 1;
+    pn.value = 0;
     total.value = 0;
     hasMore.value = true;
     salesOrders.clear();
@@ -233,6 +232,7 @@ class MySalesOrdersController extends GetxController {
               children: [
                 CustomDropdown(
                   hint: 'علت لغو',
+                  isDark: true,
                   isTurn: turn.value == 1,
                   value: selectedReason.value.isEmpty
                       ? null
@@ -250,17 +250,16 @@ class MySalesOrdersController extends GetxController {
                     child: CustomTextFormField(
                       commentController,
                       maxLen: 200,
+                      isDark: true,
                       hintText: 'توضیحات',
                       onChanged: (String val) {},
                     ),
                   ),
                 SizedBox(height: 16),
-                Text(
-                  'آیا از لغو کردن اطمینان دارید؟',
-                  textAlign: TextAlign.center,
-                  textDirection: TextDirection.rtl,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
+                CustomText('آیا از لغو کردن اطمینان دارید؟',
+                    textAlign: TextAlign.center,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold),
                 SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -289,9 +288,8 @@ class MySalesOrdersController extends GetxController {
 
   void _updateReasonSelection(String? str) async {
     var response = await DioClient.instance.getCancelReasons();
-
     reasons.forEach((key, value) {
-      if (value == str) {
+      if (key == str) {
         reasonId.value = key;
         response?.cancelReasons?.forEach((element) {
           if (element.id == reasonId.value) {
