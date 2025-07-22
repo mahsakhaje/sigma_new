@@ -370,7 +370,7 @@ class DioClient {
       'fromAmount': fromAmount,
       'fromYear': fromYear,
       'cityId': cityId ?? '',
-      'state': state ?? '',
+      'carState': state ?? '',
       'cityIds': cityIds ?? '',
       'toAmount': toAmount,
       'toYear': toYear,
@@ -380,6 +380,7 @@ class DioClient {
       'token': await getShortToken(),
       'version': await getVersion(),
     };
+    print({'carState': state ?? ''},);
     final response =
         await _makePostRequest(URLs.GetSalesOrdersWithFilterUrl, data);
     print(response);

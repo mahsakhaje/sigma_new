@@ -148,7 +148,7 @@ SizedBox buildMobileGetData(
           const SizedBox(height: 60),
           CustomText(Strings.welcome, size: 32, fontWeight: FontWeight.bold),
           const SizedBox(
-            height: 50,
+            height: 30,
           ),
           Form(
             key: _otpFormKey,

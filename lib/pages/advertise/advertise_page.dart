@@ -25,8 +25,13 @@ class AdvertisePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final args = Get.arguments;
+    print('6');
+    print(args);
     AdvertiseController controller = Get.put(AdvertiseController(args));
     ever(controller.showFilterModal, (bool show) {
+      if (!controller.showFilterModal.value) {
+        return;
+      }
       if (show && controller.pageState.value == AdvertisePageState.list) {
         // Use Future.delayed to avoid calling during build
         Future.delayed(Duration.zero, () {
@@ -35,13 +40,13 @@ class AdvertisePage extends StatelessWidget {
             initialChildSize: 0.8,
             child: Obx(() => _buildFilterWidget(controller)),
           ).then((_) {
-            controller.showFilterModal.value = false;
+            // controller.togglePageState();
           });
         });
       } else {
         // Close the modal if it's open
         // if (Navigator.canPop(Get.context!)) {
-        //   Navigator.pop(Get.context!);
+        //  Navigator.pop(Get.context!);
         // }
       }
     });
@@ -60,8 +65,6 @@ class AdvertisePage extends StatelessWidget {
   }
 
   Widget _buildListWidget(AdvertiseController controller) {
-
-
     return CustomScrollView(
       controller: controller.scrollController,
       slivers: [
@@ -71,7 +74,9 @@ class AdvertisePage extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
               GestureDetector(
-                onTap: controller.togglePageState,
+                onTap: () {
+                  controller.togglePageState();
+                },
                 child: SvgPicture.asset('assets/filter.svg'),
               )
             ]),
@@ -87,71 +92,70 @@ class AdvertisePage extends StatelessWidget {
         ),
 
         /// GridView (SliverGrid)
-    (controller.orders.isEmpty && !controller.isLoading.value) ?  SliverToBoxAdapter(
-      child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(14.0),
-                  child: SizedBox(
-                      width: 70,
-                      height: 70,
-                      child: NoContent()),
-                ),
-                CustomText(
-                  'در صورتی که خودرو موردنظر خود را پیدا نکردید میتوانید سفارش خرید خود را ثبت نمایید.',
-                  isRtl: true,
-                  size: 16,
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                SizedBox(
-                  width: 160,
-                  height: 50,
-                  child: ConfirmButton(
-                        () => Get.toNamed(RouteName.buy),
-                    'ثبت سفارش خرید',
+        (controller.orders.isEmpty && !controller.isLoading.value)
+            ? SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(14.0),
+                        child: NoContent(),
+                      ),
+                      CustomText(
+                        'در صورتی که خودرو موردنظر خود را پیدا نکردید میتوانید سفارش خرید خود را ثبت نمایید.',
+                        isRtl: true,
+                        size: 16,
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      SizedBox(
+                        width: 160,
+                        height: 50,
+                        child: ConfirmButton(
+                          () => Get.toNamed(RouteName.buy),
+                          'ثبت سفارش خرید',
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-          ),
-    ):  SliverPadding(
-          padding: const EdgeInsets.all(8.0),
-          sliver: SliverGrid(
-            delegate: SliverChildBuilderDelegate(
-              (ctx, index) {
-                if (index == 0 && controller.orders.isEmpty) {
-                  return SizedBox();
-                }
-                if (index == controller.orders.length &&
-                    controller.hasMore.value &&
-                    index > 0) {
-                  return loading();
-                }
+              )
+            : SliverPadding(
+                padding: const EdgeInsets.all(8.0),
+                sliver: SliverGrid(
+                  delegate: SliverChildBuilderDelegate(
+                    (ctx, index) {
+                      if (index == 0 && controller.orders.isEmpty) {
+                        return SizedBox();
+                      }
+                      if (index == controller.orders.length &&
+                          controller.hasMore.value &&
+                          index > 0) {
+                        return loading();
+                      }
 
-                final order = controller.orders[index];
-                return advertiseItem(order, () async {
-                  await controller.changeLike(order.id ?? '');
-                }, controller);
-              },
-              childCount: controller.hasMore.value
-                  ? controller.orders.length + 1
-                  : controller.orders.length,
-            ),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 8.0,
-              mainAxisSpacing: 8.0,
-              childAspectRatio: 0.66,
-            ),
-          ),
-        ),
+                      final order = controller.orders[index];
+                      return advertiseItem(order, () async {
+                        await controller.changeLike(order.id ?? '');
+                      }, controller);
+                    },
+                    childCount: controller.hasMore.value
+                        ? controller.orders.length + 1
+                        : controller.orders.length,
+                  ),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 8.0,
+                    mainAxisSpacing: 8.0,
+                    childAspectRatio: 0.66,
+                  ),
+                ),
+              ),
       ],
     );
 
@@ -216,7 +220,7 @@ class AdvertisePage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(4),
                     child: Image.network(
                       '${URLs.imageLinks}${controller.banners[index].docId}',
-                      width: 340,
+                      //width: 340,height: 180,
                       fit: BoxFit.fill,
                       loadingBuilder: (BuildContext context, Widget image,
                           ImageChunkEvent? loadingProgress) {
@@ -528,6 +532,7 @@ class AdvertisePage extends StatelessWidget {
     return Obx(() => Row(
           children: [
             Checkbox(
+              activeColor: AppColors.blue,
               shape: CircleBorder(),
               value: controller.getValue(listType, value),
               onChanged: (checked) {

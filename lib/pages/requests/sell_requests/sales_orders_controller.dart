@@ -67,15 +67,19 @@ class MySalesOrdersController extends GetxController {
                     CustomText('رهگیری',
                         color: Colors.black, fontWeight: FontWeight.bold),
                     SizedBox(
-                      width: 10,
+                      width: 20,
                     ),
                     SvgPicture.asset('assets/edit.svg')
                   ],
                 ),
               ),
+              SizedBox(height: 8,),
+
               Divider(
-                color: AppColors.lightGrey,
+                color: Colors.grey.shade400,
               ),
+              SizedBox(height: 8,),
+
               InkWell(
                 onTap: () async {
                   Get.back(result: false);
@@ -87,15 +91,19 @@ class MySalesOrdersController extends GetxController {
                     CustomText('جزئیات',
                         color: Colors.black, fontWeight: FontWeight.bold),
                     SizedBox(
-                      width: 10,
+                      width: 20,
                     ),
                     SvgPicture.asset('assets/detail.svg')
                   ],
                 ),
               ),
+              SizedBox(height: 8,),
+
               Divider(
-                color: AppColors.lightGrey,
+                color: Colors.grey.shade400,
               ),
+              SizedBox(height: 8,),
+
               InkWell(
                 onTap: () async {
                   onCancelPressed(order);
@@ -107,9 +115,31 @@ class MySalesOrdersController extends GetxController {
                     CustomText('لغو سفارش',
                         color: Colors.black, fontWeight: FontWeight.bold),
                     SizedBox(
-                      width: 10,
+                      width: 20,
                     ),
                     SvgPicture.asset('assets/cancel.svg')
+                  ],
+                ),
+              ),              SizedBox(height: 8,),
+
+              Divider(
+                color: Colors.grey.shade400,
+              ),
+              SizedBox(height: 8,),
+
+              InkWell(
+                onTap: () async {
+                  Get.toNamed(RouteName.suggestions);
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    CustomText('انتقادات و پیشنهادات',
+                        color: Colors.black, fontWeight: FontWeight.bold),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    SvgPicture.asset('assets/suggest.svg',height: 22,)
                   ],
                 ),
               )

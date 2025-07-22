@@ -368,7 +368,7 @@ class AuthController extends GetxController {
 
     try {
       var response = await DioClient.instance.confirmRegister(
-        code: codeController.text,
+        code: codeController.text.toEnglishDigit(),
         cellNumber: userState.value == UserState.normal
             ? mobileNumberController.text
             : haMobileNumberController.text,

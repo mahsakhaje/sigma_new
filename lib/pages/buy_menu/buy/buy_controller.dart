@@ -253,9 +253,9 @@ class BuyController extends GetxController {
   }
 
   void onFromYearSelected(String? str) {
+    print('1');
     if (str == null) return;
-
-    selectedFromYear.value = str;
+    print(2);
     carTypeManufactureYearsTo.clear();
 
     carTypeManufactureYearsFrom.forEach((key, value) {
@@ -263,10 +263,8 @@ class BuyController extends GetxController {
         fromYearId = key;
       }
 
-      // Filter years for "to" dropdown based on selected "from" year
-      int selectedYear =
-          int.tryParse((selectedFromYear.value ?? '0000').substring(0, 4)) ?? 0;
-
+      // Use 'str' directly instead of selectedFromYear.value
+      int selectedYear = int.tryParse((str).substring(0, 4)) ?? 0;
       int currentYear = int.tryParse(value.substring(0, 4)) ?? 0;
 
       if (currentYear >= selectedYear) {
@@ -274,6 +272,8 @@ class BuyController extends GetxController {
       }
     });
 
+    // Set the reactive value after processing
+    selectedFromYear.value = str;
     turn.value = 5;
   }
 
@@ -296,12 +296,15 @@ class BuyController extends GetxController {
     kilometerFrom.forEach((element) {
       int selectedKm = int.tryParse(selectedKiloMeterFrom.value ?? '0') ?? 0;
       int currentKm = int.tryParse(element) ?? 0;
-
+      print(selectedKm);
+      print(currentKm);
+      print(currentKm >= selectedKm);
       if (currentKm >= selectedKm) {
         tempKilometerTo.add(element);
       }
     });
-
+    selectedKiloMeteTo.value = null;
+    kilometerTo.value = tempKilometerTo;
     kilometerFromId = selectedKiloMeterFrom.value ?? '0';
     turn.value = 7;
   }

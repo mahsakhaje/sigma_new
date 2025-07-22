@@ -154,7 +154,10 @@ class BuyPage extends StatelessWidget {
               isTurn: controller.turn.value == 4,
               value: controller.selectedFromYear.value,
               items: controller.carTypeManufactureYearsFrom,
-              onChanged: (String? str) => controller.onFromYearSelected(str))),
+              onChanged: (String? str) {
+                print('onChanged called with: $str'); // Add this debug line
+                controller.onFromYearSelected(str);
+              })),
         ),
       ],
     );

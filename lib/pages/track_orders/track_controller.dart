@@ -193,7 +193,7 @@ class TrackingSalesOrderController extends GetxController {
 
   Widget _buildDetailRow(String title, String desc) {
     return Container(
-      height: title == 'محل مراجعه' ? 70 : 30,
+      height: title == 'محل مراجعه' ||title == 'محل پارک خودرو'?  70 : 30,
       child: Column(
         children: [
           Expanded(
@@ -202,19 +202,21 @@ class TrackingSalesOrderController extends GetxController {
               children: [
                 Expanded(
                   child: Container(
+                    height:title == 'محل مراجعه' ||title == 'محل پارک خودرو'?  70 : 30,
+
                     constraints: BoxConstraints(minHeight: 30),
                     child: CustomText(desc.usePersianNumbers(),
                         color: Colors.black, maxLine: 4, isRtl: true,textAlign: TextAlign.justify),
                   ),
                 ),
                 SizedBox(
-                  height: title == 'محل مراجعه' ? 70 : 30,
+                  height: title == 'محل مراجعه' ||title == 'محل پارک خودرو'? 70 : 30,
 
                   width: 10,
                   child: CustomText(' : ', color: Colors.black),
                 ),
                 SizedBox(
-                  height: title == 'محل مراجعه' ? 70 : 30,
+                  height:title == 'محل مراجعه' ||title == 'محل پارک خودرو'?  70 : 30,
                   child: CustomText(title, color: Colors.black,textAlign: TextAlign.justify),
                 ),
               ],

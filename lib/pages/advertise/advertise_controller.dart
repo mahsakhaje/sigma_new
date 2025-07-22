@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -37,14 +36,18 @@ enum MultiSelectListType { Brand, Model, Type, Color, City, None }
 
 class AdvertiseController extends GetxController {
   AdvertiseController(dynamic state) {
-    if (state == BuyState.NEW) {
+    print('4');
+    print(state =='NEW');
+    if (state =='NEW') {
       orderState = 'NEW';
     }
-    if (state == BuyState.USED) {
+    if (state == 'USED') {
       orderState = 'USED';
     } else {
       orderState = '';
     }
+    print('3');
+    print(orderState);
   }
 
   final RxList<SalesOrders> orders = <SalesOrders>[].obs;
@@ -127,6 +130,8 @@ class AdvertiseController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    print('1');
+    print(orderState);
     final arguments = Get.arguments;
 
     if (arguments != null && arguments is Map<String, dynamic>) {
@@ -139,7 +144,9 @@ class AdvertiseController extends GetxController {
     }
     scrollController.addListener(() {
       print((scrollController.position.pixels ==
-          scrollController.position.maxScrollExtent).toString()+'**************************************');
+                  scrollController.position.maxScrollExtent)
+              .toString() +
+          '**************************************');
       if (scrollController.position.pixels ==
               scrollController.position.maxScrollExtent &&
           hasMore.value &&
@@ -149,7 +156,6 @@ class AdvertiseController extends GetxController {
       }
     });
     loadInitialData();
-
   }
 
   void handleCarItemTap(String carId) {
@@ -176,7 +182,7 @@ class AdvertiseController extends GetxController {
       //   await FirebaseAnalytics.instance.logEvent(name: advertise_key);
       // }
       pageController = PageController(initialPage: 0);
-       fetchBanners();
+      fetchBanners();
     } catch (e) {
     } finally {
       isLoading.value = false;
@@ -225,13 +231,13 @@ class AdvertiseController extends GetxController {
     String? fromYear,
     String? toYear,
   }) async {
-    print('isfeching more'+isFetchingMore.toString());
     try {
       if (isFetchingMore.value) return;
       isFetchingMore.value = true;
       isLoading.value = true;
       pn.value++;
-print('get data');
+      print('2');
+      print(orderState);
       var response = await DioClient.instance.getSalesOrdersWithFilter(
         brandId: brandId,
         carModelId: carModelId,
@@ -469,11 +475,12 @@ print('get data');
   }
 
   void togglePageState() {
-    showFilterModal.value = !showFilterModal.value;
     if (showFilterModal.value) {
       pageState.value = AdvertisePageState.filter;
+      showFilterModal.value = false;
     } else {
       pageState.value = AdvertisePageState.list;
+      showFilterModal.value = true;
     }
   }
 
@@ -483,9 +490,9 @@ print('get data');
     }
     update();
   }
+
   Future<void> fetchBanners() async {
     try {
-
       var response = await DioClient.instance.getBanners();
 
       if (response != null && response.message == 'OK') {
@@ -498,8 +505,7 @@ print('get data');
     } catch (e) {
       banners.value = [];
       print('Error fetching banners: $e');
-    } finally {
-    }
+    } finally {}
   }
 
   void startAutoSlide() {
@@ -520,17 +526,17 @@ print('get data');
     }
   }
 
-
-
   void onPageChanged(int page) {
     currentPage.value = page;
   }
+
   @override
   void onClose() {
     pageController.dispose();
 
     super.onClose();
   }
+
   void resetFilters() {
     selectedBrands.clear();
     selectedModels.clear();
@@ -548,12 +554,11 @@ print('get data');
 
     priceValues.value = SfRangeValues(200.0, 9000.0);
     yearValues.value = SfRangeValues(1380, 1405);
-
+    Get.back();
     disabledFilter.value = true;
     closeAllExpansionTiles();
     reset();
     getOrders();
-
   }
 
   void reset() {
@@ -563,7 +568,10 @@ print('get data');
   }
 
   Future<void> applyFilters() async {
-    showFilterModal.value = false;
+    Navigator.pop(Get.context!);
+    // showFilterModal.value = false;
+    // pageState.value = AdvertisePageState.list;
+
     if (disabledFilter.value) {
       pageState.value = AdvertisePageState.list;
       return;

@@ -1,14 +1,21 @@
 class GlobalAppData {
   static final GlobalAppData _instance = GlobalAppData._internal();
   String _pelaksefid = "";
-  String _insta= "";
+  String _insta = "";
   String _aparat = "";
   String _linkedin = "";
+  String _telegram = "";
 
   String get insta => _insta;
 
+  String get telegram => _telegram;
+
   set insta(String value) {
     _insta = value;
+  }
+
+  set telegram(String value) {
+    _telegram = value;
   }
 
   factory GlobalAppData() {
@@ -16,6 +23,7 @@ class GlobalAppData {
   }
 
   GlobalAppData._internal();
+
   // Getter method to access the value
   String get pelaksefid => _pelaksefid;
 

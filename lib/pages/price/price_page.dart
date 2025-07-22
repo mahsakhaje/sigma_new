@@ -329,9 +329,11 @@ class PricePage extends StatelessWidget {
                 showTicks: false,
                 stepSize: 100,
                 showLabels: false,
+
                 activeColor: Colors.white,
                 enableTooltip: true,
                 minorTicksPerInterval: 1000,
+
                 onChanged: (SfRangeValues values) =>
                     controller.updateKilometerValues(values),
               )),
@@ -504,7 +506,9 @@ class PricePage extends StatelessWidget {
   void _showCarDamageBottomSheet() {
     CustomBottomSheet.show(
         context: Get.context!,
-        initialChildSize: 0.7,
+        initialChildSize:   controller.priceItems.value == null ||
+            controller.priceItems.value!.isEmpty
+            ?0.3: 0.7,
         child: Column(
           children: [
             // Header - اضافه شده
@@ -524,17 +528,11 @@ class PricePage extends StatelessWidget {
                         color: Colors.grey,
                       ),
                       SizedBox(height: 16),
-                      CustomText(
-                        'اطلاعات آسیب خودرو موجود نیست',
-                        size: 16,
-                        color: Colors.grey.shade600,
-                      ),
+                      CustomText('اطلاعات آسیب خودرو موجود نیست.',
+                          size: 16, color: Colors.grey.shade600, isRtl: true),
                       SizedBox(height: 8),
-                      CustomText(
-                        'لطفاً ابتدا مشخصات خودرو را کامل کنید',
-                        size: 14,
-                        color: Colors.grey.shade500,
-                      ),
+                      CustomText('لطفاً ابتدا مشخصات خودرو را کامل کنید.',
+                          size: 14, color: Colors.grey.shade500, isRtl: true),
                     ],
                   ),
                 );
@@ -549,26 +547,30 @@ class PricePage extends StatelessWidget {
             }),
 
             // Bottom buttons
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: customOutlinedButton(
-                        () => controller.clearAllSelections(), 'حذف همه',
-                        borderColorolor: AppColors.darkGrey,
-                        txtColor: AppColors.darkGrey),
-                  ),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: ConfirmButton(
-                      () => Get.back(),
-                      'تایید',
+            controller.priceItems.value == null ||
+                    controller.priceItems.value!.isEmpty
+                ? SizedBox()
+                : Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 12, horizontal: 20),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: customOutlinedButton(
+                              () => controller.clearAllSelections(), 'حذف همه',
+                              borderColorolor: AppColors.darkGrey,
+                              txtColor: AppColors.darkGrey),
+                        ),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: ConfirmButton(
+                            () => Get.back(),
+                            'تایید',
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
           ],
         ));
   }
@@ -593,6 +595,7 @@ class PricePage extends StatelessWidget {
                       ),
                     ),
                     child: RadioListTile<String>(
+                      activeColor: AppColors.blue,
                       value: valueElement.id ?? "",
                       groupValue: controller.selectedIdsMap.value[element.id] ==
                               valueElement.id
@@ -646,6 +649,7 @@ class PricePage extends StatelessWidget {
         child: ExpansionTile(
           collapsedIconColor: Colors.black87,
           textColor: Colors.black87,
+          iconColor: AppColors.blue,
           childrenPadding: EdgeInsets.zero,
           tilePadding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           title: Row(

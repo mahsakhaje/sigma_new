@@ -37,7 +37,6 @@ class _MobileTextFormFieldState extends State<MobileTextFormField> {
   void initState() {
     super.initState();
     widget.controller.addListener(() {
-      setState(() {}); // Just rebuild, no need for _value
     });
   }
 
@@ -48,12 +47,12 @@ class _MobileTextFormFieldState extends State<MobileTextFormField> {
       value = value?.withEnglishNumbers();
       final regex = RegExp(r'09[01239]\d{8}');
       if (!regex.hasMatch(value ?? '')) {
-        return 'شماره موبایل صحیح نیست';
+        return 'شماره موبایل صحیح نیست.';
       }
     }
 
     if (value == null || value.isEmpty || value.length != 11) {
-      return 'شماره موبایل را وارد نمایید';
+      return 'شماره موبایل را وارد نمایید.';
     }
 
     return null;

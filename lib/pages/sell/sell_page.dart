@@ -23,7 +23,14 @@ class SellPageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final SellPageController controller = Get.put(SellPageController());
+    final args = Get.arguments;
+    print('***');
+
+    String? id;
+    if (args != null && args is Map<String, dynamic> && args['id'] != null) {
+      id = args['id'].toString();
+    }
+    final SellPageController controller = Get.put(SellPageController(id));
 
     return DarkBackgroundWidget(
       title: Strings.sell,
@@ -370,7 +377,7 @@ class UploadPhotoForm extends StatelessWidget {
               height: 8,
             ),
             Obx(() => CustomDropdown(
-                hint: 'شهر         ',
+                hint: 'شهر',
                 largeFont: true,
                 value: controller.selectedCity.value,
                 items: controller.cities,
@@ -426,60 +433,59 @@ class UploadPhotoForm extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: Colors.white)),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: SvgPicture.asset(
-                        'assets/share.svg',
-                        height: 23,
-                        color: Colors.white,
+                    Obx(() => controller.images.isNotEmpty &&
+                        controller.base64Images.isNotEmpty
+                        ? Expanded(
+                      child: SizedBox(
+                        height: 40,
+                        child: ListView.builder(
+                            shrinkWrap: true,
+                            reverse: true,
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            scrollDirection: Axis.horizontal,
+                            itemCount: controller.images.length.clamp(0, 5),
+                            itemBuilder: (ctx, index) {
+                              return Chip(
+                                backgroundColor: Colors.white,
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 0, vertical: 0),
+                                label: SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: imageFromBase64String(
+                                        controller.base64Images[index]!,
+                                        20)),
+                                onDeleted: () =>
+                                    controller.removeImage(index),
+                                deleteIcon: Icon(
+                                  Icons.close,
+                                  size: 14,
+                                  color: Colors.black,
+                                ),
+                              );
+                            }),
                       ),
-                    ),
+                    )
+                        : Center(
+                          child: CustomText('بارگذاری عکس                      ',
+                              color: Colors.white,
+                              fontWeight: FontWeight.w400,
+                              size: 14),
+                        )),
+
                     SizedBox(
                       width: 4,
                     ),
-                    Obx(() => controller.images.isNotEmpty &&
-                            controller.base64Images.isNotEmpty
-                        ? Expanded(
-                            child: SizedBox(
-                              height: 40,
-                              child: ListView.builder(
-                                  shrinkWrap: true,
-                                  reverse: true,
-                                  physics: const AlwaysScrollableScrollPhysics(),
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: controller.images.length.clamp(0, 5),
-                                  itemBuilder: (ctx, index) {
-                                    return Chip(
-                                      backgroundColor: Colors.white,
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 0, vertical: 0),
-                                      label: SizedBox(
-                                          width: 20,
-                                          height: 20,
-                                          child: imageFromBase64String(
-                                              controller.base64Images[index]!,
-                                              20)),
-                                      onDeleted: () =>
-                                          controller.removeImage(index),
-                                      deleteIcon: Icon(
-                                        Icons.close,
-                                        size: 14,
-                                        color: Colors.black,
-                                      ),
-                                    );
-                                  }),
-                            ),
-                          )
-                        : Expanded(
-                          child: Center(
-                              child: CustomText('                           بارگزاری عکس',
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w400,
-                                  size: 14),
-                            ),
-                        )),
+                    Padding(
+                      padding: const EdgeInsets.all(18.0),
+                      child: SvgPicture.asset(
+                        'assets/share.svg',
+                        height: 20,
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
               ),

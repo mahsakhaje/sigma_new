@@ -88,8 +88,19 @@ class SellPageController extends GetxController {
   MyCarsResponse? myCarsResponse;
   AvailableAccountManagersResponse? karshenasResponse;
   Account? account;
-
+  bool isFromContinue = false;
   final picker = ImagePicker();
+
+  SellPageController(String? id) {
+    if ((id?.isEmpty ?? false) || id == null) {
+    } else {
+       isFromContinue = true;
+
+      carId.value = int.tryParse(id!) ?? 0;
+      print(carId);
+      step.value = SellPageStep.getMilage;
+    }
+  }
 
   @override
   void onInit() {
@@ -111,7 +122,9 @@ class SellPageController extends GetxController {
         }
       }
     }
-
+if(isFromContinue){
+  return;
+}
     scrollController.addListener(() async {
       if (scrollController.position.pixels ==
           scrollController.position.maxScrollExtent) {

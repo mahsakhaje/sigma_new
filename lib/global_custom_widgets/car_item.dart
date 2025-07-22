@@ -99,7 +99,7 @@ class _carItemState extends State<carItem> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(10.0),
+                        padding: const EdgeInsets.all(6.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -179,7 +179,7 @@ class _carItemState extends State<carItem> {
               ),
             ),
             SizedBox(
-              width: 8,
+              width: 4,
             ),
             order.salesOrderDocuments == null
                 ? ClipRRect(

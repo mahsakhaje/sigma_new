@@ -107,6 +107,67 @@ class BranchesController extends GetxController {
     }
   }
 
+// Zoom controls
+  void zoomIn() {
+    final newZoom = (currentZoom.value + 0.5).clamp(MIN_ZOOM, MAX_ZOOM);
+    if (newZoom != currentZoom.value) {
+      currentZoom.value = newZoom;
+      mapController.zoom = newZoom;
+      print('Zoom in: ${currentZoom.value}');
+      // Force update if needed
+      update();
+    }
+  }
+
+  void zoomOut() {
+    final newZoom = (currentZoom.value - 0.5).clamp(MIN_ZOOM, MAX_ZOOM);
+    if (newZoom != currentZoom.value) {
+      currentZoom.value = newZoom;
+      mapController.zoom = newZoom;
+      print('Zoom out: ${currentZoom.value}');
+      // Force update if needed
+      update();
+    }
+  }
+
+// Handle gesture-based scaling
+  void handleScaleUpdate(double scaleDiff, Offset focalPoint, MapTransformer transformer) {
+    if (scaleDiff.abs() < 0.01) return; // Ignore very small changes
+
+    double zoomDelta = 0;
+    if (scaleDiff > 0.1) {
+      zoomDelta = 0.05;
+    } else if (scaleDiff < -0.1) {
+      zoomDelta = -0.05;
+    }
+
+    if (zoomDelta != 0) {
+      final newZoom = (currentZoom.value + zoomDelta).clamp(MIN_ZOOM, MAX_ZOOM);
+
+      if (newZoom != currentZoom.value) {
+        currentZoom.value = newZoom;
+        mapController.zoom = newZoom;
+        // Use transformer for smooth zoom at focal point
+        transformer.setZoomInPlace(newZoom, focalPoint);
+        // Force update if needed
+        update();
+      }
+    }
+  }
+
+// Handle mouse wheel scroll
+  void handleScrollEvent(double delta, Offset localPosition, MapTransformer transformer) {
+    final zoomDelta = -delta / 1000.0; // Adjust sensitivity
+    final newZoom = (currentZoom.value + zoomDelta).clamp(MIN_ZOOM, MAX_ZOOM);
+
+    if (newZoom != currentZoom.value) {
+      currentZoom.value = newZoom;
+      mapController.zoom = newZoom;
+      transformer.setZoomInPlace(newZoom, localPosition);
+      // Force update if needed
+      update();
+    }
+  }
   void _initializeDefaultSelection() {
     if (cities.isNotEmpty) {
       selectCity(0);
@@ -157,58 +218,58 @@ class BranchesController extends GetxController {
   }
 
   // Zoom controls
-  void zoomIn() {
-    final newZoom = (currentZoom.value + 0.5).clamp(MIN_ZOOM, MAX_ZOOM);
-    if (newZoom != currentZoom.value) {
-      currentZoom.value = newZoom;
-      mapController.zoom = newZoom;
-      print('Zoom in: ${currentZoom.value}');
-    }
-  }
-
-  void zoomOut() {
-    final newZoom = (currentZoom.value - 0.5).clamp(MIN_ZOOM, MAX_ZOOM);
-    if (newZoom != currentZoom.value) {
-      currentZoom.value = newZoom;
-      mapController.zoom = newZoom;
-      print('Zoom out: ${currentZoom.value}');
-    }
-  }
-
-  // Handle gesture-based scaling
-  void handleScaleUpdate(double scaleDiff, Offset focalPoint, MapTransformer transformer) {
-    if (scaleDiff.abs() < 0.01) return; // Ignore very small changes
-
-    double zoomDelta = 0;
-    if (scaleDiff > 0.1) {
-      zoomDelta = 0.05;
-    } else if (scaleDiff < -0.1) {
-      zoomDelta = -0.05;
-    }
-
-    if (zoomDelta != 0) {
-      final newZoom = (currentZoom.value + zoomDelta).clamp(MIN_ZOOM, MAX_ZOOM);
-
-      if (newZoom != currentZoom.value) {
-        currentZoom.value = newZoom;
-        mapController.zoom = newZoom;
-        // Use transformer for smooth zoom at focal point
-        transformer.setZoomInPlace(newZoom, focalPoint);
-      }
-    }
-  }
-
-  // Handle mouse wheel scroll
-  void handleScrollEvent(double delta, Offset localPosition, MapTransformer transformer) {
-    final zoomDelta = -delta / 1000.0; // Adjust sensitivity
-    final newZoom = (currentZoom.value + zoomDelta).clamp(MIN_ZOOM, MAX_ZOOM);
-
-    if (newZoom != currentZoom.value) {
-      currentZoom.value = newZoom;
-      mapController.zoom = newZoom;
-      transformer.setZoomInPlace(newZoom, localPosition);
-    }
-  }
+  // void zoomIn() {
+  //   final newZoom = (currentZoom.value + 0.5).clamp(MIN_ZOOM, MAX_ZOOM);
+  //   if (newZoom != currentZoom.value) {
+  //     currentZoom.value = newZoom;
+  //     mapController.zoom = newZoom;
+  //     print('Zoom in: ${currentZoom.value}');
+  //   }
+  // }
+  //
+  // void zoomOut() {
+  //   final newZoom = (currentZoom.value - 0.5).clamp(MIN_ZOOM, MAX_ZOOM);
+  //   if (newZoom != currentZoom.value) {
+  //     currentZoom.value = newZoom;
+  //     mapController.zoom = newZoom;
+  //     print('Zoom out: ${currentZoom.value}');
+  //   }
+  // }
+  //
+  // // Handle gesture-based scaling
+  // void handleScaleUpdate(double scaleDiff, Offset focalPoint, MapTransformer transformer) {
+  //   if (scaleDiff.abs() < 0.01) return; // Ignore very small changes
+  //
+  //   double zoomDelta = 0;
+  //   if (scaleDiff > 0.1) {
+  //     zoomDelta = 0.05;
+  //   } else if (scaleDiff < -0.1) {
+  //     zoomDelta = -0.05;
+  //   }
+  //
+  //   if (zoomDelta != 0) {
+  //     final newZoom = (currentZoom.value + zoomDelta).clamp(MIN_ZOOM, MAX_ZOOM);
+  //
+  //     if (newZoom != currentZoom.value) {
+  //       currentZoom.value = newZoom;
+  //       mapController.zoom = newZoom;
+  //       // Use transformer for smooth zoom at focal point
+  //       transformer.setZoomInPlace(newZoom, focalPoint);
+  //     }
+  //   }
+  // }
+  //
+  // // Handle mouse wheel scroll
+  // void handleScrollEvent(double delta, Offset localPosition, MapTransformer transformer) {
+  //   final zoomDelta = -delta / 1000.0; // Adjust sensitivity
+  //   final newZoom = (currentZoom.value + zoomDelta).clamp(MIN_ZOOM, MAX_ZOOM);
+  //
+  //   if (newZoom != currentZoom.value) {
+  //     currentZoom.value = newZoom;
+  //     mapController.zoom = newZoom;
+  //     transformer.setZoomInPlace(newZoom, localPosition);
+  //   }
+  // }
 
   // Navigation
   Future<void> launchNavigation() async {

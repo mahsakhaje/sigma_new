@@ -81,27 +81,28 @@ class MyCarsController extends GetxController {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              InkWell(
-                onTap: () {
+              TextButton(
+                onPressed:order.editable=='1'? () {
                   Get.toNamed(RouteName.car, arguments: order);
-                },
+                }:null,
+
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     CustomText('ویرایش',
-                        color: Colors.black, fontWeight: FontWeight.bold),
+                        color: order.editable=='1'?Colors.black:Colors.grey, fontWeight: FontWeight.bold),
                     SizedBox(
                       width: 10,
                     ),
-                    SvgPicture.asset('assets/edit.svg')
+                    SvgPicture.asset('assets/edit.svg',color: order.editable=='1'?Colors.black:Colors.grey,)
                   ],
                 ),
               ),
               Divider(
                 color: AppColors.lightGrey,
               ),
-              InkWell(
-                onTap: () async {
+              TextButton(
+                onPressed: () async {
                   var response =
                       await DioClient.instance.deleteCar(id: order.id ?? '');
                   if (response?.message == 'OK') {
@@ -129,7 +130,27 @@ class MyCarsController extends GetxController {
                     SvgPicture.asset('assets/trash.svg')
                   ],
                 ),
-              )
+              ),
+              Divider(
+                color: AppColors.lightGrey,
+              ),
+              TextButton(
+
+                onPressed:order.editable=='1'? () {
+                  Get.toNamed(RouteName.sell, arguments: {'id': order.id});
+                }:null,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    CustomText('ادامه فروش',
+                        color:order.editable=='1'?Colors.black:Colors.grey , fontWeight: FontWeight.bold),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    SvgPicture.asset('assets/continue.svg',color:order.editable=='1'?Colors.black:Colors.grey)
+                  ],
+                ),
+              ),
             ],
           ),
         ));

@@ -8,8 +8,8 @@ import 'package:sigma/global_custom_widgets/detail_widget.dart';
 import 'package:sigma/helper/colors.dart';
 import 'package:sigma/helper/dio_repository.dart';
 import 'package:sigma/helper/helper.dart';
+import 'package:sigma/helper/route_names.dart';
 import 'package:sigma/models/my_reservation_model.dart';
-
 
 class MyReservationsController extends GetxController {
   final RxList<Reservations> reservations = <Reservations>[].obs;
@@ -45,10 +45,8 @@ class MyReservationsController extends GetxController {
 
   Future<void> getData() async {
     pn.value++;
-    var response = await DioClient.instance.getMyReservations(
-        pn: pn.value,
-        pl: pl.value
-    );
+    var response =
+        await DioClient.instance.getMyReservations(pn: pn.value, pl: pl.value);
 
     if (response != null) {
       if (pn.value == 1) {
@@ -124,7 +122,7 @@ class MyReservationsController extends GetxController {
               children: [
                 Expanded(
                   child: ConfirmButton(
-                        () => Get.back(),
+                    () => Get.back(),
                     'خیر',
                     borderRadius: 8,
                   ),
@@ -132,7 +130,7 @@ class MyReservationsController extends GetxController {
                 SizedBox(width: 8),
                 Expanded(
                   child: ConfirmButton(
-                        () => _confirmCancel(order),
+                    () => _confirmCancel(order),
                     'بله',
                     borderRadius: 8,
                     txtColor: Colors.white,
@@ -155,7 +153,7 @@ class MyReservationsController extends GetxController {
 
     await Future.delayed(
       Duration(milliseconds: 500),
-          () => showToast(ToastState.SUCCESS, 'با موفقیت لغو شد'),
+      () => showToast(ToastState.SUCCESS, 'با موفقیت لغو شد'),
     );
 
     Get.back();
@@ -178,28 +176,30 @@ class MyReservationsController extends GetxController {
     scrollController.dispose();
     super.onClose();
   }
-  void showMyReservationsDetailDialog(BuildContext context, Reservations order) {
+
+  void showMyReservationsDetailDialog(
+      BuildContext context, Reservations order) {
     showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              detailItem(order.timespanDate ?? "", 'تاریخ بازدید'),
-              Divider(),
-              detailItem(order.timespanFromHour ?? "", 'ساعت بازدید از'),
-              Divider(),
-              detailItem(order.timespanToHour ?? "", 'ساعت بازدید تا'),
-              Divider(),
-              detailItem(order.unitAddress ?? '-', '  آدرس شوروم',
-                  isRtl: true),
-            ],
-          ),
-        ));
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  detailItem(order.timespanDate ?? "", 'تاریخ بازدید'),
+                  Divider(),
+                  detailItem(order.timespanFromHour ?? "", 'ساعت بازدید از'),
+                  Divider(),
+                  detailItem(order.timespanToHour ?? "", 'ساعت بازدید تا'),
+                  Divider(),
+                  detailItem(order.unitAddress ?? '-', '  آدرس شوروم',
+                      isRtl: true),
+                ],
+              ),
+            ));
   }
-  onProposalsPressed(Reservations order) async{
 
-   var shouldChange=await CustomBottomSheet.show(
+  onProposalsPressed(Reservations order) async {
+    var shouldChange = await CustomBottomSheet.show(
         initialChildSize: 0.25,
         context: Get.context!,
         child: Padding(
@@ -217,14 +217,21 @@ class MyReservationsController extends GetxController {
                     CustomText('جزئیات',
                         color: Colors.black, fontWeight: FontWeight.bold),
                     SizedBox(
-                      width: 10,
+                      width: 20,
                     ),
                     SvgPicture.asset('assets/detail.svg')
                   ],
                 ),
-              ),Divider(),
-
-
+              ),
+              SizedBox(
+                height: 8,
+              ),
+              Divider(
+                color: Colors.grey.shade400,
+              ),
+              SizedBox(
+                height: 8,
+              ),
               InkWell(
                 onTap: () async {
                   onCancelPressed(order);
@@ -236,16 +243,42 @@ class MyReservationsController extends GetxController {
                     CustomText('لغو درخواست رزرو',
                         color: Colors.black, fontWeight: FontWeight.bold),
                     SizedBox(
-                      width: 10,
+                      width: 20,
                     ),
                     SvgPicture.asset('assets/cancel.svg')
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 8,
+              ),
+              Divider(
+                color: Colors.grey.shade400,
+              ),
+              SizedBox(
+                height: 8,
+              ),
+              InkWell(
+                onTap: () async {
+                  Get.toNamed(RouteName.suggestions);
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    CustomText('انتقادات و پیشنهادات',
+                        color: Colors.black, fontWeight: FontWeight.bold),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    SvgPicture.asset(
+                      'assets/suggest.svg',
+                      height: 22,
+                    )
                   ],
                 ),
               )
             ],
           ),
         ));
-
-
   }
 }

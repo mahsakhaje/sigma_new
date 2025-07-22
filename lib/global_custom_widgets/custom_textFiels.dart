@@ -67,19 +67,19 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
     value = value?.toEnglishDigit();
     if (widget.isNationalId) {
       if ((value?.length ?? 0) < 10) {
-        return 'کدملی وارد شده صحیح نمی باشد';
+        return 'کدملی وارد شده صحیح نمی باشد.';
       }
       final pattern = r'^\d{10}$';
       final regExp = RegExp(pattern);
       if (!regExp.hasMatch(value!)) {
         return 'Please enter a valid national ID';
       } else if (!isValidNationalId(value)) {
-        return 'کدملی وارد شده صحیح نمی باشد';
+        return 'کدملی وارد شده صحیح نمی باشد.';
       }
       return null;
     }
     if (value == null || value.isEmpty) {
-      return 'اطلاعات را وارد نمایید';
+      return 'اطلاعات را وارد نمایید.';
     }
 
     return null;

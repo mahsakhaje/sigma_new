@@ -30,7 +30,7 @@ class SuggestionPage extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: ListView(
             children: [
-              const SizedBox(height: 16),
+              const SizedBox(height: 26),
 
               CustomText(
                   'کاربر گرامی جهت بهبود ارائه خدمات،لطفا انتقادات و پیشنهادات خودتان را برای ما ارسال کنید:  ',
@@ -104,7 +104,7 @@ class SuggestionPage extends StatelessWidget {
                   textDirection: TextDirection.rtl,
                   style: const TextStyle(color: Colors.white),
                   decoration:  InputDecoration(border:  InputBorder.none,
-                    hintText: ' یادداشت خود را وارد کنید',
+                    hintText: ' یادداشت خود را وارد کنید...',
                     hintStyle: TextStyle(
                       color: Colors.white,
 

@@ -45,15 +45,15 @@ class _MoneyFormState extends State<MoneyForm> {
   String? _validator(String? value) {
 
     if (value == null || value.isEmpty) {
-      return 'اطلاعات را وارد نمایید';
+      return 'اطلاعات را وارد نمایید.';
     }
     if(widget.min!=null && widget.max!=null){
       int a=double.tryParse(value.toEnglishDigit().replaceAll(',', ''))?.toInt() ??0;
       if(widget.min! > a ){
-        return 'مبلغ کافی نیست';
+        return 'مبلغ کافی نیست.';
       }
       if(a > widget.max!){
-        return 'مبلغ بیش از حد مجاز است';
+        return 'مبلغ بیش از حد مجاز است.';
 
       }
     }
@@ -62,17 +62,18 @@ class _MoneyFormState extends State<MoneyForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: widget.isTurn
-          ? BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: Colors.white,
-          width:1.5, // Border width
-        ),
-      )
-          : BoxDecoration(),
-      child: TextFormField(
+    // return Container(
+    //   decoration: widget.isTurn
+    //       ? BoxDecoration(
+    //     borderRadius: BorderRadius.circular(10),
+    //     border: Border.all(
+    //       color: Colors.white,
+    //       width:1.5, // Border width
+    //     ),
+    //   )
+    //       : BoxDecoration(),
+    //   child:
+    return TextFormField(
         autovalidateMode: widget.autovalidateMode,
         onEditingComplete: widget.onEditingComplete,
         focusNode: widget.focusNode,
@@ -114,7 +115,7 @@ class _MoneyFormState extends State<MoneyForm> {
             borderRadius: BorderRadius.circular(8.0),
             borderSide: BorderSide(color: Colors.white, width: 1.0),
           ),
-          hintStyle: TextStyle(color: Colors.white,fontSize: 14,fontFamily: 'Peyda',),
+          hintStyle: TextStyle(color: Colors.white,fontSize: 13,fontFamily: 'Peyda',),
           counterText: "",
           // focusColor: colors.textColorDark,
           // hoverColor: colors.textColorDark,
@@ -139,7 +140,7 @@ class _MoneyFormState extends State<MoneyForm> {
           floatingLabelBehavior: FloatingLabelBehavior.always,
           //hintTextDirection: TextDirection.rtl,
         ),
-      ),
+     // ),
     );
   }
 }

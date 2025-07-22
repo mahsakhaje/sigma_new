@@ -165,8 +165,8 @@ class _HomePgeState extends State<HomePge> {
                   padding: const EdgeInsets.only(bottom: 65),
                   child: SvgPicture.asset(
                     'assets/sigma_home.svg',
-                    height: 140,
-                    width: 140,
+                    height: 130,
+                    width: 130,
                   ),
                 ),
               ),

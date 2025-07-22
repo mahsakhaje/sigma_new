@@ -4,7 +4,9 @@ import 'package:get/get.dart';
 import 'package:sigma/global_custom_widgets/bottom_sheet.dart';
 import 'package:sigma/global_custom_widgets/custom_text.dart';
 import 'package:sigma/global_custom_widgets/detail_widget.dart';
+import 'package:sigma/helper/colors.dart';
 import 'package:sigma/helper/dio_repository.dart';
+import 'package:sigma/helper/route_names.dart';
 import 'package:sigma/models/my_purchase_order_response.dart';
 
 class MyBuyOrdersController extends GetxController {
@@ -102,9 +104,32 @@ class MyBuyOrdersController extends GetxController {
                     CustomText('جزئیات',
                         color: Colors.black, fontWeight: FontWeight.bold),
                     SizedBox(
-                      width: 10,
+                      width: 20,
                     ),
                     SvgPicture.asset('assets/detail.svg')
+                  ],
+                ),
+              ),
+              SizedBox(height: 8,),
+
+              Divider(
+                color: Colors.grey.shade400,
+              ),
+              SizedBox(height: 8,),
+
+              InkWell(
+                onTap: () async {
+                  Get.toNamed(RouteName.suggestions);
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    CustomText('انتقادات و پیشنهادات',
+                        color: Colors.black, fontWeight: FontWeight.bold),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    SvgPicture.asset('assets/suggest.svg',height: 22,)
                   ],
                 ),
               )

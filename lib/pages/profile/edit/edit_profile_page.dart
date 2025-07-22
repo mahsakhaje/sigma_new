@@ -197,6 +197,7 @@ class EditProfileInfo extends StatelessWidget {
       controller.postalCodeController,
       enabled: controller.isEnabled.value,
       maxLen: 10,
+      isOnlyNumber: true,
       // isPostalCode: true,
       // isOnlyNumber: true,
       hintText: Strings.postalCode,

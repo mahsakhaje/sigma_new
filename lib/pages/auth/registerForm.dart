@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:sigma/global_custom_widgets/confirm_button.dart';
@@ -21,36 +23,39 @@ Widget buildRegister() {
   buildRegisterOtp() {
     return Expanded(
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(height: 100),
+          SizedBox(height: 80),
           CustomText(
             'لطفاً کد فرستاده شده برای ${authController.mobileNumberController.text}${authController.haMobileNumberController.text} را وارد نمایید:',
             textAlign: TextAlign.center,
+            isRtl: true
           ),
           SizedBox(height: 30),
-          PinCodeTextField(
-            autoDisposeControllers:false,
+          SizedBox(
 
-            length: 5,
-            animationType: AnimationType.fade,
-            enableActiveFill: true,
-            pinTheme: PinTheme(
-              shape: PinCodeFieldShape.box,
-              borderRadius: BorderRadius.circular(5),
-              fieldHeight: 50,
-              fieldWidth: 50,
-              activeFillColor: AppColors.grey,
-              disabledColor: AppColors.grey,
-              errorBorderColor: Colors.white,
-              activeColor: AppColors.grey,
-              inactiveColor: AppColors.grey,
-              inactiveFillColor: AppColors.grey,
-              selectedColor: AppColors.grey,
-              selectedFillColor: AppColors.grey,
+            child: PinCodeTextField(
+              autoDisposeControllers: false,
+              length: 5,
+              controller: authController.codeController,
+              animationType: AnimationType.fade,
+              enableActiveFill: true,
+              pinTheme: PinTheme(
+                shape: PinCodeFieldShape.box,
+                borderRadius: BorderRadius.circular(5),
+                fieldHeight: 50,
+                fieldWidth: 50,
+                activeFillColor: AppColors.grey,
+                disabledColor: AppColors.grey,
+                errorBorderColor: Colors.white,
+                activeColor: AppColors.grey,
+                inactiveColor: AppColors.grey,
+                inactiveFillColor: AppColors.grey,
+                selectedColor: AppColors.grey,
+                selectedFillColor: AppColors.grey,
+              ),
+              onCompleted: authController.onPinCompleted,
+              appContext: Get.context!,
             ),
-            onCompleted: authController.onPinCompleted,
-            appContext: Get.context!,
           ),
           SizedBox(height: 10),
           Obx(() => Text(
@@ -101,6 +106,8 @@ Widget buildRegister() {
                   CustomTextFormField(
                     authController.haNationalCodeController,
                     hintText: Strings.companyNationalId,
+                    isNationalId: true,
+
                   )),
               dualRow(
                   CustomDropdown(
@@ -121,10 +128,7 @@ Widget buildRegister() {
                   CustomTextFormField(
                     authController.haPasswordRepeatController,
                     hintText: Strings.repeatPassword,
-
                   )),
-
-
             ],
           ),
         ),
@@ -160,6 +164,7 @@ Widget buildRegister() {
                   CustomTextFormField(
                     authController.nationalCodeController,
                     hintText: Strings.nationalCode,
+                    isNationalId: true,
                   )),
               dualRow(
                   CustomDropdown(
@@ -187,7 +192,6 @@ Widget buildRegister() {
                     authController.passwordRepeatController,
                     hintText: Strings.repeatPassword,
                   )),
-
             ],
           ),
         ),
@@ -267,15 +271,17 @@ Widget buildRegister() {
                 ],
               )
             : const SizedBox(),
-        Obx(() {   switch (authController.userState.value) {
-    case UserState.normal:
-    return buildHaghighiForm();
-    case UserState.legal:
-    return buildLegalForm();
-    default:
-    return SizedBox(); // or any fallback widget
-    }
-            }),
+        Obx(() {
+          switch (authController.userState.value) {
+            case UserState.normal:
+              return 
+                buildHaghighiForm();
+            case UserState.legal:
+              return buildLegalForm();
+            default:
+              return SizedBox(); // or any fallback widget
+          }
+        }),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -313,16 +319,17 @@ Widget buildRegister() {
   }
 
   return Column(
-    mainAxisAlignment: MainAxisAlignment.center,
     children: [
-      SizedBox(height: 52,),
+      SizedBox(
+        height: 52,
+      ),
       back(authController),
       CustomText(Strings.account, size: 32, fontWeight: FontWeight.bold),
       const SizedBox(
         height: 8,
       ),
       Obx(() => switch (authController.registerState.value) {
-            RegisterPageState.forms => buildRegisterForms(),
+            RegisterPageState.forms => Expanded(child: SingleChildScrollView(child: buildRegisterForms())),
             RegisterPageState.otp => buildRegisterOtp()
           })
     ],

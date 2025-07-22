@@ -49,8 +49,8 @@ class SplashController extends GetxController {
       GlobalAppData().setInsta(response?.instaLink ?? "");
       GlobalAppData().aparat = (response?.aparatLink ?? "");
       GlobalAppData().linkedin = (response?.linkedinLink ?? "");
+      GlobalAppData().telegram = (response?.telegramLink ?? "");
     }
-    print(isLogedIn);
     if (isLogedIn) {
       Get.offAllNamed(RouteName.home);
     } else {

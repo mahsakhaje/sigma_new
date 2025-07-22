@@ -12,7 +12,7 @@ class HeadedPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
 
       backgroundColor: AppColors.darkGrey,
       appBar:hideAppBar?null: AppBar(title: CustomText(title),),

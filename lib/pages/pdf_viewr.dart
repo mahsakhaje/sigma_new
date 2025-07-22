@@ -55,7 +55,6 @@ class _PdfState extends State<Pdf> {
             url,
             key: _pdfViewerKey,
             onDocumentLoadFailed: (PdfDocumentLoadFailedDetails details) {
-              // Handle PDF load failure
               print('PDF load failed: ${details.error}');
             },
           ),
