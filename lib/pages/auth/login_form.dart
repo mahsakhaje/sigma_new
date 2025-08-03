@@ -145,10 +145,10 @@ SizedBox buildMobileGetData(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           back(authController),
-          const SizedBox(height: 60),
+          const SizedBox(height: 48),
           CustomText(Strings.welcome, size: 32, fontWeight: FontWeight.bold),
           const SizedBox(
-            height: 30,
+            height: 18,
           ),
           Form(
             key: _otpFormKey,
@@ -165,7 +165,7 @@ SizedBox buildMobileGetData(
             }),
           ),
           const SizedBox(
-            height: 12,
+            height: 10,
           ),
           // TextFormField(controller: _passWordController),
           CustomTextFormField(
@@ -195,7 +195,7 @@ SizedBox buildMobileGetData(
             ],
           ),
           const SizedBox(
-            height: 30,
+            height: 28,
           ),
           customOutlinedButton(() {
             if (_otpFormKey.currentState!.validate()) {

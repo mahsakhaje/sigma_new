@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:persian_number_utility/persian_number_utility.dart';
 import 'package:sigma/global_custom_widgets/bottom_sheet.dart';
 import 'package:sigma/global_custom_widgets/confirm_button.dart';
 import 'package:sigma/global_custom_widgets/custom_drop_box.dart';
@@ -96,35 +97,57 @@ class SellPageView extends StatelessWidget {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: TextField(
-            controller: controller.searchController,
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Colors.transparent,
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-                borderSide: BorderSide(color: Colors.white, width: 1.0),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-                borderSide: BorderSide(color: Colors.white, width: 1.0),
-              ),
-              disabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-                borderSide: BorderSide(color: Colors.white, width: 1.0),
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-                borderSide: BorderSide(color: Colors.white, width: 1.0),
-              ),
-              hintStyle: TextStyle(color: Colors.white, fontSize: 12),
-              counterText: "",
-              hintText: 'جستجو بر اساس شماره شاسی',
-              prefixIcon: const Icon(
-                Icons.search,
-                color: Colors.white,
-              ),
+            padding: const EdgeInsets.all(16.0),
+            child:
+                // TextField(
+                //   controller: controller.searchController,
+                //   decoration: InputDecoration(
+                //     filled: true,
+                //     fillColor: Colors.transparent,
+                //     enabledBorder: OutlineInputBorder(
+                //       borderRadius: BorderRadius.circular(8.0),
+                //       borderSide: BorderSide(color: Colors.white, width: 1.0),
+                //     ),
+                //     focusedBorder: OutlineInputBorder(
+                //       borderRadius: BorderRadius.circular(8.0),
+                //       borderSide: BorderSide(color: Colors.white, width: 1.0),
+                //     ),
+                //     disabledBorder: OutlineInputBorder(
+                //       borderRadius: BorderRadius.circular(8.0),
+                //       borderSide: BorderSide(color: Colors.white, width: 1.0),
+                //     ),
+                //     border: OutlineInputBorder(
+                //       borderRadius: BorderRadius.circular(8.0),
+                //       borderSide: BorderSide(color: Colors.white, width: 1.0),
+                //     ),
+                //     hintStyle: TextStyle(color: Colors.white, fontSize: 12),
+                //     counterText: "",
+                //     hintText: 'جستجو بر اساس شماره شاسی',
+                //     prefixIcon: const Icon(
+                //       Icons.search,
+                //       color: Colors.white,
+                //     ),
+                //     suffixIcon: IconButton(
+                //       icon: const Icon(
+                //         Icons.clear,
+                //         color: Colors.white,
+                //       ),
+                //       onPressed: () {
+                //         controller.searchController.clear();
+                //         controller.getMyCars();
+                //       },
+                //     ),
+                //   ),
+                //   style: TextStyle(color: Colors.white, fontFamily: "Peyda"),
+                //   onChanged: (value) => controller.getMyCars(),
+                // ),
+                CustomTextFormField(
+              controller.searchController,
+              maxLen: 17,
+                      prefixIcon: const Icon(
+                        Icons.search,
+                        color: Colors.white,
+                      ),
               suffixIcon: IconButton(
                 icon: const Icon(
                   Icons.clear,
@@ -135,11 +158,19 @@ class SellPageView extends StatelessWidget {
                   controller.getMyCars();
                 },
               ),
-            ),
-            style: TextStyle(color: Colors.white, fontFamily: "Peyda"),
-            onChanged: (value) => controller.getMyCars(),
-          ),
-        ),
+
+              hintText: 'جستجو بر اساس شماره شاسی                             ',
+              // isChassiNumber: true,
+              // validator: controller.validate,
+              // exaxtLen: 17,
+              autovalidateMode: controller.searchController.text.length == 17
+                  ? AutovalidateMode.always
+                  : AutovalidateMode.disabled,
+              onChanged: (s) {
+                controller.getMyCars();
+              },
+              //errorText: 'شماره شاسی را به صورت صحیح وارد نمایید',
+            )),
         const SizedBox(height: 20),
         CustomText(Strings.yourEnteredAddress, isRtl: true),
         const SizedBox(height: 20),
@@ -215,84 +246,106 @@ class GetMilageStep extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<SellPageController>();
-
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            height: 30,
-          ),
-          CustomText('لطفا کارکرد خودروی مورد نظر را وارد کنید:',
-              isRtl: true, fontWeight: FontWeight.bold, size: 15),
-          const SizedBox(height: 30),
-          Expanded(
-            child: Obx(() => Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                            child: InkWell(
-                                onTap: () => controller.milageStatus.value = 0,
-                                child: Container(
-                                    padding: EdgeInsets.all(10),
-                                    margin: EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(
-                                            color:
-                                                controller.milageStatus.value ==
-                                                        0
-                                                    ? AppColors.blue
-                                                    : Colors.white),
-                                        color:
-                                            controller.milageStatus.value == 0
-                                                ? AppColors.blue
-                                                : Colors.transparent),
-                                    child: Center(child: CustomText('صفر'))))),
-                        Expanded(
-                            child: InkWell(
-                          onTap: () => controller.milageStatus.value = 1,
-                          child: Container(
-                              margin: EdgeInsets.all(8),
-                              padding: EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(
-                                      color: controller.milageStatus.value == 1
-                                          ? AppColors.blue
-                                          : Colors.white),
-                                  color: controller.milageStatus.value == 1
-                                      ? AppColors.blue
-                                      : Colors.transparent),
-                              child: Center(child: CustomText('کارکرده'))),
-                        ))
-                      ],
-                    ),
-                    controller.milageStatus.value == 1
-                        ? Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: CustomTextFormField(
-                              controller.kilometerController,
-                              hintText: 'کارکرد را وارد نمایید',
-                              isOnlyNumber: true,
-
-                            ),
-                          )
-                        : SizedBox(),
-                  ],
-                )),
-          ),
-          const SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ConfirmButton(
-              () => controller.step.value = SellPageStep.khodEzhari,
-              'ادامه',
+    final GlobalKey<FormState> mileageKey = GlobalKey<FormState>();
+    return Form(
+      key: mileageKey,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: 26,
             ),
-          ),
-        ],
+            CustomText('لطفا کارکرد خودروی مورد نظر را وارد کنید:',
+                isRtl: true, fontWeight: FontWeight.bold, size: 15),
+            const SizedBox(height: 30),
+            Expanded(
+              child: Obx(() => Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                              child: InkWell(
+                                  onTap: () =>
+                                      controller.milageStatus.value = 0,
+                                  child: Container(
+                                      padding: EdgeInsets.all(10),
+                                      margin: EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          border: Border.all(
+                                              color: controller
+                                                          .milageStatus.value ==
+                                                      0
+                                                  ? AppColors.blue
+                                                  : Colors.white),
+                                          color:
+                                              controller.milageStatus.value == 0
+                                                  ? AppColors.blue
+                                                  : Colors.transparent),
+                                      child:
+                                          Center(child: CustomText('صفر'))))),
+                          Expanded(
+                              child: InkWell(
+                            onTap: () => controller.milageStatus.value = 1,
+                            child: Container(
+                                margin: EdgeInsets.all(8),
+                                padding: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                        color:
+                                            controller.milageStatus.value == 1
+                                                ? AppColors.blue
+                                                : Colors.white),
+                                    color: controller.milageStatus.value == 1
+                                        ? AppColors.blue
+                                        : Colors.transparent),
+                                child: Center(child: CustomText('کارکرده'))),
+                          ))
+                        ],
+                      ),
+                      controller.milageStatus.value == 1
+                          ? Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: CustomTextFormField(
+                                controller.kilometerController,
+                                hintText: 'کارکرد را وارد نمایید',
+                                isOnlyNumber: true,
+                              ),
+                            )
+                          : SizedBox(),
+                    ],
+                  )),
+            ),
+            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ConfirmButton(
+                () {
+                  if (controller.milageStatus.value == 0) {
+                    controller.step.value = SellPageStep.khodEzhari;
+                    return;
+                  }
+                  if (mileageKey.currentState!.validate() &&
+                      controller.kilometerController.text.toEnglishDigit() ==
+                          '0') {
+                    showToast(
+                        ToastState.ERROR, 'مقدار صحیح کارکرد را وارد نمایید');
+                    return;
+                  }
+                  if (mileageKey.currentState!.validate() &&
+                      controller.kilometerController.text.isNotEmpty) {
+                    controller.step.value = SellPageStep.khodEzhari;
+                  }
+                },
+                'ادامه',
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -317,13 +370,17 @@ class UploadPhotoForm extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 CustomText('لطفا جزئیات خودروی مورد نظر را وارد کنید.',
-                    size: 16, fontWeight: FontWeight.w500,isRtl: true),
+                    size: 16, fontWeight: FontWeight.w500, isRtl: true),
               ],
             ),
-            SizedBox(height: 45,),
+            SizedBox(
+              height: 45,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
-              children: [CustomText('چه کسی خودرو را برای کارشناسی خواهد برد؟ ')],
+              children: [
+                CustomText('چه کسی خودرو را برای کارشناسی خواهد برد؟ ')
+              ],
             ),
             Obx(() => Row(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -372,7 +429,7 @@ class UploadPhotoForm extends StatelessWidget {
                     CustomText('سایر'),
                   ],
                 )),
-      
+
             SizedBox(
               height: 8,
             ),
@@ -395,7 +452,7 @@ class UploadPhotoForm extends StatelessWidget {
                 isFullLine: true,
                 isRtl: true,
                 onChanged: (String? str) => controller.onAddressSelected(str))),
-      
+
             SizedBox(
               height: 8,
             ),
@@ -405,7 +462,8 @@ class UploadPhotoForm extends StatelessWidget {
                 items: controller.karshenasList,
                 isRtl: true,
                 isTurn: controller.selectedAddress.value != null,
-                onChanged: (String? str) => controller.onKarshenasSelected(str))),
+                onChanged: (String? str) =>
+                    controller.onKarshenasSelected(str))),
             SizedBox(
               height: 8,
             ),
@@ -422,7 +480,7 @@ class UploadPhotoForm extends StatelessWidget {
                 autovalidateMode: AutovalidateMode.disabled,
                 maxLen: 200,
                 hintText: 'توضیحات شما'),
-      
+
             SizedBox(
               height: 8,
             ),
@@ -436,45 +494,47 @@ class UploadPhotoForm extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Obx(() => controller.images.isNotEmpty &&
-                        controller.base64Images.isNotEmpty
+                            controller.base64Images.isNotEmpty
                         ? Expanded(
-                      child: SizedBox(
-                        height: 40,
-                        child: ListView.builder(
-                            shrinkWrap: true,
-                            reverse: true,
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            scrollDirection: Axis.horizontal,
-                            itemCount: controller.images.length.clamp(0, 5),
-                            itemBuilder: (ctx, index) {
-                              return Chip(
-                                backgroundColor: Colors.white,
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 0, vertical: 0),
-                                label: SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: imageFromBase64String(
-                                        controller.base64Images[index]!,
-                                        20)),
-                                onDeleted: () =>
-                                    controller.removeImage(index),
-                                deleteIcon: Icon(
-                                  Icons.close,
-                                  size: 14,
-                                  color: Colors.black,
-                                ),
-                              );
-                            }),
-                      ),
-                    )
+                            child: SizedBox(
+                              height: 40,
+                              child: ListView.builder(
+                                  shrinkWrap: true,
+                                  reverse: true,
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount:
+                                      controller.images.length.clamp(0, 5),
+                                  itemBuilder: (ctx, index) {
+                                    return Chip(
+                                      backgroundColor: Colors.white,
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 0, vertical: 0),
+                                      label: SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: imageFromBase64String(
+                                              controller.base64Images[index]!,
+                                              20)),
+                                      onDeleted: () =>
+                                          controller.removeImage(index),
+                                      deleteIcon: Icon(
+                                        Icons.close,
+                                        size: 14,
+                                        color: Colors.black,
+                                      ),
+                                    );
+                                  }),
+                            ),
+                          )
                         : Center(
-                          child: CustomText('بارگذاری عکس                      ',
-                              color: Colors.white,
-                              fontWeight: FontWeight.w400,
-                              size: 14),
-                        )),
-
+                            child: CustomText(
+                                'بارگذاری عکس                      ',
+                                color: Colors.white,
+                                fontWeight: FontWeight.w400,
+                                size: 14),
+                          )),
                     SizedBox(
                       width: 4,
                     ),
@@ -499,6 +559,7 @@ class UploadPhotoForm extends StatelessWidget {
                       CustomTextFormField(
                         controller.swapCommentController,
                         maxLen: 200,
+                        acceptAll: true,
                         hintText: 'توضیحات تعویض',
                       ),
                     ],
@@ -509,7 +570,8 @@ class UploadPhotoForm extends StatelessWidget {
               children: [
                 Obx(() => CustomCheckBox(
                     value: controller.isSwap.value,
-                    onChanged: (val) => controller.isSwap.value = val ?? false)),
+                    onChanged: (val) =>
+                        controller.isSwap.value = val ?? false)),
                 SizedBox(
                   width: 8,
                 ),
@@ -558,7 +620,7 @@ class UploadPhotoForm extends StatelessWidget {
                 controller.nameController,
                 maxLen: 20,
                 isDark: true,
-                autovalidateMode: AutovalidateMode.disabled,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 hintText: 'نام مراجعه کننده',
               ),
               const SizedBox(height: 8),
@@ -566,14 +628,14 @@ class UploadPhotoForm extends StatelessWidget {
                 controller.lastNameController,
                 maxLen: 30,
                 isDark: true,
-                autovalidateMode: AutovalidateMode.disabled,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 hintText: 'نام خانوادگی مراجعه کننده',
               ),
               const SizedBox(height: 8),
               CustomTextFormField(
                 controller.nationalCodeController,
                 maxLen: 10,
-                autovalidateMode: AutovalidateMode.disabled,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 isNationalId: true,
                 isDark: true,
                 hintText: 'کدملی مراجعه کننده',
@@ -645,7 +707,8 @@ class PaymentResultStep extends StatelessWidget {
         padding: EdgeInsets.all(20),
         margin: EdgeInsets.all(16),
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10), color: Colors.grey.shade800),
+            borderRadius: BorderRadius.circular(10),
+            color: Colors.grey.shade800),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
@@ -660,22 +723,24 @@ class PaymentResultStep extends StatelessWidget {
                 isRtl: true),
             const SizedBox(height: 16),
             const SizedBox(height: 8),
-            CustomText('کد رهگیری :',isRtl: true,size: 14),
+            CustomText('کد رهگیری :', isRtl: true, size: 14),
             const SizedBox(height: 8),
-
             Obx(() => Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.white)),
-                      child:
-                          Center(child: CustomText('${controller.orderNumber.value}'.usePersianNumbers(),size: 14))),
-                ),
-              ],
-            )),
+                  children: [
+                    Expanded(
+                      child: Container(
+                          padding: EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.white)),
+                          child: Center(
+                              child: CustomText(
+                                  '${controller.orderNumber.value}'
+                                      .usePersianNumbers(),
+                                  size: 14))),
+                    ),
+                  ],
+                )),
             const SizedBox(height: 24),
             ConfirmButton(
               () => Get.back(),
@@ -717,7 +782,6 @@ class KhodEzhariStep extends StatelessWidget {
         textDirection: TextDirection.rtl,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-
           children: [
             CustomText('لطفا قسمت‌های آسیب‌دیده خودرو را مشخص نمایید.',
                 size: 16, isRtl: true, fontWeight: FontWeight.w500),
@@ -725,7 +789,7 @@ class KhodEzhariStep extends StatelessWidget {
             GestureDetector(
               onTapDown: (details) {
                 // Check if a color is selected
-                if(controller.selectedColorIndex.value==8){
+                if (controller.selectedColorIndex.value == 8) {
                   showToast(ToastState.INFO,
                       'ابتدا نوع آسیب دیدگی را با انتخاب رنگ متناسب با آن مشخص کنید.');
                   return;
@@ -737,7 +801,6 @@ class KhodEzhariStep extends StatelessWidget {
                       details.localPosition.dy, selectedColor));
                 } else {
                   // Show toast (implement the toast functionality)
-
                 }
               },
               child: Container(

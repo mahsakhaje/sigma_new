@@ -166,7 +166,7 @@ class AdvertiseController extends GetxController {
             carId,
           ));
     } else {
-      Get.offAndToNamed(RouteName.carDetails, arguments: {'id': carId});
+      Get.toNamed(RouteName.carDetails, arguments: {'id': carId});
     }
   }
 

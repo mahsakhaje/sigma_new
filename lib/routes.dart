@@ -9,6 +9,7 @@ import 'package:sigma/pages/buy_menu/buy_menu_page.dart';
 import 'package:sigma/pages/buy_menu/loan/loan_page.dart';
 import 'package:sigma/pages/car/car_page.dart';
 import 'package:sigma/pages/car_detail/car_detail_page.dart';
+import 'package:sigma/pages/car_detail/compare_car_list/compare_car_page.dart';
 import 'package:sigma/pages/chat/chat_page.dart';
 import 'package:sigma/pages/compare_cars/binding.dart';
 import 'package:sigma/pages/compare_cars/compare_cars_page.dart';
@@ -32,6 +33,7 @@ import 'package:sigma/pages/suggestions/suggestions_page.dart';
 import 'package:sigma/pages/track_orders/track_page.dart';
 import 'package:sigma/pages/transactions/all_transactions_page.dart';
 
+import 'models/my_cars_model.dart';
 import 'pages/advertise/advertise_page.dart';
 import 'pages/pdf_viewr.dart';
 import 'pages/profile/edit/edit_profile_page.dart';
@@ -101,7 +103,10 @@ class AppRoutes {
         ),
         GetPage(
           name: RouteName.car,
-          page: () => CarWidget(),
+          page: () {
+            final Cars? order = Get.arguments as Cars?;
+            return CarWidget(order: order);
+          },
           transitionDuration: const Duration(milliseconds: 10),
           transition: Transition.native,
         ),
@@ -211,6 +216,12 @@ class AppRoutes {
         GetPage(
           name: RouteName.suggestions,
           page: () => SuggestionPage(),
+          transitionDuration: const Duration(milliseconds: 10),
+          transition: Transition.native,
+        ),
+        GetPage(
+          name: RouteName.compare_car,
+          page: () => CompareAdvertisePage(),
           transitionDuration: const Duration(milliseconds: 10),
           transition: Transition.native,
         ),

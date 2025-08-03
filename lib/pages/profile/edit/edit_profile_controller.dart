@@ -177,8 +177,8 @@ class EditProfileController extends GetxController {
         if (response?.message == "OK") {
           showToast(ToastState.SUCCESS, 'تغییرات با موفقیت ذخیره شد');
           fullName.value = '${nameController.text} ${lastNameController.text}';
-          cityController.text = geoCityNames[selectedCity] ?? "";
-          provinceController.text = geoNames[selectedProvince] ?? "";
+          cityController.text = geoCityNames[selectedCity.value] ?? "";
+          provinceController.text = geoNames[selectedProvince.value] ?? "";
           isEnabled.value = false;
         }
       } finally {

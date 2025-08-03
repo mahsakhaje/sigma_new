@@ -5,15 +5,12 @@ import 'package:sigma/global_custom_widgets/custom_text.dart';
 import 'package:sigma/helper/dio_repository.dart';
 import 'package:sigma/helper/helper.dart';
 import 'package:sigma/models/all_cars_json_model.dart';
+import 'package:sigma/models/car_info_response.dart';
 import 'package:sigma/models/my_cars_model.dart';
 
 enum PageState { Estelam, Confirm }
 
 class CarController extends GetxController {
-
-
-
-
   final shasiController = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
@@ -49,6 +46,7 @@ class CarController extends GetxController {
 
   void init(Cars? car) async {
     order = car;
+    print(order);
     if (order != null) {
       pageState.value = PageState.Confirm;
     }
@@ -65,19 +63,25 @@ class CarController extends GetxController {
     }
 
     if (order != null) {
-      var data = await DioClient.instance.getCarInfo(id: order?.id ?? '');
+      CarInfoResponse? data =
+          await DioClient.instance.getCarInfo(id: order?.id ?? '');
+      print(data?.toJson());
       shasiController.text = order?.chassisNumber ?? '';
-      selectedCarModel.value = order?.carModelDescription ?? '';
-      selectedBrand.value = order?.brandDescription ?? '';
-      selectedFromYear.value = "${order?.miladiYear}_${order?.persianYear}";
-      selectedCarType.value = order?.carTypeDescription ?? '';
+
+      selectedBrand.value = data?.car?.brandId ?? '';
+      selectedCarModel.value = data?.car?.carModelId ?? "";
+      selectedFromYear.value = data?.car?.manufactureYearId;
+      selectedCarType.value = data?.car?.carTypeId ?? '';
 
       _fillModelTypeColorData();
 
-      selectedTrimColors.value = trimColors[data?.car?.trimColorId] ?? '';
-      selectedColors.value = colorsCars[data?.car?.colorId] ?? '';
+      selectedTrimColors.value = data?.car?.trimColorId;
+      selectedColors.value = data?.car?.colorId;
       colorId = data?.car?.colorId ?? '';
       trimColorId = data?.car?.trimColorId ?? '';
+      firstLoading.value = false;
+
+      return;
     }
 
     brands.forEach((key, value) {
@@ -94,16 +98,17 @@ class CarController extends GetxController {
   }
 
   void _fillModelTypeColorData() {
+    print(allCarsJsonModel?.toJson());
     allCarsJsonModel?.brands?.forEach((brand) {
-      if (brand.description == selectedBrand.value) {
+      if (brand.id == selectedBrand.value) {
         for (var model in brand.carModels ?? []) {
           carModels[model.id!] = model.description!;
 
-          if (model.description == selectedCarModel.value) {
+          if (model.id == selectedCarModel.value) {
             for (var type in model.carTypes ?? []) {
               carTypes[type.id!] = type.description!;
 
-              if (type.description == selectedCarType.value) {
+              if (type.id == selectedCarType.value) {
                 for (var color in type.carTypeColors ?? []) {
                   colorsCars[color.colorId ?? ''] = color.color ?? '';
                 }
@@ -133,10 +138,11 @@ class CarController extends GetxController {
   }
 
   void onBrandChanged(String? str) {
-    print(str);
+    print('callllllllled');
     selectedBrand.value = str ?? '';
     turn.value = 3;
     carModels.clear();
+    carTypes.clear();
     allCarsJsonModel?.brands?.forEach((brand) {
       print(brand);
       if (brand.id == str) {
@@ -157,6 +163,8 @@ class CarController extends GetxController {
   }
 
   void onModelChanged(String? str) {
+    print('callllllllled');
+
     selectedCarModel.value = str ?? '';
     carModels.forEach((key, value) {
       if (value == str) modelId = key;
@@ -178,6 +186,9 @@ class CarController extends GetxController {
     selectedFromYear.value = null;
     colorsCars.clear();
     trimColors.clear();
+    selectedTrimColors.value=null;
+    selectedColors.value=null;
+
   }
 
   void onTypeChanged(String? str) {
@@ -188,6 +199,8 @@ class CarController extends GetxController {
     turn.value = 5;
     colorsCars.clear();
     trimColors.clear();
+    selectedTrimColors.value=null;
+    selectedColors.value=null;
     carTypeManufactureYears.clear();
 
     allCarsJsonModel?.brands?.forEach((brand) {
@@ -224,6 +237,7 @@ class CarController extends GetxController {
   }
 
   void onColorChanged(String? str) {
+    print(str);
     selectedColors.value = str ?? '';
     colorsCars.forEach((key, value) {
       if (value == str) colorId = key;
@@ -332,12 +346,8 @@ class CarController extends GetxController {
                 fontWeight: FontWeight.bold,
               ),
               SizedBox(height: 12),
-              CustomText(
-                'لطفا اطلاعات خودروی خود را وارد نمائید.',
-                color: Colors.black87,
-                size: 14,
-                isRtl: true
-              ),
+              CustomText('لطفا اطلاعات خودروی خود را وارد نمائید.',
+                  color: Colors.black87, size: 14, isRtl: true),
               SizedBox(height: 34),
               ConfirmButton(() {
                 Get.back();

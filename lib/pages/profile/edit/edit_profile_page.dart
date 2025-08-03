@@ -79,11 +79,11 @@ class EditProfileInfo extends StatelessWidget {
     return Column(
       children: [
         const SizedBox(height: 8),
-        CustomText(controller.fullName.value, size: 14),
+        CustomText(controller.fullName.value, size: 16,fontWeight: FontWeight.bold),
         const SizedBox(height: 8),
         Center(
-            child: CustomText(controller.phoneNumber.value!.usePersianNumbers(),
-                size: 14)),
+            child: CustomText(controller.phoneNumber.value!.usePersianNumbers(),fontWeight: FontWeight.bold,
+                size: 16)),
         const SizedBox(height: 12),
       ],
     );
@@ -212,7 +212,7 @@ class EditProfileInfo extends StatelessWidget {
       maxLen: 50,
       autovalidateMode: AutovalidateMode.disabled,
       enabled: controller.isEnabled.value,
-      // isEmail: true,
+       isEmail: true,
     );
   }
 

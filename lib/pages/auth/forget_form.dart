@@ -193,7 +193,6 @@ Widget buildForgetPassword() {
 
   ListView _buildContentListView() {
     return ListView(
-      padding: const EdgeInsets.all(12),
       shrinkWrap: true,
       children: [
         Obx(() => _getContent()),

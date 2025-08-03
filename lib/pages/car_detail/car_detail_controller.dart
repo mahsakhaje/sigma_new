@@ -84,8 +84,10 @@ class CarDetailController extends GetxController {
       showToast(ToastState.INFO, 'لطفا منتظر بمانید');
 
       isExpertLoading.value = true;
-      final response = await DioClient.instance.getExpertReport(carId);
-
+      final response =
+          await DioClient.instance.getExpertReport(carId.toString());
+      print('**************');
+      print(response);
       if (response != null) {
         if (response.contains('فایل')) {
           showToast(ToastState.ERROR, 'خطا در نمایش فایل');
@@ -133,7 +135,7 @@ class CarDetailController extends GetxController {
   }
 
   void navigateToComparison() {
-    Get.toNamed(RouteName.advertise, arguments: {'compareCarId': carId});
+    Get.toNamed(RouteName.compare_car, arguments:  carId);
   }
 
   void navigateToReservation() {

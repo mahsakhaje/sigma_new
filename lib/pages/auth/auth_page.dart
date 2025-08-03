@@ -28,7 +28,7 @@ class AuthPage extends StatelessWidget {
             fit: BoxFit.cover,
           ),
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 12),
             child: Obx(() => switch (authController.currentPage.value) {
                   AuthPageState.login => buildLogin(),
                   AuthPageState.register => buildRegister(),

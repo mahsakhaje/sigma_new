@@ -138,7 +138,17 @@ class BuyController extends GetxController {
         brandId = key;
       }
     });
-
+    carModels.clear();
+    carTypes.clear();
+    selectedCarModel.value = null;
+    selectedCarType.value = null;
+    selectedKiloMeteTo.value = null;
+    selectedFromYear.value = null;
+    selectedKiloMeterFrom.value = null;
+    selectedKiloMeterFrom.value = null;
+    selectedToYear.value = null;
+    selectedCity.value = null;
+    amountController.text = '';
     //clearFields();
     turn.value = 2;
 
@@ -155,6 +165,13 @@ class BuyController extends GetxController {
   }
 
   void onCarModelSelected(String? str) {
+    carTypes.clear();
+    selectedCarType.value = null;
+    selectedKiloMeteTo.value = null;
+    selectedFromYear.value = null;
+    selectedKiloMeterFrom.value = null;
+    selectedToYear.value = null;
+    amountController.text = '';
     if (str == null) return;
 
     selectedCarModel.value = str;
@@ -197,7 +214,11 @@ class BuyController extends GetxController {
 
   void onCarTypeSelected(String? str) {
     if (str == null) return;
-
+    selectedKiloMeteTo.value = null;
+    selectedFromYear.value = null;
+    selectedKiloMeterFrom.value = null;
+    selectedToYear.value = null;
+    amountController.text = '';
     selectedCarType.value = str;
     carTypeManufactureYearsFrom.clear();
     carTypeManufactureYearsTo.clear();

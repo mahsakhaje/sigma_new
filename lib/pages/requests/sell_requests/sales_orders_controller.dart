@@ -178,7 +178,7 @@ class MySalesOrdersController extends GetxController {
                   Divider(),
                   detailItem(order.showRoomName ?? "", 'محل مراجعه'),
                   Divider(),
-                  detailItem(order.showRoomAddress ?? "", 'آدرس محل مراجعه'),
+                  detailItem(order.showRoomAddress ?? "", 'آدرس محل مراجعه',isRtl: true),
                 ],
               ),
             ));

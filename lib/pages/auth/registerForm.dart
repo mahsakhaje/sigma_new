@@ -26,13 +26,11 @@ Widget buildRegister() {
         children: [
           SizedBox(height: 80),
           CustomText(
-            'لطفاً کد فرستاده شده برای ${authController.mobileNumberController.text}${authController.haMobileNumberController.text} را وارد نمایید:',
-            textAlign: TextAlign.center,
-            isRtl: true
-          ),
+              'لطفاً کد فرستاده شده برای ${authController.mobileNumberController.text}${authController.haMobileNumberController.text} را وارد نمایید:',
+              textAlign: TextAlign.center,
+              isRtl: true),
           SizedBox(height: 30),
           SizedBox(
-
             child: PinCodeTextField(
               autoDisposeControllers: false,
               length: 5,
@@ -107,19 +105,25 @@ Widget buildRegister() {
                     authController.haNationalCodeController,
                     hintText: Strings.companyNationalId,
                     isNationalId: true,
-
+                    maxLen: 10,
                   )),
               dualRow(
                   CustomDropdown(
-                      hint: Strings.province,
-                      value: '',
-                      items: {},
-                      onChanged: (str) {}),
+                    hint: Strings.province,
+                    value: authController.selectedProvince.value,
+                    items: authController.geoNames.value,
+                    isTurn: false,
+                    largeFont: true,
+                    onChanged: authController.onProvinceChanged,
+                  ),
                   CustomDropdown(
-                      hint: Strings.city,
-                      value: '',
-                      items: {},
-                      onChanged: (str) {})),
+                    hint: Strings.city,
+                    value: authController.selectedCity.value,
+                    largeFont: true,
+                    items: authController.geoCityNames.value,
+                    isTurn: false,
+                    onChanged: authController.onCityChanged,
+                  )),
               dualRow(
                   CustomTextFormField(
                     authController.haPasswordController,
@@ -137,6 +141,7 @@ Widget buildRegister() {
           child: CustomTextFormField(
             authController.haReferralCodeController,
             hintText: Strings.referralCode,
+            acceptAll: true,
           ),
         ),
       ],
@@ -165,6 +170,7 @@ Widget buildRegister() {
                     authController.nationalCodeController,
                     hintText: Strings.nationalCode,
                     isNationalId: true,
+                    maxLen: 10,
                   )),
               dualRow(
                   CustomDropdown(
@@ -200,6 +206,8 @@ Widget buildRegister() {
           child: CustomTextFormField(
             authController.referralCodeController,
             hintText: Strings.referralCode,
+            acceptAll: true,
+
           ),
         ),
       ],
@@ -274,8 +282,7 @@ Widget buildRegister() {
         Obx(() {
           switch (authController.userState.value) {
             case UserState.normal:
-              return 
-                buildHaghighiForm();
+              return buildHaghighiForm();
             case UserState.legal:
               return buildLegalForm();
             default:
@@ -329,7 +336,8 @@ Widget buildRegister() {
         height: 8,
       ),
       Obx(() => switch (authController.registerState.value) {
-            RegisterPageState.forms => Expanded(child: SingleChildScrollView(child: buildRegisterForms())),
+            RegisterPageState.forms => Expanded(
+                child: SingleChildScrollView(child: buildRegisterForms())),
             RegisterPageState.otp => buildRegisterOtp()
           })
     ],

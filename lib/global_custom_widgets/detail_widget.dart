@@ -11,7 +11,7 @@ Widget detailItem(String info, String title, {bool isRtl = false}) {
               color: Colors.black87,
               fontWeight: FontWeight.w500,
               maxLine: 4,
-              isRtl: isRtl)),
+              isRtl: isRtl,textAlign: TextAlign.justify)),
       SizedBox(
         width: 8,
       ),

@@ -108,6 +108,7 @@ Widget _buildDropdownItem(
 
 ButtonStyleData _decoration(bool isDark) {
   return ButtonStyleData(
+    padding: EdgeInsets.symmetric(vertical: 4),
     decoration: BoxDecoration(
       shape: BoxShape.rectangle,
       border: Border.all(color:isDark?Colors.black: Colors.white),

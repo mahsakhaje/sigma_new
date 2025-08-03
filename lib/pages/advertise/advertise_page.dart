@@ -69,6 +69,7 @@ class AdvertisePage extends StatelessWidget {
       controller: controller.scrollController,
       slivers: [
         /// ویجت اول
+       if (!controller.isCompareMode.value)
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -83,7 +84,7 @@ class AdvertisePage extends StatelessWidget {
           ),
         ),
 
-        /// ویجت دوم
+       if (!controller.isCompareMode.value)
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.all(8.0),

@@ -11,7 +11,7 @@ import 'package:sigma/models/my_purchase_order_response.dart';
 
 class MyBuyOrdersController extends GetxController {
   final RxList<PurchaseOrders> purchaseOrders = <PurchaseOrders>[].obs;
-  final RxInt pn = 1.obs;
+  final RxInt pn = 0.obs;
   final RxInt pl = 10.obs;
   final RxInt total = 0.obs;
   final RxBool hasMore = true.obs;
@@ -59,7 +59,7 @@ class MyBuyOrdersController extends GetxController {
   }
 
   void reset() {
-    pn.value = 1;
+    pn.value = 0;
     total.value = 0;
     hasMore.value = true;
     purchaseOrders.clear();

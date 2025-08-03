@@ -47,7 +47,7 @@ class _HomePgeState extends State<HomePge> {
     setState(() {
       _isLeftDrawerOpen = true;
       _isRightDrawerOpen = false;
-      _leftIconOffset = 90.0;
+      _leftIconOffset = 120.0;
       _rightIconOffset = 0.0;
       _logoOffsetX = 0.1; // reset right icon
     });
@@ -57,7 +57,7 @@ class _HomePgeState extends State<HomePge> {
     setState(() {
       _isRightDrawerOpen = true;
       _isLeftDrawerOpen = false;
-      _rightIconOffset = -90.0;
+      _rightIconOffset = -120.0;
       _leftIconOffset = 0.0;
       _logoOffsetX = -0.1; //   // reset left icon
     });
@@ -189,10 +189,10 @@ class _HomePgeState extends State<HomePge> {
             AnimatedPositioned(
               duration: const Duration(milliseconds: 500),
               curve: Curves.linear,
-              left: _isLeftDrawerOpen ? 0 : -100,
+              left: _isLeftDrawerOpen ? 0 : -120,
               top: 0,
               bottom: 0,
-              width: 100,
+              width: 120,
               child: Material(
                 color: AppColors.grey,
                 child: Column(
@@ -225,10 +225,10 @@ class _HomePgeState extends State<HomePge> {
             AnimatedPositioned(
               duration: const Duration(milliseconds: 500),
               curve: Curves.linear,
-              right: _isRightDrawerOpen ? 0 : -100,
+              right: _isRightDrawerOpen ? 0 : -120,
               top: 0,
               bottom: 0,
-              width: 100,
+              width: 120,
               child: Material(
                 color: AppColors.grey,
                 child: Column(

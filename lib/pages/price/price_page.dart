@@ -613,6 +613,8 @@ class PricePage extends StatelessWidget {
                         valueElement.description ?? "",
                         color: Colors.black87,
                         textAlign: TextAlign.right,
+                        size: 14,
+                        fontWeight: FontWeight.w400
                       ),
                       //activeColor: Colors.orange,
                       contentPadding:
@@ -661,14 +663,13 @@ class PricePage extends StatelessWidget {
                   child: CustomText(desc, color: AppColors.darkGrey),
                 ),
               Expanded(
-                child: Text(
+                child: CustomText(
                   title,
-                  style: TextStyle(
-                    color: Colors.black87,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  size: 14,
+                  color: Colors.black87,
+                  fontWeight: FontWeight.bold,
                   textAlign: TextAlign.right,
+
                 ),
               ),
             ],

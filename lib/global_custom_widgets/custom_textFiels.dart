@@ -16,6 +16,8 @@ class CustomTextFormField extends StatefulWidget {
   Color fillColor;
   int maxLen;
   bool isNationalId;
+  bool isEmail;
+  bool acceptAll;
   double borderRadius;
   Widget? prefixIcon;
   Widget? suffixIcon;
@@ -27,11 +29,13 @@ class CustomTextFormField extends StatefulWidget {
     this.onEditingComplete,
     this.enabled = true,
     this.isDark = false,
+    this.acceptAll = false,
     this.maxLen = 1000,
     this.prefixIcon = null,
     this.suffixIcon = null,
     this.isNationalId = false,
     this.isOnlyNumber = false,
+    this.isEmail = false,
     this.focusNode,
     this.borderRadius = 5,
     this.fillColor = Colors.transparent,
@@ -116,9 +120,11 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         cursorColor: widget.isDark ? Colors.black87 : Colors.white,
         obscureText: _isPasswordField ? !_isPasswordVisible : false,
         inputFormatters: getFormatter(),
-        keyboardType: widget.isNationalId || widget.isOnlyNumber
-            ? TextInputType.number
-            : TextInputType.text,
+        keyboardType: widget.isEmail
+            ? TextInputType.emailAddress
+            : widget.isNationalId || widget.isOnlyNumber
+                ? TextInputType.number
+                : TextInputType.text,
         textDirection: TextDirection.rtl,
         textAlign: TextAlign.center,
         maxLength: widget.maxLen,
@@ -147,7 +153,6 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
               width: 1.0,
             ),
           ),
-
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
             borderSide: BorderSide(
@@ -201,7 +206,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
 
   List<TextInputFormatter> getFormatter() {
     if (widget.isOnlyNumber || widget.isNationalId) {
-      return [ PersianFormatter()];
+      return [PersianFormatter()];
     }
     if ((widget.hintText ?? '').contains('شاسی')) {
       return [
@@ -210,7 +215,10 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         EnglishFormatter()
       ];
     }
-    if(widget.hintText!.contains('رمز')){
+    if (widget.hintText!.contains('رمز')) {
+      return [];
+    }
+    if (widget.isEmail|| widget.acceptAll) {
       return [];
     }
     return [PersianLettersFormatter()];

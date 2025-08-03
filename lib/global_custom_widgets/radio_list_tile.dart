@@ -11,19 +11,26 @@ Widget buildRadioTile<T extends Enum>({
 }) {
   return SizedBox(
     width: 110,
-    child:  RadioListTile<int>(
+    child: ListTile(
       contentPadding: EdgeInsets.zero,
-      activeColor: Colors.white,
-      hoverColor: Colors.white,
-      selected: groupValue.value == value,
-      value: value.index,
-      groupValue: groupValue.value.index,
-      title: CustomText(label, isRtl: true),
-      onChanged: (val) {
-        if (val != null) {
-          onChanged(values[val]);
-        }
-      },
+      leading: Radio<T>(
+        value: value,
+        groupValue: groupValue.value,
+        onChanged: (val) {
+          if (val != null) {
+            onChanged(val);
+          }
+        },
+        activeColor: Colors.white,
+        fillColor: MaterialStateProperty.resolveWith<Color>((states) {
+          if (states.contains(MaterialState.selected)) {
+            return Colors.white; // selected color
+          }
+          return Colors.white; // unselected color
+        }),
+      ),
+      title: CustomText(label, isRtl: true,size: 13),
+      onTap: () => onChanged(value),
     ),
   );
 }

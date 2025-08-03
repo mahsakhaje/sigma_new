@@ -438,9 +438,10 @@ class AuthController extends GetxController {
   Future<void> onProvinceChanged(String? province) async {
     selectedProvince.value = province ?? "";
     provinceId.value = province ?? '';
-
-    await _loadCities();
     selectedCity.value = null;
+    geoCityNames.clear();
+    await _loadCities();
+
   }
 
   void onCityChanged(String? city) {

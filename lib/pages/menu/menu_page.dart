@@ -113,7 +113,7 @@ class ParentMenuWidget extends StatelessWidget {
                   left: menuController.isOpen.value ? 0 : -120,
                   bottom: 0,
                   child: Container(
-                    width: 100,
+                    width: 120,
                     color: AppColors.lightGrey,
                     child: ListView(
                       children: menuController.menuItems

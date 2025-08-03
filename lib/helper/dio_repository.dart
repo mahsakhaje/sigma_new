@@ -92,9 +92,11 @@ class DioClient {
       {bool isBytes = false}) async {
     print(URLs.BaseUrl + url);
     print(data);
+
     try {
       final token = await _getToken();
-      print(token);
+
+
       Response response = await _dio.post(
         url,
         data: jsonEncode(data),
@@ -103,6 +105,9 @@ class DioClient {
             responseType: isBytes ? ResponseType.bytes : ResponseType.json),
       );
       print(response);
+      // if(response.data['message']=='INVALID_TOKEN'){
+      //   showToast(ToastState.ERROR, response.data['persianMessage']);
+      // }
       return response;
     } catch (e) {
       debugPrint("Error making POST request: $e");
@@ -497,8 +502,8 @@ class DioClient {
     });
 
     if (response?.statusCode == 200) {
-      showMessage(response!.data);
-      return ChassiInquiryResponse.fromJson(response.data);
+     // showMessage(response!.data);
+      return ChassiInquiryResponse.fromJson(response?.data);
     }
 
     return null;
@@ -681,6 +686,7 @@ class DioClient {
         },
         isBytes: true);
 
+
     if (response?.statusCode == 200 && response?.data != null) {
       if (kIsWeb) {
         return await FileSaver.instance.saveFile(
@@ -690,6 +696,7 @@ class DioClient {
           mimeType: MimeType.pdf,
         );
       } else {
+        print(response!.data);
         return await saveFile(id, response!.data);
       }
     }
@@ -758,7 +765,6 @@ class DioClient {
 
   Future<String> _getToken() async {
     _token = StorageHelper().getToken();
-    print('here4');
 
     if (_token == null || JwtDecoder.isExpired(_token ?? '')) {
       var response = await getTokenRequest();
@@ -862,7 +868,8 @@ class DioClient {
     final response = await _makePostRequest(
       URLs.SendOTPUrl,
       {
-        'account': {'cellNumber': cellNumber.toEnglishDigit()}
+        'account': {'cellNumber': cellNumber.toEnglishDigit()},
+        'token':''
       },
     );
 

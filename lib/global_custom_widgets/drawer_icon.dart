@@ -76,7 +76,7 @@ Widget drawerIcon(
       }
       Get.toNamed(route, arguments: arg);
     },
-    child: SvgPicture.asset(path),
+    child: SvgPicture.asset(path,fit: BoxFit.fill,),
   );
 }
 

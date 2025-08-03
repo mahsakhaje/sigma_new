@@ -45,6 +45,7 @@ class RouteName {
   static const String callUs = '/callUs';
   static const String forms = '/forms';
   static const String pdf = '/pdf';
+  static const String compare_car = '/compare_car';
   static const String suggestions = '/suggestions';
   static const String price_estimation = '/price_estimation';
   static const String track = '/track_sales_order';

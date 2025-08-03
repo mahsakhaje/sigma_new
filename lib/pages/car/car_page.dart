@@ -17,6 +17,7 @@ class CarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(CarController());
+
     controller.init(order);
 
     return DarkBackgroundWidget(
@@ -136,7 +137,7 @@ class CarWidget extends StatelessWidget {
             CustomText('لطفا جزئیات خودروی مورد نظر را وارد نمائید:',
                 isRtl: true, size: 16, fontWeight: FontWeight.bold),
             SizedBox(
-              height: 40,
+              height: 32,
             ),
             _shasiForm(controller),
             const SizedBox(height: 8),

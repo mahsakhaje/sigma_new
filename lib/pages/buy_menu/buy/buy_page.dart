@@ -54,9 +54,9 @@ class BuyPage extends StatelessWidget {
           children: [
             InkWell(
                 onTap: () {
-                  CustomBottomSheet.show(
+                  CustomBottomSheetAnimated.show(
                       context: Get.context!,
-                      initialChildSize: 0.4,
+                      initialChildSize: 0.5,
                       child: Wrap(
                         children: [
                           _buildCheckboxOptions(),
@@ -329,8 +329,9 @@ class BuyPage extends StatelessWidget {
                       controller.swapCommentController,
                       maxLen: 300,
                       isDark: true,
+                      acceptAll: true,
                       hintText:
-                          'لطفا جهت تعویض خودرو مشخصات خودرو مورد نظر خود را وارد نمائید.',
+                          'توضیحات تعویض',
                     ),
                     const SizedBox(height: 8),
                   ],

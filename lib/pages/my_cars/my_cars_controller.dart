@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:sigma/global_custom_widgets/bottom_sheet.dart';
+import 'package:sigma/global_custom_widgets/confirm_button.dart';
 import 'package:sigma/global_custom_widgets/custom_text.dart';
 import 'package:sigma/helper/colors.dart';
 import 'package:sigma/helper/dio_repository.dart';
@@ -82,19 +83,27 @@ class MyCarsController extends GetxController {
           child: Column(
             children: [
               TextButton(
-                onPressed:order.editable=='1'? () {
-                  Get.toNamed(RouteName.car, arguments: order);
-                }:null,
-
+                onPressed: order.editable == '1'
+                    ? () async {
+                        await Get.toNamed(RouteName.car, arguments: order);
+                        reset();
+                        await getData();
+                      }
+                    : null,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     CustomText('ویرایش',
-                        color: order.editable=='1'?Colors.black:Colors.grey, fontWeight: FontWeight.bold),
+                        color:
+                            order.editable == '1' ? Colors.black : Colors.grey,
+                        fontWeight: FontWeight.bold),
                     SizedBox(
                       width: 10,
                     ),
-                    SvgPicture.asset('assets/edit.svg',color: order.editable=='1'?Colors.black:Colors.grey,)
+                    SvgPicture.asset(
+                      'assets/edit.svg',
+                      color: order.editable == '1' ? Colors.black : Colors.grey,
+                    )
                   ],
                 ),
               ),
@@ -103,21 +112,7 @@ class MyCarsController extends GetxController {
               ),
               TextButton(
                 onPressed: () async {
-                  var response =
-                      await DioClient.instance.deleteCar(id: order.id ?? '');
-                  if (response?.message == 'OK') {
-                    Future.delayed(
-                        Duration(milliseconds: 500),
-                        () => {
-                              showToast(ToastState.SUCCESS, ' با موفقیت حذف شد')
-                            });
-
-                    Get.back(result: true);
-                  }
-                  if (response?.message == 'INVALID_STATE') {
-                    showToast(ToastState.ERROR, 'امکان حذف وجود ندارد');
-                  }
-                  Get.back(result: true);
+                _showDeleteDialog(order);
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -135,19 +130,25 @@ class MyCarsController extends GetxController {
                 color: AppColors.lightGrey,
               ),
               TextButton(
-
-                onPressed:order.editable=='1'? () {
-                  Get.toNamed(RouteName.sell, arguments: {'id': order.id});
-                }:null,
+                onPressed: order.editable == '1'
+                    ? () {
+                        Get.toNamed(RouteName.sell,
+                            arguments: {'id': order.id});
+                      }
+                    : null,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     CustomText('ادامه فروش',
-                        color:order.editable=='1'?Colors.black:Colors.grey , fontWeight: FontWeight.bold),
+                        color:
+                            order.editable == '1' ? Colors.black : Colors.grey,
+                        fontWeight: FontWeight.bold),
                     SizedBox(
                       width: 10,
                     ),
-                    SvgPicture.asset('assets/continue.svg',color:order.editable=='1'?Colors.black:Colors.grey)
+                    SvgPicture.asset('assets/continue.svg',
+                        color:
+                            order.editable == '1' ? Colors.black : Colors.grey)
                   ],
                 ),
               ),
@@ -159,6 +160,49 @@ class MyCarsController extends GetxController {
       await getData();
     }
   }
+  void _showDeleteDialog(Cars order) {
+    Get.dialog(
+      AlertDialog(
+        title: Container(),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'آیا از حذف خودرو مطمئن هستید؟'
+                  .usePersianNumbers(),
+              textAlign: TextAlign.center,
+              textDirection: TextDirection.rtl,
+              style: TextStyle(
+                fontFamily: 'Peyda',
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  child: ConfirmButton(
+                        () => Get.back(),
+                    'خیر',
+                    borderRadius: 8,
+                  ),
+                ),
+                SizedBox(width: 8),
+                Expanded(
+                  child: ConfirmButton(
+                        () => _confirmDelete(order),
+                    'بله',
+                    borderRadius: 8,
+                    txtColor: Colors.white,
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
 
   void onDetailsPressed(Cars order) {
     // showMyBuyDetailDialog(Get.context!, order);
@@ -168,5 +212,23 @@ class MyCarsController extends GetxController {
   void onClose() {
     scrollController.dispose();
     super.onClose();
+  }
+
+  _confirmDelete(Cars order) async{
+    var response =
+        await DioClient.instance.deleteCar(id: order.id ?? '');
+    if (response?.message == 'OK') {
+      Future.delayed(
+          Duration(milliseconds: 500),
+              () => {
+            showToast(ToastState.SUCCESS, ' با موفقیت حذف شد')
+          });
+
+      Get.back(result: true);
+    }
+    if (response?.message == 'INVALID_STATE') {
+      showToast(ToastState.ERROR, 'امکان حذف وجود ندارد');
+    }
+    Get.back(result: true);
   }
 }
