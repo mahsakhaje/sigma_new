@@ -279,6 +279,7 @@ class MySalesOrdersController extends GetxController {
                     key: commentFormKey,
                     child: CustomTextFormField(
                       commentController,
+
                       maxLen: 200,
                       isDark: true,
                       acceptAll: true,
