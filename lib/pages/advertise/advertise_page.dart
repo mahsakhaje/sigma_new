@@ -69,28 +69,28 @@ class AdvertisePage extends StatelessWidget {
       controller: controller.scrollController,
       slivers: [
         /// ویجت اول
-       if (!controller.isCompareMode.value)
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-              GestureDetector(
-                onTap: () {
-                  controller.togglePageState();
-                },
-                child: SvgPicture.asset('assets/filter.svg'),
-              )
-            ]),
+        if (!controller.isCompareMode.value)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                GestureDetector(
+                  onTap: () {
+                    controller.togglePageState();
+                  },
+                  child: SvgPicture.asset('assets/filter.svg'),
+                )
+              ]),
+            ),
           ),
-        ),
 
-       if (!controller.isCompareMode.value)
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: BannerWidget(controller),
+        if (!controller.isCompareMode.value)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: BannerWidget(controller),
+            ),
           ),
-        ),
 
         /// GridView (SliverGrid)
         (controller.orders.isEmpty && !controller.isLoading.value)
@@ -386,14 +386,14 @@ class AdvertisePage extends StatelessWidget {
                             // color: colors.dropdowncolor,
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: Text(
-                            'از' +
-                                '  ' +
-                                NumberUtils.toTomans(
-                                    controller.priceValues.value.start *
-                                        10000000),
-                            textAlign: TextAlign.center,
-                          ),
+                          child: CustomText(
+                              'از' +
+                                  '  ' +
+                                  NumberUtils.toTomans(
+                                      controller.priceValues.value.start *
+                                          10000000),
+                              textAlign: TextAlign.center,
+                              color: Colors.black),
                         ),
                       ),
                       SizedBox(width: 16),
@@ -404,14 +404,14 @@ class AdvertisePage extends StatelessWidget {
                             // color: colors.dropdowncolor,
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: Text(
-                            'تا' +
-                                '  ' +
-                                NumberUtils.toTomans(
-                                    controller.priceValues.value.end *
-                                        10000000),
-                            textAlign: TextAlign.center,
-                          ),
+                          child: CustomText(
+                              'تا' +
+                                  '  ' +
+                                  NumberUtils.toTomans(
+                                      controller.priceValues.value.end *
+                                          10000000),
+                              textAlign: TextAlign.center,
+                              color: Colors.black),
                         ),
                       ),
                       SizedBox(width: 12),
@@ -456,15 +456,15 @@ class AdvertisePage extends StatelessWidget {
                               //  color: colors.dropdowncolor,
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: Text(
-                              'از' +
-                                  '  ' +
-                                  controller.yearValues.value.start
-                                      .toInt()
-                                      .toString()
-                                      .usePersianNumbers(),
-                              textAlign: TextAlign.center,
-                            ),
+                            child: CustomText(
+                                'از' +
+                                    '  ' +
+                                    controller.yearValues.value.start
+                                        .toInt()
+                                        .toString()
+                                        .usePersianNumbers(),
+                                textAlign: TextAlign.center,
+                                color: Colors.black),
                           ),
                         ),
                         SizedBox(width: 16),
@@ -475,15 +475,15 @@ class AdvertisePage extends StatelessWidget {
                               // color: colors.dropdowncolor,
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: Text(
-                              'تا' +
-                                  '  ' +
-                                  controller.yearValues.value.end
-                                      .toInt()
-                                      .toString()
-                                      .usePersianNumbers(),
-                              textAlign: TextAlign.center,
-                            ),
+                            child: CustomText(
+                                'تا' +
+                                    '  ' +
+                                    controller.yearValues.value.end
+                                        .toInt()
+                                        .toString()
+                                        .usePersianNumbers(),
+                                textAlign: TextAlign.center,
+                                color: Colors.black),
                           ),
                         ),
                         SizedBox(width: 12),

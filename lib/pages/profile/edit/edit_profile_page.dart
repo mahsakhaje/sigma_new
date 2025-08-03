@@ -46,6 +46,8 @@ class EditProfileInfo extends StatelessWidget {
                           buildRadioTile<Gender>(
                             label: Strings.male,
                             value: Gender.male,
+                            enabled: controller.isEnabled.value,
+
                             groupValue: controller.userGender,
                             onChanged: controller.setUserGender,
                             values: Gender.values,
@@ -53,6 +55,7 @@ class EditProfileInfo extends StatelessWidget {
                           const SizedBox(width: 36),
                           buildRadioTile<Gender>(
                             label: Strings.female,
+                            enabled: controller.isEnabled.value,
                             value: Gender.female,
                             groupValue: controller.userGender,
                             onChanged: controller.setUserGender,
@@ -136,7 +139,7 @@ class EditProfileInfo extends StatelessWidget {
       child: Column(
         children: [
           dualRow(_buildNameField(), _buildLastNameField()),
-          dualRow(_buildNationalIdField(), _buildPostalCodeField()),
+         // dualRow(_buildNationalIdField(), _buildPostalCodeField()),
           dualRow(_buildProvinceField(), _buildCityField()),
           Padding(
             padding: const EdgeInsets.all(4.0),

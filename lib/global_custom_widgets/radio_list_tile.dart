@@ -8,6 +8,7 @@ Widget buildRadioTile<T extends Enum>({
   required Rx<T> groupValue,
   required void Function(T) onChanged,
   required List<T> values,
+  bool enabled=true
 }) {
   return SizedBox(
     width: 110,
@@ -24,9 +25,9 @@ Widget buildRadioTile<T extends Enum>({
         activeColor: Colors.white,
         fillColor: MaterialStateProperty.resolveWith<Color>((states) {
           if (states.contains(MaterialState.selected)) {
-            return Colors.white; // selected color
+            return enabled ?Colors.white:Colors.grey; // selected color
           }
-          return Colors.white; // unselected color
+          return enabled?Colors.white:Colors.grey; // unselected color
         }),
       ),
       title: CustomText(label, isRtl: true,size: 13),

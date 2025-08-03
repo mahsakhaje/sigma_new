@@ -41,7 +41,7 @@ class SplashController extends GetxController {
   }
 
   Future<void> getInfo() async {
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 2));
     bool isLogedIn = await StorageHelper().getIsLogedIn() ?? false;
     var response = await DioClient.instance.getBanners();
     if (response != null && response.message == 'OK') {

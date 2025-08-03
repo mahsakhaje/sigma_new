@@ -60,11 +60,12 @@ Widget buildLogin() {
           length: 5,
           obscureText: false,
           autoDisposeControllers: false,
-          keyboardType: TextInputType.visiblePassword,
+          keyboardType: TextInputType.number,
           pinTheme: PinTheme(
             shape: PinCodeFieldShape.box,
             borderRadius: BorderRadius.circular(5),
             fieldHeight: 50,
+
             fieldWidth: 50,
             fieldOuterPadding: const EdgeInsets.all(4),
             activeFillColor: AppColors.grey,
@@ -76,7 +77,7 @@ Widget buildLogin() {
             selectedColor: AppColors.grey,
             selectedFillColor: AppColors.grey,
           ),
-          textStyle: const TextStyle(fontSize: 18, height: 1.6),
+          textStyle: const TextStyle(fontSize: 18, height: 1.6,fontFamily: 'Peyda'),
           enableActiveFill: true,
           controller: authController.otpCodeController,
           onChanged: (value) {

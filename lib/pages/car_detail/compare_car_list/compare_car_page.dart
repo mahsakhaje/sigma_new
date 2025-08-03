@@ -103,13 +103,13 @@ class compareAdvertiseItem extends StatelessWidget {
     return InkWell(
       onTap: () => controller.handleCarItemTap(order.id ?? ''),
       child: Card(
-        color: Colors.white,
+        color:order.id != controller.compareCarId? Colors.white:Colors.white.withOpacity(0.5),
         margin: EdgeInsets.symmetric(vertical: 9, horizontal: 0),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
         child: Column(
           children: [
             // نشانگر مقایسه
-            Container(
+            order.id != controller.compareCarId? Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(vertical: 4),
               decoration: BoxDecoration(
@@ -126,7 +126,23 @@ class compareAdvertiseItem extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-            ),
+            ):Container(
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(vertical: 4),
+        decoration: BoxDecoration(
+          color: AppColors.darkGrey,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(4),
+            topRight: Radius.circular(4),
+          ),
+        ),
+        child: Center(
+          child: CustomText(
+            '',
+            size: 12,
+            fontWeight: FontWeight.bold,
+          ),
+        ),),
 
             Row(
               children: [

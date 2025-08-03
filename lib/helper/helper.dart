@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sigma/global_custom_widgets/custom_text.dart';
+import 'package:sigma/helper/colors.dart';
 import 'package:universal_platform/universal_platform.dart';
 
 void showToast(ToastState state, String msg, {bool isIos = false}) {
@@ -25,7 +26,7 @@ void showToast(ToastState state, String msg, {bool isIos = false}) {
             : state == ToastState.SUCCESS
             ? Colors.green
             : state == ToastState.INFO
-            ? Colors.grey
+            ? AppColors.orange
             : Colors.blueGrey,
         gravity: ToastGravity.BOTTOM,
         webBgColor: state == ToastState.ERROR

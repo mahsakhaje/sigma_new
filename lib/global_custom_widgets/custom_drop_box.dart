@@ -60,7 +60,7 @@ Widget CustomDropdown({
                   isEng ? entry.value : entry.value.usePersianNumbers(),
                   color: isDark?Colors.black:Colors.white, // white for selected item
                   isRtl: isRtl,
-                  size: largeFont ? 15 : 12,
+                  size: largeFont ? 16 : 12,
                 ),
               );
             }).toList();
@@ -108,7 +108,7 @@ Widget _buildDropdownItem(
 
 ButtonStyleData _decoration(bool isDark) {
   return ButtonStyleData(
-    padding: EdgeInsets.symmetric(vertical: 4),
+    padding: EdgeInsets.symmetric(vertical: 3),
     decoration: BoxDecoration(
       shape: BoxShape.rectangle,
       border: Border.all(color:isDark?Colors.black: Colors.white),

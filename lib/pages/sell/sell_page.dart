@@ -144,10 +144,10 @@ class SellPageView extends StatelessWidget {
                 CustomTextFormField(
               controller.searchController,
               maxLen: 17,
-                      prefixIcon: const Icon(
-                        Icons.search,
-                        color: Colors.white,
-                      ),
+              prefixIcon: const Icon(
+                Icons.search,
+                color: Colors.white,
+              ),
               suffixIcon: IconButton(
                 icon: const Icon(
                   Icons.clear,
@@ -190,8 +190,14 @@ class SellPageView extends StatelessWidget {
                     child: RadioListTile<int>(
                       title: CustomText(car.value, isRtl: true),
                       value: car.id,
-                      activeColor: Colors.white,
                       groupValue: controller.carId.value,
+                      activeColor: Colors.white,
+                      fillColor: MaterialStateProperty.resolveWith<Color>((states) {
+                        if (states.contains(MaterialState.selected)) {
+                          return Colors.white; // selected color
+                        }
+                        return Colors.white; // unselected color
+                      }),
                       onChanged: (val) => controller.carId.value = val ?? 0,
                     ),
                   );
@@ -310,10 +316,11 @@ class GetMilageStep extends StatelessWidget {
                       controller.milageStatus.value == 1
                           ? Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: CustomTextFormField(
+                              child: MoneyForm(
                                 controller.kilometerController,
                                 hintText: 'کارکرد را وارد نمایید',
-                                isOnlyNumber: true,
+                                // isOnlyNumber: true,
+                                maxLen: 7,
                               ),
                             )
                           : SizedBox(),

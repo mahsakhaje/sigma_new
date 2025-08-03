@@ -216,7 +216,7 @@ class BranchesPage extends StatelessWidget {
       BuildContext context, BranchesController controller) async {
     var a = await CustomBottomSheet.show(
       context: Get.context!,
-      initialChildSize:controller.branchesInDialog.length==1?0.4: 0.6,
+      initialChildSize:controller.branchesInDialog.length==1?0.4: 0.85,
       child: Column(
         children: [
           Obx(() {
@@ -266,6 +266,7 @@ class BranchesPage extends StatelessWidget {
             final isSelected = controller.selectedBranchIndex.value == index;
 
             return ExpansionTile(
+
               title: RadioListTile<int>(
                 value: index,
                 groupValue: controller.selectedBranchIndex.value,

@@ -27,6 +27,8 @@ class AuthController extends GetxController {
   final forgetMobileNumberController = TextEditingController();
   final passwordController = TextEditingController();
   final passwordRepeatController = TextEditingController();
+  final forgetPasswordController = TextEditingController();
+  final forgetRepeatPasswordController = TextEditingController();
   final referralCodeController = TextEditingController();
   final emailController = TextEditingController();
   final loginMobileNumberController = TextEditingController();
@@ -149,9 +151,8 @@ class AuthController extends GetxController {
 
     try {
       var response = await DioClient.instance.confirmOTP(
-        password: otpCodeController.text.toEnglishDigit(),
-        cellNumber: loginMobileNumberController.text.toEnglishDigit()
-      );
+          password: otpCodeController.text.toEnglishDigit(),
+          cellNumber: loginMobileNumberController.text.toEnglishDigit());
 
       if (response == null) {
         _showError('خطا در دریافت اطلاعات از سرور');
@@ -181,7 +182,7 @@ class AuthController extends GetxController {
 
     try {
       var response = await DioClient.instance.confirmNewPassword(
-        newPassword: passwordController.text,
+        newPassword: forgetPasswordController.text,
         cellNumber: forgetMobileNumberController.text,
         code: codeController.text,
       );
@@ -225,18 +226,18 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> login( String password) async {
+  Future<void> login(String password) async {
     isLoading.value = true;
-    var response = await DioClient.instance.login(loginMobileNumberController.text, password).catchError(()=>isLoading.value=false);
+    var response = await DioClient.instance
+        .login(loginMobileNumberController.text, password)
+        .catchError(() => isLoading.value = false);
     isLoading.value = false;
     if (response?.message == 'OK') {
       StorageHelper().setShortToken(response?.token ?? '');
       StorageHelper().setIsLogedIn(true);
       StorageHelper().setPhoneNumber(loginMobileNumberController.text);
       Get.offAllNamed(RouteName.home);
-    }else{
-      
-    }
+    } else {}
   }
 
   Future<void> sendOtp() async {
@@ -245,7 +246,7 @@ class AuthController extends GetxController {
         .sendOTP(cellNumber: loginMobileNumberController.text.toEnglishDigit());
     if (response?.message == 'OK') {
       isLoading.value = false;
-      currentPage.value=AuthPageState.otp;
+      currentPage.value = AuthPageState.otp;
       startTimer();
     } else {
       showToast(ToastState.ERROR,
@@ -288,7 +289,7 @@ class AuthController extends GetxController {
 
 // Replace the existing register method with this implementation
   Future<void> register() async {
-    if(cityId==null||cityId.isEmpty){
+    if (cityId == null || cityId.isEmpty) {
       showToast(
         ToastState.ERROR,
         'لطفاً استان و شهر خودرا انتخاب نمایید.',
@@ -441,7 +442,6 @@ class AuthController extends GetxController {
     selectedCity.value = null;
     geoCityNames.clear();
     await _loadCities();
-
   }
 
   void onCityChanged(String? city) {
@@ -481,7 +481,7 @@ class AuthController extends GetxController {
   }
 }
 
-enum AuthPageState { welcome, login, register, forgetPassword,otp }
+enum AuthPageState { welcome, login, register, forgetPassword, otp }
 
 enum RegisterPageState { forms, otp }
 

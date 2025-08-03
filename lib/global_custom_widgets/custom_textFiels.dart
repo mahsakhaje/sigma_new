@@ -163,7 +163,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           disabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
             borderSide: BorderSide(
-              color: widget.isDark ? Colors.black87 : Colors.white,
+              color: widget.isDark ? Colors.black87 : Colors.grey,
               width: 1.0,
             ),
           ),
@@ -175,7 +175,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
             ),
           ),
           hintStyle: TextStyle(
-            color: widget.isDark ? Colors.black87 : Colors.white,
+            color: widget.isDark ? Colors.black87 : widget.enabled?Colors.white: Colors.grey,
             fontSize: 12,
           ),
           counterText: "",

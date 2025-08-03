@@ -31,16 +31,17 @@ class SuggestionPage extends StatelessWidget {
           child: ListView(
             children: [
               const SizedBox(height: 26),
-
               CustomText(
                   'کاربر گرامی جهت بهبود ارائه خدمات،لطفا انتقادات و پیشنهادات خودتان را برای ما ارسال کنید:  ',
-                  isRtl: true,fontWeight: FontWeight.bold,size: 16,textAlign: TextAlign.center),
+                  isRtl: true,
+                  fontWeight: FontWeight.bold,
+                  size: 16,
+                  textAlign: TextAlign.center),
               const SizedBox(height: 36),
-
               buildSuggestionTypeDropdown(),
               const SizedBox(height: 66),
-
-              CustomText('یادداشت خود را برای ما بنویسید:', isRtl: true,fontWeight: FontWeight.bold,size: 16),
+              CustomText('یادداشت خود را برای ما بنویسید:',
+                  isRtl: true, fontWeight: FontWeight.bold, size: 16),
               const SizedBox(height: 8),
               _buildCommentBox(),
               const SizedBox(height: 16),
@@ -75,6 +76,7 @@ class SuggestionPage extends StatelessWidget {
         },
         isRtl: true,
         isDark: false,
+        largeFont: true,
         // or true based on theme
         isFullLine: true,
       );
@@ -95,20 +97,20 @@ class SuggestionPage extends StatelessWidget {
               key: controller.formKey,
               child: Directionality(
                 textDirection: TextDirection.rtl,
-                child: TextFormField(
-                  controller: controller.commentController,
-                  cursorColor: Colors.white,
-                  keyboardType: TextInputType.multiline,
-                  maxLines: 10,
-
-                  textDirection: TextDirection.rtl,
-                  style: const TextStyle(color: Colors.white),
-                  decoration:  InputDecoration(border:  InputBorder.none,
-                    hintText: ' یادداشت خود را وارد کنید...',
-                    hintStyle: TextStyle(
-                      color: Colors.white,
-
-                    )
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    controller: controller.commentController,
+                    cursorColor: Colors.white,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: 10,
+                    textDirection: TextDirection.rtl,
+                    style:
+                        const TextStyle(color: Colors.white, fontFamily: 'Peyda'),
+                    decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: ' یادداشت خود را وارد کنید...',
+                        hintStyle: TextStyle(color: Colors.white, fontSize: 12)),
                   ),
                 ),
               ),

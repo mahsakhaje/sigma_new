@@ -136,7 +136,7 @@ class PricePage extends StatelessWidget {
       width: Get.width,
       child: Card(
         color: Colors.white,
-        margin: EdgeInsets.all(4),
+        margin: EdgeInsets.symmetric(vertical: 4,horizontal: 2),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -178,20 +178,29 @@ class PricePage extends StatelessWidget {
                       ],
                     )),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  CustomText(
-                      (price?.leastPrice ?? "0").usePersianNumbers() +
-                          ' تا ' +
-                          (price?.mostPrice ?? "0").usePersianNumbers(),
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                      isRtl: true,
-                      size: 13),
+                  Row(
+                    children: [
+                      CustomText(' تومان' , fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                          isRtl: true,
+                          size: 12),
+                      CustomText(
+                          (price?.leastPrice ?? "0").usePersianNumbers() +
+                              ' تا ' +
+                              (price?.mostPrice ?? "0").usePersianNumbers(),
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                          isRtl: true,
+                          size: 12),
+
+                    ],
+                  ),
                   CustomText(price.carModel ?? '',
-                      size: 13,
+                      size: 12,
                       isRtl: true,
                       fontWeight: FontWeight.bold,
                       color: Colors.black87),
@@ -329,11 +338,9 @@ class PricePage extends StatelessWidget {
                 showTicks: false,
                 stepSize: 100,
                 showLabels: false,
-
                 activeColor: Colors.white,
                 enableTooltip: true,
                 minorTicksPerInterval: 1000,
-
                 onChanged: (SfRangeValues values) =>
                     controller.updateKilometerValues(values),
               )),
@@ -506,9 +513,10 @@ class PricePage extends StatelessWidget {
   void _showCarDamageBottomSheet() {
     CustomBottomSheet.show(
         context: Get.context!,
-        initialChildSize:   controller.priceItems.value == null ||
-            controller.priceItems.value!.isEmpty
-            ?0.3: 0.7,
+        initialChildSize: controller.priceItems.value == null ||
+                controller.priceItems.value!.isEmpty
+            ? 0.3
+            : 0.7,
         child: Column(
           children: [
             // Header - اضافه شده
@@ -609,13 +617,11 @@ class PricePage extends StatelessWidget {
                           valueElement.description ?? "",
                         );
                       },
-                      title: CustomText(
-                        valueElement.description ?? "",
-                        color: Colors.black87,
-                        textAlign: TextAlign.right,
-                        size: 14,
-                        fontWeight: FontWeight.w400
-                      ),
+                      title: CustomText(valueElement.description ?? "",
+                          color: Colors.black87,
+                          textAlign: TextAlign.right,
+                          size: 14,
+                          fontWeight: FontWeight.w400),
                       //activeColor: Colors.orange,
                       contentPadding:
                           EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -669,7 +675,6 @@ class PricePage extends StatelessWidget {
                   color: Colors.black87,
                   fontWeight: FontWeight.bold,
                   textAlign: TextAlign.right,
-
                 ),
               ),
             ],

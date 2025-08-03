@@ -34,7 +34,7 @@ class _HomePgeState extends State<HomePge> {
   void initState() {
     super.initState();
     // Auto-open left drawer after 2 seconds
-    Future.delayed(const Duration(seconds: 2), () async {
+    Future.delayed(const Duration(seconds: 1), () async {
       final _packageInfo = await PackageInfo.fromPlatform();
       version = await _packageInfo.version;
       if (mounted) {

@@ -126,7 +126,7 @@ class BuyController extends GetxController {
         cityId = key;
       }
     });
-    turn.value = 1;
+    turn.value = 2;
   }
 
   void onBrandSelected(String? str) {
@@ -150,7 +150,7 @@ class BuyController extends GetxController {
     selectedCity.value = null;
     amountController.text = '';
     //clearFields();
-    turn.value = 2;
+    turn.value = 1;
 
     // Load car models for selected brand
     allCarsJsonModel?.brands?.forEach((element) {
@@ -317,9 +317,6 @@ class BuyController extends GetxController {
     kilometerFrom.forEach((element) {
       int selectedKm = int.tryParse(selectedKiloMeterFrom.value ?? '0') ?? 0;
       int currentKm = int.tryParse(element) ?? 0;
-      print(selectedKm);
-      print(currentKm);
-      print(currentKm >= selectedKm);
       if (currentKm >= selectedKm) {
         tempKilometerTo.add(element);
       }

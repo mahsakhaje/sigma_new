@@ -7,9 +7,9 @@ import 'package:sigma/models/sigma_rales_response_model.dart';
 import 'package:sigma/pages/compare_cars/compare_cars_controller.dart';
 
 class CompareAdvertiseController extends GetxController {
-  CompareAdvertiseController(String compareCarId) : _compareCarId = compareCarId;
+  CompareAdvertiseController(String compareCarId) : compareCarId = compareCarId;
 
-  final String _compareCarId;
+  final String compareCarId;
   final RxList<SalesOrders> orders = <SalesOrders>[].obs;
   final RxBool isLoading = false.obs;
   final RxBool hasMore = true.obs;
@@ -35,10 +35,10 @@ class CompareAdvertiseController extends GetxController {
 
   void handleCarItemTap(String carId) {
     // فقط اگر آیدی با _compareCarId متفاوت باشد، به صفحه مقایسه برود
-    if (carId != _compareCarId) {
+    if (carId != compareCarId) {
       Get.toNamed(RouteName.compare,
           arguments: Compare(
-            _compareCarId,
+            compareCarId,
             carId,
           ));
     }

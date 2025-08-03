@@ -84,12 +84,13 @@ Widget buildForgetPassword() {
           length: 5,
           autoDisposeControllers: false,
           obscureText: false,
-          keyboardType: TextInputType.visiblePassword,
+          keyboardType: TextInputType.number,
           pinTheme: PinTheme(
             shape: PinCodeFieldShape.box,
             borderRadius: BorderRadius.circular(5),
             fieldHeight: 50,
             fieldWidth: 50,
+
             fieldOuterPadding: const EdgeInsets.all(4),
             activeFillColor: AppColors.grey,
             disabledColor: AppColors.grey,
@@ -100,8 +101,9 @@ Widget buildForgetPassword() {
             selectedColor: AppColors.grey,
             selectedFillColor: AppColors.grey,
           ),
-          textStyle: const TextStyle(fontSize: 18, height: 1.6),
+          textStyle: const TextStyle(fontSize: 18, height: 1.6,fontFamily: 'Peyda'),
           enableActiveFill: true,
+
           controller: authController.codeController,
           onChanged: (value) {
             authController.codeController.text = value.usePersianNumbers();
@@ -154,7 +156,7 @@ Widget buildForgetPassword() {
           ),
           const SizedBox(height: 16),
           CustomTextFormField(
-            authController.passwordController,
+            authController.forgetPasswordController,
             hintText: 'رمز عبور جدید',
             maxLen: 20,
             autovalidateMode: AutovalidateMode.disabled,

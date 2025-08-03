@@ -281,6 +281,7 @@ class MySalesOrdersController extends GetxController {
                       commentController,
                       maxLen: 200,
                       isDark: true,
+                      acceptAll: true,
                       hintText: 'توضیحات',
                       onChanged: (String val) {},
                     ),

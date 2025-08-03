@@ -96,7 +96,6 @@ class DioClient {
     try {
       final token = await _getToken();
 
-
       Response response = await _dio.post(
         url,
         data: jsonEncode(data),
@@ -114,9 +113,10 @@ class DioClient {
       return null;
     }
   }
+
   Future<BannersResponse?> getBanners() async {
     final response = await _makePostRequest(URLs.GetApplicationBannersUrl, {
-      'token':  getShortToken(),
+      'token': getShortToken(),
       'version': await getVersion(),
     });
 
@@ -127,6 +127,7 @@ class DioClient {
 
     return null;
   }
+
   Future<BaseResponse?> insertSuggestion({
     required String id,
     required String comment,
@@ -136,7 +137,7 @@ class DioClient {
         'comment': comment,
         'typeId': id,
       },
-      'token':  getShortToken(),
+      'token': getShortToken(),
       'version': await getVersion(),
     });
 
@@ -152,7 +153,7 @@ class DioClient {
     final response = await _makePostRequest(URLs.GetSuggestionTypesUrl, {
       'pn': '1',
       'pl': '1000',
-      'token':  getShortToken(),
+      'token': getShortToken(),
       'version': await getVersion(),
     });
 
@@ -171,7 +172,7 @@ class DioClient {
       'discountCode': '',
       'orderId': orderId,
       'payType': 'CREDIT',
-      'token':  getShortToken(),
+      'token': getShortToken(),
       'version': await getVersion(),
     });
 
@@ -196,10 +197,12 @@ class DioClient {
         ? RulesResponse.fromJson(response?.data)
         : null;
   }
+
   Future<BaseResponse?> hasActiveOrderWithChassisNumber(String id) async {
-    final response = await _makePostRequest(URLs.GetHasActiveOrderWithChassisNumberUrl, {
+    final response =
+        await _makePostRequest(URLs.GetHasActiveOrderWithChassisNumberUrl, {
       'car': {'id': id},
-      'token':  getShortToken(),
+      'token': getShortToken(),
       'version': await getVersion(),
     });
 
@@ -356,7 +359,7 @@ class DioClient {
     String? carTypeIds = '',
     String? colorId = '',
     String? cityId = '',
-    String? state ,
+    String? state,
     String? cityIds = '',
     String? fromAmount = '',
     String? fromYear = '',
@@ -385,7 +388,9 @@ class DioClient {
       'token': await getShortToken(),
       'version': await getVersion(),
     };
-    print({'carState': state ?? ''},);
+    print(
+      {'carState': state ?? ''},
+    );
     final response =
         await _makePostRequest(URLs.GetSalesOrdersWithFilterUrl, data);
     print(response);
@@ -502,18 +507,19 @@ class DioClient {
     });
 
     if (response?.statusCode == 200) {
-     // showMessage(response!.data);
+      // showMessage(response!.data);
       return ChassiInquiryResponse.fromJson(response?.data);
     }
 
     return null;
   }
+
   Future<TrackingSalesOrderResponse?> trackSalesOrder({
     required String id,
   }) async {
     final response = await _makePostRequest(URLs.TrackingSalesOrderUrl, {
       'salesOrder': {'id': id},
-      'token':  getShortToken(),
+      'token': getShortToken(),
       'version': await getVersion(),
     });
 
@@ -524,6 +530,7 @@ class DioClient {
 
     return null;
   }
+
   Future<String?> getExpertReportInTracking(String id) async {
     final response = await _makePostRequest(
       URLs.ExpertOrderPrintUrl,
@@ -539,7 +546,9 @@ class DioClient {
     }
 
     return null;
-  }  Future<String?> getContractReportInTracking(String orderNumber) async {
+  }
+
+  Future<String?> getContractReportInTracking(String orderNumber) async {
     final response = await _makePostRequest(
       URLs.ContractPrintUrl,
       {
@@ -682,10 +691,9 @@ class DioClient {
         {
           'salesOrder': {'id': id},
           'version': await getVersion(),
-          'token':  getShortToken(), // Added missing token
+          'token': getShortToken(), // Added missing token
         },
         isBytes: true);
-
 
     if (response?.statusCode == 200 && response?.data != null) {
       if (kIsWeb) {
@@ -869,7 +877,7 @@ class DioClient {
       URLs.SendOTPUrl,
       {
         'account': {'cellNumber': cellNumber.toEnglishDigit()},
-        'token':''
+        'token': ''
       },
     );
 
@@ -974,8 +982,6 @@ class DioClient {
         ? DiscountResponse.fromJson(response?.data)
         : null;
   }
-
-
 
   Future<LoginResponse?> forgetPassword({required String cellNumber}) async {
     return _makePostRequest(URLs.ResetPasswordUrl, {
@@ -1251,6 +1257,7 @@ class DioClient {
 
   Future<ManaPricesResponse?> getManaPrices() async {
     final response = await _makePostRequest(URLs.ManaPricesUrl, {
+      'pl': '50',
       'token': getShortToken(),
       'version': await getVersion(),
     });

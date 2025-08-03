@@ -95,14 +95,14 @@ class BuyPage extends StatelessWidget {
               largeFont: true,
               value: controller.selectedCity.value,
               items: controller.cities,
-              isTurn: controller.turn.value == 0,
+              isTurn: controller.turn.value == 1,
               onChanged: (String? str) => controller.onCitySelected(str))),
         ),
         const SizedBox(width: 12),
         Expanded(
           child: Obx(() => CustomDropdown(
               hint: 'برند خودرو',
-              isTurn: controller.turn.value == 1,
+              isTurn: controller.turn.value == 0,
               value: controller.selectedBrand.value,
               items: controller.brands,
               onChanged: (String? str) => controller.onBrandSelected(str))),
@@ -171,11 +171,26 @@ class BuyPage extends StatelessWidget {
               hint: 'کارکرد تا',
               value: controller.selectedKiloMeteTo.value,
               isTurn: controller.turn.value == 7,
-              items: {
-                for (var item in controller.kilometerTo.value) '$item': '$item'
-              },
-              onChanged: (String? str) =>
-                  controller.onKilometerToSelected(str))),
+              items: ((controller.selectedBrand.isEmpty ?? true) ||
+                      (controller.selectedCarModel.isEmpty ?? true) ||
+                      (controller.selectedCarType.isEmpty ?? true) ||
+                      (controller.selectedFromYear.isEmpty ?? true) ||
+                      (controller.selectedToYear.isEmpty ?? true))
+                  ? {}
+                  : {
+                      for (var item in controller.kilometerTo.value)
+                        '$item': '$item'
+                    },
+              onChanged: (String? str) {
+                if ((controller.selectedBrand.isNullOrBlank ?? true) ||
+                    (controller.selectedCarModel.isNullOrBlank ?? true) ||
+                    (controller.selectedCarType.isNullOrBlank ?? true) ||
+                    (controller.selectedFromYear.isNullOrBlank ?? true) ||
+                    (controller.selectedToYear.isNullOrBlank ?? true)) {
+                  return;
+                }
+                controller.onKilometerToSelected(str);
+              })),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -183,12 +198,21 @@ class BuyPage extends StatelessWidget {
               hint: 'کارکرد از',
               value: controller.selectedKiloMeterFrom.value,
               isTurn: controller.turn.value == 6,
-              items: {
-                for (var item in controller.kilometerFrom.value)
-                  '$item': '$item'
-              },
-              onChanged: (String? str) =>
-                  controller.onKilometerFromSelected(str))),
+              items: ((controller.selectedBrand.isEmpty ?? true) ||
+                      (controller.selectedCarModel.isEmpty ?? true) ||
+                      (controller.selectedCarType.isEmpty ?? true) ||
+                      (controller.selectedFromYear.isEmpty ?? true) ||
+                      (controller.selectedToYear.isEmpty ?? true))
+                  ? {}
+                  : {
+                      for (var item in controller.kilometerFrom.value)
+                        '$item': '$item'
+                    },
+              onChanged: (String? str) {
+                print(controller.selectedBrand);
+
+                controller.onKilometerFromSelected(str);
+              })),
         ),
       ],
     );
@@ -236,7 +260,6 @@ class BuyPage extends StatelessWidget {
               onEditingComplete: () {
                 _formKey.currentState!.validate();
                 hideKeyboard(context);
-
               },
               onChanged: (str) => controller.onBudgetChanged(),
               isTurn: controller.turn.value == 10,
@@ -330,8 +353,7 @@ class BuyPage extends StatelessWidget {
                       maxLen: 300,
                       isDark: true,
                       acceptAll: true,
-                      hintText:
-                          'توضیحات تعویض',
+                      hintText: 'توضیحات تعویض',
                     ),
                     const SizedBox(height: 8),
                   ],

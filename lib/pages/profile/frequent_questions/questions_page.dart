@@ -20,16 +20,13 @@ class QuestionsPage extends StatelessWidget {
       title: Strings.questions,
       child: Obx(() {
         if (controller.isLoading.value) {
-          return  Center(
+          return Center(
             child: loading(),
           );
         } else {
-          return ListView(
-            shrinkWrap: true,
+          return Column(
             children: [
-              SizedBox(
-                height: 24,
-              ),
+              SizedBox(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -37,16 +34,15 @@ class QuestionsPage extends StatelessWidget {
                       fontWeight: FontWeight.bold, size: 16),
                 ],
               ),
-              SizedBox(
-                height: 12,
-              ),
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: controller.faqContents.length,
-                padding: const EdgeInsets.all(16),
-                itemBuilder: (context, index) {
-                  return _buildQuestionRowItem(controller.faqContents[index]);
-                },
+              SizedBox(height: 12),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: controller.faqContents.length,
+                  padding: const EdgeInsets.all(16),
+                  itemBuilder: (context, index) {
+                    return buildQuestionRowItem(controller.faqContents[index]);
+                  },
+                ),
               ),
             ],
           );
@@ -55,7 +51,7 @@ class QuestionsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildQuestionRowItem(FaqContents question) {
+  Widget buildQuestionRowItem(FaqContents question) {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Container(

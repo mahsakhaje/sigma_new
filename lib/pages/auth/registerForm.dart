@@ -37,6 +37,8 @@ Widget buildRegister() {
               controller: authController.codeController,
               animationType: AnimationType.fade,
               enableActiveFill: true,
+              keyboardType: TextInputType.number,
+
               pinTheme: PinTheme(
                 shape: PinCodeFieldShape.box,
                 borderRadius: BorderRadius.circular(5),
@@ -51,6 +53,8 @@ Widget buildRegister() {
                 selectedColor: AppColors.grey,
                 selectedFillColor: AppColors.grey,
               ),
+              textStyle: const TextStyle(fontSize: 18, height: 1.6,fontFamily: 'Peyda'),
+
               onCompleted: authController.onPinCompleted,
               appContext: Get.context!,
             ),

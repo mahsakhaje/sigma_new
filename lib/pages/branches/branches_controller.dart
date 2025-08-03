@@ -28,7 +28,8 @@ class BranchesController extends GetxController {
 
   // Make map controller properties reactive
   final RxDouble currentZoom = DEFAULT_ZOOM.obs;
-  final Rx<LatLng> currentCenter = const LatLng(Angle.degree(35.6892), Angle.degree(51.3890)).obs;
+  final Rx<LatLng> currentCenter =
+      const LatLng(Angle.degree(35.6892), Angle.degree(51.3890)).obs;
 
   // Map controller and markers
   late MapController mapController;
@@ -76,7 +77,7 @@ class BranchesController extends GetxController {
 
       // First, find Tehran and add it first
       final tehran = response?.geoNames?.firstWhere(
-            (e) => e.description == 'تهران',
+        (e) => e.description == 'تهران',
         orElse: () => response!.geoNames!.first,
       );
 
@@ -131,7 +132,8 @@ class BranchesController extends GetxController {
   }
 
 // Handle gesture-based scaling
-  void handleScaleUpdate(double scaleDiff, Offset focalPoint, MapTransformer transformer) {
+  void handleScaleUpdate(
+      double scaleDiff, Offset focalPoint, MapTransformer transformer) {
     if (scaleDiff.abs() < 0.01) return; // Ignore very small changes
 
     double zoomDelta = 0;
@@ -156,7 +158,8 @@ class BranchesController extends GetxController {
   }
 
 // Handle mouse wheel scroll
-  void handleScrollEvent(double delta, Offset localPosition, MapTransformer transformer) {
+  void handleScrollEvent(
+      double delta, Offset localPosition, MapTransformer transformer) {
     final zoomDelta = -delta / 1000.0; // Adjust sensitivity
     final newZoom = (currentZoom.value + zoomDelta).clamp(MIN_ZOOM, MAX_ZOOM);
 
@@ -168,6 +171,7 @@ class BranchesController extends GetxController {
       update();
     }
   }
+
   void _initializeDefaultSelection() {
     if (cities.isNotEmpty) {
       selectCity(0);
@@ -273,15 +277,13 @@ class BranchesController extends GetxController {
 
   // Navigation
   Future<void> launchNavigation() async {
-    final googleUrl = 'https://www.google.com/maps/search/?api=1&query=${selectedLat.value},${selectedLong.value}';
-
     try {
-      final uri = Uri.parse(googleUrl);
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
-      } else {
-        throw 'Could not launch $googleUrl';
-      }
+      await launchUrl(
+        Uri(scheme: 'geo', queryParameters: {
+          'q': '${selectedLat.value},${selectedLong.value}'
+        }),
+        mode: LaunchMode.externalApplication,
+      );
     } catch (e) {
       Get.snackbar('خطا', 'امکان باز کردن نقشه وجود ندارد');
       print('Error launching navigation: $e');
@@ -290,13 +292,15 @@ class BranchesController extends GetxController {
 
   // Getters
   Units? get selectedBranch {
-    if (branchesInDialog.isEmpty || selectedBranchIndex.value >= branchesInDialog.length) {
+    if (branchesInDialog.isEmpty ||
+        selectedBranchIndex.value >= branchesInDialog.length) {
       return null;
     }
     return branchesInDialog[selectedBranchIndex.value];
   }
 
   bool get canZoomIn => currentZoom.value < MAX_ZOOM;
+
   bool get canZoomOut => currentZoom.value > MIN_ZOOM;
 
   @override
