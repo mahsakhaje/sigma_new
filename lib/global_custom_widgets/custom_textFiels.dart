@@ -178,6 +178,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
             color: widget.isDark ? Colors.black87 : widget.enabled?Colors.white: Colors.grey,
             fontSize: 12,
           ),
+
           counterText: "",
           prefixIcon: _isPasswordField
               ? IconButton(

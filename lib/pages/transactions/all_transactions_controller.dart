@@ -4,7 +4,7 @@ import 'package:sigma/helper/dio_repository.dart';
 import 'package:sigma/models/published_transaction_response.dart';
 
 class AllTransactionsController extends GetxController {
-  int pn = 1;
+  int pn = 0;
   final int pl = 5;
   int total = 0;
 
@@ -26,7 +26,8 @@ class AllTransactionsController extends GetxController {
     });
   }
 
-  Future<void> getTransactions() async {
+  Future<void>
+  getTransactions() async {
     if (isFetchingMore) return;
     isFetchingMore = true;
     isLoading(true);

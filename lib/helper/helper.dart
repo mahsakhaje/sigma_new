@@ -19,6 +19,7 @@ void showToast(ToastState state, String msg, {bool isIos = false}) {
 
     Fluttertoast.showToast(
         msg: msg,
+
         toastLength: Toast.LENGTH_LONG,
 
         backgroundColor: state == ToastState.ERROR
