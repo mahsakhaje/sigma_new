@@ -753,6 +753,17 @@ class advertiseItem extends StatelessWidget {
                         CustomText('قیمت', color: Colors.black87),
                       ],
                     ),
+                    SizedBox(height: 6),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        CustomText(order.provinceDescription??'', color: Colors.black87),
+                        CustomText('  ', color: Colors.black87),
+
+                        SizedBox(width: 4),
+                        CustomText('شهر', color: Colors.black87),
+                      ],
+                    ),
                     Expanded(child: SizedBox(height: 6)),
                     Divider(
                       color: Colors.grey.shade400,

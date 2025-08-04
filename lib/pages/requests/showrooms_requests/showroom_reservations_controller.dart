@@ -13,7 +13,7 @@ import 'package:sigma/models/my_reservation_model.dart';
 
 class MyReservationsController extends GetxController {
   final RxList<Reservations> reservations = <Reservations>[].obs;
-  final RxInt pn = 1.obs;
+  final RxInt pn = 0.obs;
   final RxInt pl = 10.obs;
   final RxInt total = 0.obs;
   final RxBool hasMore = true.obs;

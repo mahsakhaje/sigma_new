@@ -35,6 +35,7 @@ class SalesOrders {
   String? id;
   String? state;
   String? stateText;
+  String? provinceDescription;
   String? orderNumber;
   String? comment;
   String? registerTime;
@@ -108,6 +109,7 @@ class SalesOrders {
       this.declaredAmount,
       this.soldAmount,
       this.registerTime,
+      this.provinceDescription,
       this.timespanDate,
       this.accountManagerName,
       this.accountManagerLastName,
@@ -171,6 +173,7 @@ class SalesOrders {
     rated = json['rated'];
     accountManagerName = json['accountManagerName'];
     accountManagerLastName = json['accountManagerLastName'];
+    provinceDescription = json['provinceDescription'];
     timespanDate = json['timespanDate'];
     timespanDateDescription = json['timespanDateDescription'];
     registerTime = json['registerTime'];

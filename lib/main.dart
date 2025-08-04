@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:sigma/helper/colors.dart';
 import 'package:sigma/routes.dart';
 
 void main() async {
@@ -23,11 +24,32 @@ class MyHttpOverrides extends HttpOverrides {
 
 class SigmaApp extends StatelessWidget {
   const SigmaApp({super.key});
-
+  MaterialColor createMaterialColor(Color color) {
+    return MaterialColor(
+      color.value,
+      <int, Color>{
+        50: color.withOpacity(0.1),
+        100: color.withOpacity(0.2),
+        200: color.withOpacity(0.3),
+        300: color.withOpacity(0.4),
+        400: color.withOpacity(0.5),
+        500: color.withOpacity(0.6),
+        600: color.withOpacity(0.7),
+        700: color.withOpacity(0.8),
+        800: color.withOpacity(0.9),
+        900: color.withOpacity(1.0),
+      },
+    );
+  }
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      theme: ThemeData(
+        primarySwatch: createMaterialColor(AppColors.blue), // Or another color
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
+        useMaterial3: true,
+      ),
      builder: (context, child) {
         return Center(
           child: ConstrainedBox(
@@ -39,10 +61,7 @@ class SigmaApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       getPages: AppRoutes.appRoutes(),
       title: 'Sigma',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
-        useMaterial3: true,
-      ),
+
     );
   }
 }

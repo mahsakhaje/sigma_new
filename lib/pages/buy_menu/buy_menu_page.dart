@@ -20,16 +20,16 @@ class BuyMenuPage extends StatelessWidget {
       drawerIcon(
           path: 'assets/buy_order.svg',
           route: RouteName.buy,
-          arg: BuyState.NORMAL.name),
+          arg: BuyState.NORMAL.name,isItsSize:true),
       drawerIcon(
           path: 'assets/buy_new.svg',
           route: RouteName.advertise,
-          arg: BuyState.NEW.name),
+          arg: BuyState.NEW.name,isItsSize:true),
       drawerIcon(
           path: 'assets/buy_used.svg',
           route: RouteName.advertise,
-          arg: BuyState.USED.name),
-      drawerIcon(path: 'assets/loan.svg', route: RouteName.loan)
+          arg: BuyState.USED.name,isItsSize:true),
+      drawerIcon(path: 'assets/loan.svg', route: RouteName.loan,isItsSize:true)
     ]);
     return ParentMenuWidget(child: Center(), title: Strings.buyCar);
   }

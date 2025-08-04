@@ -11,7 +11,7 @@ import 'package:sigma/models/global_app_data.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 Widget drawerIcon(
-    {required String path, required String route, String arg = ''}) {
+    {required String path, required String route, String arg = '',bool isItsSize=false}) {
   return InkWell(
     onTap: () async {
       if (route == 'exit') {
@@ -76,7 +76,7 @@ Widget drawerIcon(
       }
       Get.toNamed(route, arguments: arg);
     },
-    child: SvgPicture.asset(path,fit: BoxFit.fill,),
+    child: SvgPicture.asset(path,fit:isItsSize?BoxFit.contain: BoxFit.fill,),
   );
 }
 

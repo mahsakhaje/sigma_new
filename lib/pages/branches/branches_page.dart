@@ -115,6 +115,7 @@ class BranchesPage extends StatelessWidget {
       }
 
       return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CustomText(
             (selectedBranch.address ?? '').usePersianNumbers(),
@@ -122,13 +123,19 @@ class BranchesPage extends StatelessWidget {
             size: 14,
           ),
           const SizedBox(height: 8),
-          Row(
-            children: [
-              SizedBox(
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: (selectedBranch.telNumber ?? '')
+                .split('-')
+                .where((number) => number.trim().isNotEmpty)
+                .map((phoneNumber) => Padding(
+              padding: const EdgeInsets.only(bottom: 4.0),
+              child: SizedBox(
                 width: 140,
-                child: showRoomNumber(selectedBranch.telNumber ?? ''),
+                child: showRoomNumber(phoneNumber.trim()),
               ),
-            ],
+            ))
+                .toList(),
           ),
           const SizedBox(height: 48),
         ],
@@ -148,7 +155,7 @@ class BranchesPage extends StatelessWidget {
         }
       },
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 10),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             color: AppColors.lightGrey),
@@ -160,12 +167,12 @@ class BranchesPage extends StatelessWidget {
               color: isLite ? Colors.black : Colors.white,
             ),
 
-            const SizedBox(width: 8),
             CustomText(
               number.usePersianNumbers(),
               color: isLite ? Colors.black : Colors.white,
-              textAlign: TextAlign.left,
+              textAlign: TextAlign.center,
               fontWeight: FontWeight.bold,
+
             ),
           ],
         ),
@@ -216,7 +223,7 @@ class BranchesPage extends StatelessWidget {
       BuildContext context, BranchesController controller) async {
     var a = await CustomBottomSheet.show(
       context: Get.context!,
-      initialChildSize:controller.branchesInDialog.length==1?0.4: 0.85,
+      initialChildSize:controller.branchesInDialog.length==1?0.4: 0.6,
       child: Column(
         children: [
           Obx(() {
@@ -269,6 +276,14 @@ class BranchesPage extends StatelessWidget {
 
               title: RadioListTile<int>(
                 value: index,
+
+                activeColor: AppColors.blue,
+                fillColor: MaterialStateProperty.resolveWith<Color>((states) {
+                  if (states.contains(MaterialState.selected)) {
+                    return AppColors.blue; // selected color
+                  }
+                  return AppColors.blue;// unselected color
+                }),
                 groupValue: controller.selectedBranchIndex.value,
                 onChanged: (int? value) {
                   if (value != null) {
@@ -281,7 +296,7 @@ class BranchesPage extends StatelessWidget {
                       (branch.name ?? '').usePersianNumbers(),
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
-                      size: 12,
+                      size: 11,
                     ),
                   ],
                 ),
@@ -304,26 +319,28 @@ class BranchesPage extends StatelessWidget {
                           textAlign: TextAlign.right,
                           fontWeight: FontWeight.bold,
                           maxLine: 2,
+                          size: 11
                         ),
                       ),
                     ),
                   ],
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    SizedBox(
-                      width: 8,
-                    ),
-                    Directionality(
-                      textDirection: TextDirection.ltr,
-                      child:
-                          showRoomNumber(branch.telNumber ?? "", isLite: true),
-                    ),
-                    SizedBox(
-                      width: 8,
-                    ),
-                  ],
+                Directionality(
+                  textDirection: TextDirection.ltr,
+                  child: Wrap(
+                   // crossAxisAlignment: CrossAxisAlignment.start,
+                    children: (branch.telNumber ?? '')
+                        .split('-')
+                        .where((number) => number.trim().isNotEmpty)
+                        .map((phoneNumber) => Padding(
+                      padding: const EdgeInsets.only(bottom: 4.0),
+                      child: SizedBox(
+                        width: 140,
+                        child: showRoomNumber(phoneNumber.trim(),isLite: true),
+                      ),
+                    ))
+                        .toList(),
+                  ),
                 ),
                 const SizedBox(height: 4),
               ],
