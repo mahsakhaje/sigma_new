@@ -149,6 +149,7 @@ class MyReservationsController extends GetxController {
 
     if (response?.message == 'OK') {
       await refreshData();
+      Get.back();
     }
 
     await Future.delayed(
@@ -234,8 +235,9 @@ class MyReservationsController extends GetxController {
               ),
               InkWell(
                 onTap: () async {
+                  print('here');
                   onCancelPressed(order);
-                  Get.back(result: true);
+                  //Get.back(result: true);
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
