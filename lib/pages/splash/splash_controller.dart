@@ -83,8 +83,11 @@ class SplashController extends GetxController {
     try {
       // Get current version
       PackageInfo packageInfo = await PackageInfo.fromPlatform();
-      String currentVersion = packageInfo.version;
+      String currentVersion='';
+      currentVersion  = packageInfo.version;
+      String cleanVersion = currentVersion.split('-')[0].split('+')[0];
 
+      currentVersion = cleanVersion;
       // Call your API to check for updates (replace with your actual API call)
       var verResponse = await DioClient.instance.checkVersion();
 
@@ -110,7 +113,7 @@ class SplashController extends GetxController {
             textAlign: TextAlign.center,
             fontWeight: FontWeight.bold,
             isRtl: true,
-            size: 16,
+            size: 14,
             color: Colors.black),
         actions: [
           Row(
@@ -148,7 +151,7 @@ class SplashController extends GetxController {
             'نسخه جدید با تجربه کاربری بهتر آماده است. \nلطفا همین حالا بروزرسانی کنید.',
             textAlign: TextAlign.center,
             fontWeight: FontWeight.bold,
-            size: 16,
+            size: 14,
             isRtl: true,
             color: Colors.black),
         actions: [
