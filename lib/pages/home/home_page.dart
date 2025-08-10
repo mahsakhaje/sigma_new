@@ -37,6 +37,10 @@ class _HomePgeState extends State<HomePge> {
     Future.delayed(const Duration(seconds: 1), () async {
       final _packageInfo = await PackageInfo.fromPlatform();
       version = await _packageInfo.version;
+
+      String cleanVersion = version.split('-')[0].split('+')[0];
+
+      version = cleanVersion;
       if (mounted) {
         _openLeftDrawer();
       }

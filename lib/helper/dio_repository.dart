@@ -103,6 +103,7 @@ class DioClient {
             headers: {'Authorization': 'Bearer $token'},
             responseType: isBytes ? ResponseType.bytes : ResponseType.json),
       );
+      print('****');
       print(response);
       // if(response.data['message']=='INVALID_TOKEN'){
       //   showToast(ToastState.ERROR, response.data['persianMessage']);
@@ -1103,8 +1104,10 @@ class DioClient {
 
   Future<String> getVersion() async {
     final packageInfo = await PackageInfo.fromPlatform();
-    var version = packageInfo.version;
-
+    var version = '';
+    version = packageInfo.version;
+    String cleanVersion = version.split('-')[0].split('+')[0];
+    version = cleanVersion;
     if (UniversalPlatform.isAndroid) {
       version = 'a$version';
     }

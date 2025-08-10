@@ -4,12 +4,20 @@ plugins {
     id "dev.flutter.flutter-gradle-plugin"
 }
 
+// بارگذاری تنظیمات local.properties
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
 if (localPropertiesFile.exists()) {
     localPropertiesFile.withReader('UTF-8') { reader ->
         localProperties.load(reader)
     }
+}
+
+// بارگذاری تنظیمات keystore
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
 def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
@@ -23,8 +31,8 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace "com.example.sigma"
-    compileSdk 34
+    namespace "ir.sigmatec.sigma"
+    compileSdk flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -41,21 +49,93 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "ir.sigmatec.sigma"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
 
+    // تنظیمات signing
+    signingConfigs {
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+
+    // تعریف Product Flavors
+    flavorDimensions "store"
+
+    productFlavors {
+        cafebazaar {
+            dimension "store"
+            applicationIdSuffix ".bazaar"
+            versionNameSuffix "-bazaar"
+
+
+            buildConfigField "String", "STORE_TYPE", '"cafebazaar"'
+            buildConfigField "String", "STORE_NAME", '"کافه بازار"'
+            buildConfigField "String", "STORE_PACKAGE", '"com.farsitel.bazaar"'
+        }
+
+        myket {
+            dimension "store"
+            applicationIdSuffix ".myket"
+            versionNameSuffix "-myket"
+
+
+            buildConfigField "String", "STORE_TYPE", '"myket"'
+            buildConfigField "String", "STORE_NAME", '"مایکت"'
+            buildConfigField "String", "STORE_PACKAGE", '"ir.mservices.market"'
+        }
+
+        googleplay {
+            dimension "store"
+            applicationIdSuffix ".gplay"
+            versionNameSuffix "-gplay"
+
+
+            buildConfigField "String", "STORE_TYPE", '"googleplay"'
+            buildConfigField "String", "STORE_NAME", '"Google Play"'
+            buildConfigField "String", "STORE_PACKAGE", '"com.android.vending"'
+        }
+
+        universal {
+            dimension "store"
+
+
+
+            buildConfigField "String", "STORE_TYPE", '"auto"'
+            buildConfigField "String", "STORE_NAME", '"خودکار"'
+            buildConfigField "String", "STORE_PACKAGE", '""'
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
+            // استفاده از کلید signing برای release
+            signingConfig keystoreProperties['storeFile'] ? signingConfigs.release : signingConfigs.debug
+
+            // بهینه‌سازی
+            minifyEnabled false
+            shrinkResources false
+
+            // ProGuard
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            // تنظیمات اضافی
+            debuggable false
+            jniDebuggable false
+            renderscriptDebuggable false
+        }
+
+        debug {
+            applicationIdSuffix ".debug"
+            versionNameSuffix "-debug"
+            debuggable true
         }
     }
 }
