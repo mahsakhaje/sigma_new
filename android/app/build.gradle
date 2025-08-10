@@ -72,8 +72,6 @@ android {
     productFlavors {
         cafebazaar {
             dimension "store"
-            applicationIdSuffix ".bazaar"
-            versionNameSuffix "-bazaar"
 
 
             buildConfigField "String", "STORE_TYPE", '"cafebazaar"'
@@ -83,8 +81,6 @@ android {
 
         myket {
             dimension "store"
-            applicationIdSuffix ".myket"
-            versionNameSuffix "-myket"
 
 
             buildConfigField "String", "STORE_TYPE", '"myket"'
@@ -94,8 +90,6 @@ android {
 
         googleplay {
             dimension "store"
-            applicationIdSuffix ".gplay"
-            versionNameSuffix "-gplay"
 
 
             buildConfigField "String", "STORE_TYPE", '"googleplay"'
@@ -105,7 +99,6 @@ android {
 
         universal {
             dimension "store"
-
 
 
             buildConfigField "String", "STORE_TYPE", '"auto"'

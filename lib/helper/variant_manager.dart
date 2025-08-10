@@ -71,10 +71,6 @@ class BuildVariantStoreManager {
       String buildVariant = await _getBuildVariant();
 
       // اگر لینک سفارشی ارائه شده و از سایت شما است
-      if (customUpdateUrl != null && customUpdateUrl.contains('sigmatec.ir')) {
-        await _launchUrl(customUpdateUrl);
-        return;
-      }
 
       // بر اساس build variant عمل کن
       switch (buildVariant) {
@@ -85,7 +81,7 @@ class BuildVariantStoreManager {
           await _openMyket(packageName);
           break;
         case 'googleplay':
-          await _openGooglePlay(packageName);
+          await _openGooglePlay(customUpdateUrl ?? "");
           break;
         default:
           await _openCafeBazaar(packageName); // پیش‌فرض
@@ -130,18 +126,22 @@ class BuildVariantStoreManager {
   }
 
   static Future<void> _openGooglePlay(String packageName) async {
-    final Uri playStoreUri = Uri.parse('market://details?id=$packageName');
-    final Uri playStoreWebUri =
-        Uri.parse('https://play.google.com/store/apps/details?id=$packageName');
-
-    try {
-      if (await canLaunchUrl(playStoreUri)) {
-        await launchUrl(playStoreUri);
-      } else {
-        await launchUrl(playStoreWebUri, mode: LaunchMode.externalApplication);
-      }
-    } catch (e) {
-      print('Error opening Google Play: $e');
+    // final Uri playStoreUri = Uri.parse('market://details?id=$packageName');
+    // final Uri playStoreWebUri =
+    //     Uri.parse('https://play.google.com/store/apps/details?id=$packageName');
+    //
+    // try {
+    //   if (await canLaunchUrl(playStoreUri)) {
+    //     await launchUrl(playStoreUri);
+    //   } else {
+    //     await launchUrl(playStoreWebUri, mode: LaunchMode.externalApplication);
+    //   }
+    // } catch (e) {
+    //   print('Error opening Google Play: $e');
+    // }
+    if (packageName != null && packageName.contains('sigmatec.ir')) {
+      await _launchUrl(packageName);
+      return;
     }
   }
 

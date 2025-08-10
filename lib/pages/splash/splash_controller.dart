@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:flutter/services.dart';
@@ -104,7 +106,7 @@ class SplashController extends GetxController {
       AlertDialog(
         //  title: Text('بروزرسانی اجباری'),
         content: CustomText(
-            'نسخه جدید با تجربه کاربری بهتر آماده است. \nلطفا همین حالا نصب کنید.',
+            'نسخه جدید با تجربه کاربری بهتر آماده است. \nلطفا همین حالا بروزرسانی کنید.',
             textAlign: TextAlign.center,
             fontWeight: FontWeight.bold,
             isRtl: true,
@@ -114,8 +116,13 @@ class SplashController extends GetxController {
           Row(
             children: [
               Expanded(
-                child: customOutlinedButton(
-                    () => SystemNavigator.pop(), 'بازگشت',
+                child: customOutlinedButton(() {
+                  if (Platform.isAndroid) {
+                    SystemNavigator.pop();
+                  } else if (Platform.isIOS) {
+                    exit(0); // Not recommended for App Store apps
+                  }
+                }, 'بازگشت',
                     txtColor: Colors.black, borderColorolor: Colors.black),
               ),
               SizedBox(width: 8),
@@ -138,7 +145,7 @@ class SplashController extends GetxController {
     Get.dialog(
       AlertDialog(
         content: CustomText(
-            'نسخه جدید با تجربه کاربری بهتر آماده است. \nلطفا همین حالا نصب کنید.',
+            'نسخه جدید با تجربه کاربری بهتر آماده است. \nلطفا همین حالا بروزرسانی کنید.',
             textAlign: TextAlign.center,
             fontWeight: FontWeight.bold,
             size: 16,
