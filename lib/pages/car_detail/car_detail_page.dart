@@ -316,7 +316,7 @@ class _CarDetailContent extends StatelessWidget {
       (
         'قیمت',
         NumberUtils.separateThousand(
-            int.tryParse(order.advertiseAmount ?? '0'.usePersianNumbers()) ?? 0)
+            int.tryParse(order.advertiseAmount ?? '0'.usePersianNumbers()) ?? 0)+'   تومان '
       ),
       // ('توضیحات فروشنده', order.advertiseComment ?? "0"),
       ('نام شوروم', order.showRoomName ?? ""),

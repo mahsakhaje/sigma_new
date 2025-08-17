@@ -10,6 +10,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:sigma/global_custom_widgets/custom_text.dart';
 import 'package:sigma/helper/colors.dart';
 import 'package:universal_platform/universal_platform.dart';
@@ -393,49 +394,120 @@ double cardBorderRadius() => 8;
 // }
 
 Future<String> getVersion() async {
-  final _packageInfo = await PackageInfo.fromPlatform();
-  var version = await _packageInfo.version;
-
+  final packageInfo = await PackageInfo.fromPlatform();
+  var version = '';
+  version = packageInfo.version;
+  String cleanVersion = version.split('-')[0].split('+')[0];
+  version = cleanVersion;
   if (UniversalPlatform.isAndroid) {
     version = 'a$version';
   }
   if (UniversalPlatform.isIOS) {
     version = 'i$version';
   }
-  return version ?? "";
+  return version;
 }
 
-Future<String> saveFile(String fileName, List<int> bytes) async {
-  showToast(ToastState.INFO, 'لطفا منتظر بمانید');
 
-  Directory? directory;
-  File? file;
+Future<String> saveFile(String fileName, List<int> bytes) async {
   try {
+    Directory directory;
+
     if (defaultTargetPlatform == TargetPlatform.android) {
-//downloads folder - android only - API>30
-      directory = Directory('/storage/emulated/0/Download');
+      // Try to get Downloads directory first
+      try {
+        final List<Directory>? downloadsDir = await getExternalStorageDirectories(type: StorageDirectory.downloads);
+        if (downloadsDir != null && downloadsDir.isNotEmpty) {
+          directory = downloadsDir.first;
+        } else {
+          // Fallback to external storage
+          directory = await getExternalStorageDirectory() ?? await getApplicationDocumentsDirectory();
+          // Create Downloads subfolder
+          directory = Directory('${directory.path}/Download');
+        }
+      } catch (e) {
+        print('Error accessing Downloads: $e');
+        directory = await getApplicationDocumentsDirectory();
+      }
     } else {
       directory = await getApplicationDocumentsDirectory();
     }
 
-    bool hasExisted = await directory.exists();
-    if (!hasExisted) {
-      directory.create();
+    // Ensure directory exists
+    if (!await directory.exists()) {
+      await directory.create(recursive: true);
     }
 
-//file to saved
-    file = File("${directory.path}${Platform.pathSeparator}$fileName.pdf");
-    if (!file.existsSync()) {
-      await file.create();
-    }
+    // Clean filename to avoid path issues
+    final cleanFileName = fileName.replaceAll(RegExp(r'[<>:"/\\|?*]'), '_');
+    final filePath = '${directory.path}${Platform.pathSeparator}$cleanFileName.pdf';
+
+    print('Saving to: $filePath');
+
+    final file = File(filePath);
+
+    // Write file
     await file.writeAsBytes(bytes);
-    showToast(ToastState.SUCCESS, 'با موفقیت ذخیره شد');
-    return directory.path;
-  } catch (e) {
 
-    if (file != null && file.existsSync()) {
-      file.deleteSync();
+    // Verify file was created and has content
+    if (await file.exists() && await file.length() > 0) {
+      print('File saved successfully: $filePath');
+      showToast(ToastState.SUCCESS, 'با موفقیت ذخیره شد');
+      return filePath; // Return full file path, not just directory
+    } else {
+      throw Exception('File was not created properly');
     }
+
+  } on FileSystemException catch (e) {
+    print('FileSystemException: ${e.message}');
+    showToast(ToastState.ERROR, 'خطا در ذخیره فایل');
+    throw Exception('Failed to save file: ${e.message}');
+  } catch (e) {
+    print('Unexpected error: $e');
+    showToast(ToastState.ERROR, 'خطای غیرمنتظره');
     rethrow;
+  }
+}
+
+// Alternative method for Android Downloads folder
+Future<String> saveFileToDownloads(String fileName, List<int> bytes) async {
+  try {
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      // Request storage permission if needed
+      var status = await Permission.storage.status;
+      if (!status.isGranted) {
+        status = await Permission.storage.request();
+        if (!status.isGranted) {
+          throw Exception('Storage permission denied');
+        }
+      }
+
+      // Use Downloads directory
+      final directory = Directory('/storage/emulated/0/Download');
+      if (!await directory.exists()) {
+        await directory.create(recursive: true);
+      }
+
+      final cleanFileName = fileName.replaceAll(RegExp(r'[<>:"/\\|?*]'), '_');
+      final filePath = '${directory.path}/$cleanFileName.pdf';
+
+      final file = File(filePath);
+      await file.writeAsBytes(bytes);
+
+      if (await file.exists() && await file.length() > 0) {
+        showToast(ToastState.SUCCESS, 'فایل در پوشه دانلود ذخیره شد');
+        return filePath;
+      } else {
+        throw Exception('File not created');
+      }
+    }
+
+    // Fallback for other platforms
+    return await saveFile(fileName, bytes);
+
+  } catch (e) {
+    print('Error saving to Downloads: $e');
+    // Fallback to app directory
+    return await saveFile(fileName, bytes);
   }
 }

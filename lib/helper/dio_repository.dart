@@ -685,28 +685,47 @@ class DioClient {
         : null;
   }
 
-// --- Helper Methods (in
+  Future<String?> downloadFileFromUrl(String url, String fileName) async {
+    try {
+      final response = await Dio().get(
+        url,
+        options: Options(responseType: ResponseType.bytes),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+
+        return await saveFile(
+            '${fileName}_${DateTime.now().millisecondsSinceEpoch}',
+            response.data,
+            );
+      }
+      return null;
+    } catch (e) {
+      print('Error downloading file: $e');
+      return null;
+    }
+  }
+
   Future<String?> getExpertReport(String id) async {
     final response = await _makePostRequest(
         URLs.GetExpertReportUrl,
         {
           'salesOrder': {'id': id},
           'version': await getVersion(),
-          'token': getShortToken(), // Added missing token
+          'token': getShortToken(),
         },
         isBytes: true);
 
     if (response?.statusCode == 200 && response?.data != null) {
       if (kIsWeb) {
         return await FileSaver.instance.saveFile(
-          name: id,
+          name: 'expert_report_$id',
           bytes: response!.data,
           ext: 'pdf',
           mimeType: MimeType.pdf,
         );
       } else {
-        print(response!.data);
-        return await saveFile(id, response!.data);
+        return await saveFile('expert_report_$id', response!.data);
       }
     }
     return null;
@@ -1100,21 +1119,6 @@ class DioClient {
     return response?.statusCode == 200
         ? MyExpertOrdersResponse.fromJson(response?.data)
         : null;
-  }
-
-  Future<String> getVersion() async {
-    final packageInfo = await PackageInfo.fromPlatform();
-    var version = '';
-    version = packageInfo.version;
-    String cleanVersion = version.split('-')[0].split('+')[0];
-    version = cleanVersion;
-    if (UniversalPlatform.isAndroid) {
-      version = 'a$version';
-    }
-    if (UniversalPlatform.isIOS) {
-      version = 'i$version';
-    }
-    return version;
   }
 
   Future<BaseResponse?> cancelOrder(

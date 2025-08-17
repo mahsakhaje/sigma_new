@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:open_file_plus/open_file_plus.dart';
@@ -84,20 +87,31 @@ class CarDetailController extends GetxController {
       showToast(ToastState.INFO, 'لطفا منتظر بمانید');
 
       isExpertLoading.value = true;
-      final response =
-          await DioClient.instance.getExpertReport(carId.toString());
-      print('**************');
-      print(response);
+      final response = await DioClient.instance.getExpertReport(carId.toString());
+
+      print('Response: $response');
+
       if (response != null) {
-        if (response.contains('فایل')) {
+        // Check if response contains error message
+        if (response.contains('فایل') && response.contains('خطا')) {
           showToast(ToastState.ERROR, 'خطا در نمایش فایل');
         } else {
+          // Response should be the full file path
           showToast(ToastState.SUCCESS, 'با موفقیت ذخیره شد');
 
-          await OpenFile.open(response);
+          // Verify file exists before trying to open
+          final file = File(response);
+          if (await file.exists()) {
+            await OpenFile.open(response);
+          } else {
+            showToast(ToastState.ERROR, 'فایل یافت نشد');
+          }
         }
+      } else {
+        showToast(ToastState.ERROR, 'خطا در دریافت فایل');
       }
     } catch (e) {
+      print('Download error: $e');
       showToast(ToastState.ERROR, 'خطا در دانلود فایل');
     } finally {
       isExpertLoading.value = false;
@@ -106,24 +120,27 @@ class CarDetailController extends GetxController {
 
   Future<void> downloadCatalog() async {
     try {
+      showToast(ToastState.INFO, 'لطفا منتظر بمانید');
+
       isDownloading.value = true;
       final catalogUrl = saleOrder.value?.catalogUrl;
-      print(catalogUrl);
+      print('Catalog URL: $catalogUrl');
+
       if (catalogUrl != null) {
-        if (kIsWeb) {
-          await launchUrl(
-            Uri.parse(catalogUrl),
-            mode: LaunchMode.externalNonBrowserApplication,
-          );
+        // Download the file instead of launching URL
+        final filePath = await DioClient.instance.downloadFileFromUrl(catalogUrl, 'catalog');
+
+        if (filePath != null) {
+          showToast(ToastState.SUCCESS, 'با موفقیت ذخیره شد');
+          await OpenFile.open(filePath);
         } else {
-          // Get.toNamed(RouteName.pdf, arguments: catalogUrl);
-          await launchUrl(
-            Uri.parse(catalogUrl),
-            mode: LaunchMode.externalNonBrowserApplication,
-          );
+          showToast(ToastState.ERROR, 'خطا در دانلود فایل');
         }
+      } else {
+        showToast(ToastState.ERROR, 'لینک فایل یافت نشد');
       }
     } catch (e) {
+      print('Download error: $e');
       showToast(ToastState.ERROR, 'خطا در دانلود فایل');
     } finally {
       isDownloading.value = false;

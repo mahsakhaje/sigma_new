@@ -16,6 +16,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter/material.dart';
 
+import '../../helper/helper.dart';
+
 class SplashController extends GetxController {
   late VideoPlayerController videoController;
   var isVideoReady = false.obs;
@@ -82,15 +84,14 @@ class SplashController extends GetxController {
     print('check version called');
     try {
       // Get current version
-      PackageInfo packageInfo = await PackageInfo.fromPlatform();
-      String currentVersion='';
-      currentVersion  = packageInfo.version;
-      String cleanVersion = currentVersion.split('-')[0].split('+')[0];
+      String currentVersion = '';
 
-      currentVersion = cleanVersion;
+
+      currentVersion = await getVersion();
       // Call your API to check for updates (replace with your actual API call)
       var verResponse = await DioClient.instance.checkVersion();
-
+      print((verResponse?.newVersion ?? "") );
+      print(currentVersion);
       if (verResponse != null && verResponse.status == 0) {
         if (verResponse.forceUpdate == '1') {
           _showForceUpdateDialog(verResponse.updateLink ?? '');
