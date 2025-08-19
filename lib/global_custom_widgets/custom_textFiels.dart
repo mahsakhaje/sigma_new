@@ -17,6 +17,7 @@ class CustomTextFormField extends StatefulWidget {
   int maxLen;
   bool isNationalId;
   bool isEmail;
+  bool isCoNationalId;
   bool acceptAll;
   double borderRadius;
   Widget? prefixIcon;
@@ -34,6 +35,7 @@ class CustomTextFormField extends StatefulWidget {
     this.prefixIcon = null,
     this.suffixIcon = null,
     this.isNationalId = false,
+    this.isCoNationalId = false,
     this.isOnlyNumber = false,
     this.isEmail = false,
     this.focusNode,
@@ -69,6 +71,14 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       return null;
     }
     value = value?.toEnglishDigit();
+    if (widget.isCoNationalId) {
+      if ((value?.length ?? 0) < 11) {
+        return 'شناسه ملی وارد شده صحیح نمی باشد';
+      } else if (!isValidCoNationalId(value ?? "")) {
+        return 'شناسه ملی  وارد شده صحیح نمی باشد';
+      }
+      return null;
+    }
     if (widget.isNationalId) {
       if ((value?.length ?? 0) < 10) {
         return 'کدملی وارد شده صحیح نمی باشد.';
@@ -204,7 +214,45 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       ),
     );
   }
+  bool isValidCoNationalId(String value) {
+    bool isValidNationalId = true; // Initialize as true
 
+    // Assuming getValues() returns a String or null
+
+    if (value == null) {
+      isValidNationalId = false;
+    }
+
+    if ((value?.length != 11) || !RegExp(r'^[0-9]*$').hasMatch(value ?? "")) {
+      isValidNationalId = false;
+    }
+
+    var sumOfDigits = 0;
+    var cntr = 0;
+    var zaribArray = [29, 27, 23, 19, 17, 29, 27, 23, 19, 17];
+    var checkDigit = int.parse(value!.substring(10, 11));
+    var lastNumber = int.parse(value.substring(9, 10));
+    var nCodeArray = List<int>.filled(10, 0);
+
+    for (cntr = 0; cntr < 10; cntr++) {
+      nCodeArray[cntr] = int.parse(value.substring(cntr, cntr + 1));
+      nCodeArray[cntr] += lastNumber + 2;
+      nCodeArray[cntr] *= zaribArray[cntr];
+      sumOfDigits += nCodeArray[cntr];
+    }
+
+    var mod = sumOfDigits % 11;
+
+    if (mod > 9) {
+      mod = 0;
+    }
+
+    if (mod != checkDigit) {
+      isValidNationalId = false;
+    }
+
+    return isValidNationalId;
+  }
   List<TextInputFormatter> getFormatter() {
     if (widget.isOnlyNumber || widget.isNationalId) {
       return [PersianFormatter()];

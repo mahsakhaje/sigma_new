@@ -38,32 +38,34 @@ class EditProfileInfo extends StatelessWidget {
                     const SizedBox(height: 34),
                     _buildProfileHeader(),
                     const SizedBox(height: 34),
-                    Directionality(
-                      textDirection: TextDirection.rtl,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          buildRadioTile<Gender>(
-                            label: Strings.male,
-                            value: Gender.male,
-                            enabled: controller.isEnabled.value,
-
-                            groupValue: controller.userGender,
-                            onChanged: controller.setUserGender,
-                            values: Gender.values,
+                    controller.isLegal.value
+                        ? SizedBox(key: ValueKey('empty'))
+                        : Directionality(
+                            key: ValueKey('genderRow'),
+                            textDirection: TextDirection.rtl,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                buildRadioTile<Gender>(
+                                  label: Strings.male,
+                                  value: Gender.male,
+                                  enabled: controller.isEnabled.value,
+                                  groupValue: controller.userGender,
+                                  onChanged: controller.setUserGender,
+                                  values: Gender.values,
+                                ),
+                                const SizedBox(width: 36),
+                                buildRadioTile<Gender>(
+                                  label: Strings.female,
+                                  enabled: controller.isEnabled.value,
+                                  value: Gender.female,
+                                  groupValue: controller.userGender,
+                                  onChanged: controller.setUserGender,
+                                  values: Gender.values,
+                                ),
+                              ],
+                            ),
                           ),
-                          const SizedBox(width: 36),
-                          buildRadioTile<Gender>(
-                            label: Strings.female,
-                            enabled: controller.isEnabled.value,
-                            value: Gender.female,
-                            groupValue: controller.userGender,
-                            onChanged: controller.setUserGender,
-                            values: Gender.values,
-                          ),
-                        ],
-                      ),
-                    ),
                     _buildForm(),
                     const SizedBox(height: 34),
                     _buildSubmitButton(),
@@ -82,11 +84,12 @@ class EditProfileInfo extends StatelessWidget {
     return Column(
       children: [
         const SizedBox(height: 8),
-        CustomText(controller.fullName.value, size: 16,fontWeight: FontWeight.bold),
+        CustomText(controller.fullName.value,
+            size: 16, fontWeight: FontWeight.bold),
         const SizedBox(height: 8),
         Center(
-            child: CustomText(controller.phoneNumber.value!.usePersianNumbers(),fontWeight: FontWeight.bold,
-                size: 16)),
+            child: CustomText((controller.phoneNumber.value??'').usePersianNumbers(),
+                fontWeight: FontWeight.bold, size: 16)),
         const SizedBox(height: 12),
       ],
     );
@@ -139,7 +142,21 @@ class EditProfileInfo extends StatelessWidget {
       child: Column(
         children: [
           dualRow(_buildNameField(), _buildLastNameField()),
-         // dualRow(_buildNationalIdField(), _buildPostalCodeField()),
+          dualRow(_buildNationalIdField(), _buildPostalCodeField()),
+          if (controller.isLegal.value)
+            dualRow(
+              CustomTextFormField(
+                controller.coNameController,
+                hintText: Strings.companyNameField,
+              ),
+              CustomTextFormField(
+                controller.coNationalCodeController,
+                hintText: Strings.companyNationalCode,
+                isCoNationalId: true,
+                maxLen: 11,
+                isOnlyNumber: true,
+              ),
+            ),
           dualRow(_buildProvinceField(), _buildCityField()),
           Padding(
             padding: const EdgeInsets.all(4.0),
@@ -177,7 +194,7 @@ class EditProfileInfo extends StatelessWidget {
   Widget _buildNationalIdField() {
     return CustomTextFormField(
       controller.nationalIdController,
-      enabled: controller.isEnabled.value,
+      enabled: false,
       maxLen: 10,
       //isOnlyNumber: true,
       isNationalId: true,
@@ -215,7 +232,7 @@ class EditProfileInfo extends StatelessWidget {
       maxLen: 50,
       autovalidateMode: AutovalidateMode.disabled,
       enabled: controller.isEnabled.value,
-       isEmail: true,
+      isEmail: true,
     );
   }
 

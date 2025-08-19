@@ -20,8 +20,10 @@ class EditProfileController extends GetxController {
   final TextEditingController provinceController = TextEditingController();
   final TextEditingController cityController = TextEditingController();
   var userGender = Gender.male.obs;
-
+  final coNameController = TextEditingController();
+  final coNationalCodeController = TextEditingController();
   final RxBool isEnabled = false.obs;
+  final RxBool isLegal = false.obs;
   final RxBool isLoading = false.obs;
   final RxMap<String, String> geoNames = <String, String>{}.obs;
   final RxMap<String, String> geoCityNames = <String, String>{}.obs;
@@ -53,6 +55,7 @@ class EditProfileController extends GetxController {
 
       await _loadProvinces();
       if (userInfo != null && userInfo.message == 'OK') {
+        isLegal.value = (userInfo.account?.isReal ?? '') != '1';
         await _populateUserData(userInfo);
       }
 
@@ -76,11 +79,18 @@ class EditProfileController extends GetxController {
         userInfo.account?.sex == 'F' ? Gender.female : Gender.male;
     fullName.value =
         '${userInfo.account?.name ?? ''} ${userInfo.account?.lastName ?? ''}';
+    if (isLegal.value) {
+      coNameController.text =
+          (userInfo.account?.orgName ?? '').usePersianNumbers();
+      coNationalCodeController.text =
+          (userInfo.account?.orgNationalId ?? '').usePersianNumbers();
+    }
 
     provinceId.value = userInfo.account?.provinceId ?? '';
     cityId.value = userInfo.account?.geoNameId ?? '';
     selectedCity.value = userInfo.account?.geoNameDescription ?? '';
     selectedProvince.value = userInfo.account?.provinceDescription ?? '';
+    emailController.text = userInfo.account?.email ?? '';
     provinceController.text = selectedProvince.value ?? "";
     cityController.text = selectedCity.value ?? '';
     print(geoNames);
@@ -168,10 +178,13 @@ class EditProfileController extends GetxController {
           name: nameController.text.toEnglishDigit(),
           address: addressController.text.toEnglishDigit(),
           geoNameId: cityId.value,
+          orgNationalId: coNationalCodeController.text.toEnglishDigit(),
+          orgName: coNameController.text,
           gender: userGender.value == Gender.male ? 'M' : 'F',
           postalCode: postalCodeController.text.toEnglishDigit(),
+          email: emailController.text.toEnglishDigit(),
           lastName: lastNameController.text.toEnglishDigit(),
-          isReal: true,
+          isReal: !isLegal.value,
         );
 
         if (response?.message == "OK") {

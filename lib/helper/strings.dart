@@ -26,6 +26,8 @@ class Strings {
   static const companyName = 'نام نماینده';
   static const companyLastName = 'نام خانوادگی نماینده';
   static const companyNationalId = 'کدملی نماینده';
+  static const companyNameField = 'نام شرکت';
+  static const companyNationalCode = 'شناسه ملی شرکت';
   static const createAccountTitle = 'حساب کاربری خود را ایجاد کنید';
   static const enterOtpMessage = 'لطفا کد تایید فرستاده شده برای';
   static const natural = 'حقیقی';

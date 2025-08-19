@@ -146,10 +146,10 @@ SizedBox buildMobileGetData(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           back(authController),
-          const SizedBox(height: 48),
+          const SizedBox(height: 38),
           CustomText(Strings.welcome, size: 32, fontWeight: FontWeight.bold),
           const SizedBox(
-            height: 18,
+            height: 14,
           ),
           Form(
             key: _otpFormKey,

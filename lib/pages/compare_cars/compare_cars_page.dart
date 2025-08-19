@@ -29,7 +29,7 @@ class CompareCarsPage extends GetView<CompareCarsController> {
       child: Column(
         children: [
           // const SizedBox(height: 16),
-          // _buildComparisonTitle(),
+           _buildComparisonTitle(),
           const SizedBox(height: 16),
           Expanded(
             child: Padding(
@@ -46,14 +46,14 @@ class CompareCarsPage extends GetView<CompareCarsController> {
   Widget _buildComparisonTitle() {
     return Center(
       child: Container(
-        width: 160,
+        width: 260,
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(22),
+          borderRadius: BorderRadius.circular(8),
           border: Border.all(color: Colors.white),
         ),
         child: Center(
-          child: Obx(() => CustomText(controller.comparisonTitle)),
+          child:  CustomText(controller.comparisonTitle,isRtl: true,fontWeight: FontWeight.bold),
         ),
       ),
     );

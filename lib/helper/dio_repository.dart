@@ -693,11 +693,10 @@ class DioClient {
       );
 
       if (response.statusCode == 200 && response.data != null) {
-
         return await saveFile(
-            '${fileName}_${DateTime.now().millisecondsSinceEpoch}',
-            response.data,
-            );
+          '${fileName}_${DateTime.now().millisecondsSinceEpoch}',
+          response.data,
+        );
       }
       return null;
     } catch (e) {
@@ -936,6 +935,7 @@ class DioClient {
       required String name,
       required String orgName,
       required String gender,
+      required String email,
       required String orgNationalId,
       required String geoNameId,
       required String nationalId,
@@ -950,6 +950,7 @@ class DioClient {
         'password': password.toEnglishDigit(),
         'name': name,
         'sex': gender,
+        'email': email,
         'geoNameId': geoNameId,
         'referralCode': referralCode,
         'orgNationalId': orgNationalId.toEnglishDigit(),
@@ -1020,6 +1021,9 @@ class DioClient {
     required String nationalId,
     String? address,
     String? gender,
+    String? orgNationalId,
+    String? orgName,
+    String? email,
     String? postalCode,
     String? geoNameId,
     required bool isReal,
@@ -1030,8 +1034,11 @@ class DioClient {
         'name': name,
         'geoNameId': geoNameId,
         'sex': gender,
+        'email': email,
         'cellNumber': cellNumber.toEnglishDigit(),
         'lastName': lastName,
+        'orgName': orgName,
+        'orgNationalId': orgNationalId,
         'accountAddress': address?.toEnglishDigit(),
         'postalCode': postalCode?.toEnglishDigit(),
         'isReal': isReal ? '1' : '0',

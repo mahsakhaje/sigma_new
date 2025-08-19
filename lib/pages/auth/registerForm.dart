@@ -38,7 +38,6 @@ Widget buildRegister() {
               animationType: AnimationType.fade,
               enableActiveFill: true,
               keyboardType: TextInputType.number,
-
               pinTheme: PinTheme(
                 shape: PinCodeFieldShape.box,
                 borderRadius: BorderRadius.circular(5),
@@ -53,8 +52,8 @@ Widget buildRegister() {
                 selectedColor: AppColors.grey,
                 selectedFillColor: AppColors.grey,
               ),
-              textStyle: const TextStyle(fontSize: 18, height: 1.6,fontFamily: 'Peyda'),
-
+              textStyle: const TextStyle(
+                  fontSize: 18, height: 1.6, fontFamily: 'Peyda'),
               onCompleted: authController.onPinCompleted,
               appContext: Get.context!,
             ),
@@ -111,6 +110,19 @@ Widget buildRegister() {
                     isNationalId: true,
                     maxLen: 10,
                   )),
+              dualRow(
+                CustomTextFormField(
+                  authController.coNameController,
+                  hintText: Strings.companyNameField,
+                ),
+                CustomTextFormField(
+                  authController.coNationalCodeController,
+                  hintText: Strings.companyNationalCode,
+                  isCoNationalId: true,
+                  maxLen: 11,
+                  isOnlyNumber: true,
+                ),
+              ),
               dualRow(
                   CustomDropdown(
                     hint: Strings.province,
@@ -211,7 +223,6 @@ Widget buildRegister() {
             authController.referralCodeController,
             hintText: Strings.referralCode,
             acceptAll: true,
-
           ),
         ),
       ],
@@ -297,8 +308,8 @@ Widget buildRegister() {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Flexible(
-              child: CustomText(' سیگما را مطالعه نمودم و می پذیرم',
-                  size: 12, maxLine: 2),
+              child: CustomText(' سیگما را مطالعه نمودم و می پذیرم.',
+                  size: 12, maxLine: 2,isRtl: true),
             ),
             InkWell(
               onTap: () => Get.toNamed(RouteName.rules),

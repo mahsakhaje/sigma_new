@@ -13,12 +13,16 @@ import 'package:sigma/routes.dart';
 class DarkBackgroundWidget extends StatelessWidget {
   final Widget child;
   final String title;
+  final bool hasCustomBack;
+  final VoidCallback? onBackPressed;
 
-  const DarkBackgroundWidget({
-    super.key,
-    required this.child,
-    required this.title,
-  });
+  const DarkBackgroundWidget(
+      {super.key,
+      required this.child,
+      required this.title,
+      this.hasCustomBack = false,
+      this.onBackPressed
+      });
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +46,7 @@ class DarkBackgroundWidget extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: InkWell(
-                onTap: () => Get.back(),
+                onTap: hasCustomBack ?onBackPressed:() => Get.back(),
                 child: Row(
                   children: [
                     Icon(

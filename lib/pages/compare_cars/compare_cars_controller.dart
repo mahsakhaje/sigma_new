@@ -52,10 +52,9 @@ class CompareCarsController extends GetxController {
   }
 
   String get comparisonTitle {
-    final second = secondDetail.value?.salesOrder;
-    final first = firstDetail.value?.salesOrder;
 
-    return '${second?.brandDescription ?? ''} ${second?.carModelDescription ?? ''} / ${first?.brandDescription ?? ''} ${first?.carModelDescription ?? ''}';
+
+    return 'قیمت تمامی خودرو ها به تومان می باشد.';
   }
 }
 class Compare {

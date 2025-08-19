@@ -42,37 +42,37 @@ class RulesPage extends StatelessWidget {
                   fontFamily: 'Peyda',
 
                 ),
-                customWidgetBuilder: (element) {
-                  if (element.localName == 'li') {
-                    return Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Column(
-                          children: [
-                            Container(
-                              height: 14,
-                              width: 14,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: AppColors.blue,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(width: 8),
-                        Flexible(
-                          child: CustomText(
-                            '${element.text.replaceFirst('\n', '')}'.usePersianNumbers(),
-                            isRtl: true,
-                            size: 16,
-                            maxLine: 50,
-                          ),
-                        ),
-                      ],
-                    );
-                  }
-                  return null;
-                },
+                // customWidgetBuilder: (element) {
+                //   if (element.localName == 'li') {
+                //     return Row(
+                //       crossAxisAlignment: CrossAxisAlignment.center,
+                //       children: [
+                //         Column(
+                //           children: [
+                //             Container(
+                //               height: 14,
+                //               width: 14,
+                //               decoration: BoxDecoration(
+                //                 shape: BoxShape.circle,
+                //                 color: AppColors.blue,
+                //               ),
+                //             ),
+                //           ],
+                //         ),
+                //         const SizedBox(width: 8),
+                //         Flexible(
+                //           child: CustomText(
+                //             '${element.text.replaceFirst('\n', '')}'.usePersianNumbers(),
+                //             isRtl: true,
+                //             size: 16,
+                //             maxLine: 50,
+                //           ),
+                //         ),
+                //       ],
+                //     );
+                //   }
+                //   return null;
+                // },
                 customStylesBuilder: (element) {
                   return {
                     'text-align': UniversalPlatform.isWeb ? 'right' : 'justify',

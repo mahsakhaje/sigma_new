@@ -215,13 +215,19 @@ class AuthController extends GetxController {
   void goBack() {
     switch (currentState.value) {
       case PageState.EnterPhoneNumber:
+        isLoading.value = false;
+
         Get.back();
         break;
       case PageState.EnterCode:
         currentState.value = PageState.EnterPhoneNumber;
+        isLoading.value = false;
+
         break;
       case PageState.NewPassword:
         currentState.value = PageState.EnterCode;
+        isLoading.value = false;
+
         break;
     }
   }
@@ -317,7 +323,16 @@ class AuthController extends GetxController {
     isLoading.value = true;
     registerSuccess.value = false;
     errorMessage.value = '';
-
+    if (userState.value == UserState.normal &&
+        passwordController.text != passwordRepeatController.text) {
+      showToast(ToastState.ERROR, 'رمز عبور و تکرار آن یکسان نیست');
+      return;
+    }
+    if (userState.value == UserState.legal &&
+        haPasswordController.text != haPasswordRepeatController.text) {
+      showToast(ToastState.ERROR, 'رمز عبور و تکرار آن یکسان نیست');
+      return;
+    }
     try {
       var response = await DioClient.instance.register(
         name: userState.value == UserState.normal
@@ -327,8 +342,11 @@ class AuthController extends GetxController {
             ? lastNameController.text
             : haLastNameController.text,
         orgName: coNameController.text,
+        email: userState.value == UserState.normal
+            ? emailController.text
+            : haEmailController.text,
         gender: userGender.value == Gender.male ? 'M' : 'F',
-        orgNationalId: coNationalCodeController.text,
+        orgNationalId: coNationalCodeController.text.toEnglishDigit(),
         geoNameId: cityId.value,
         nationalId: userState.value == UserState.normal
             ? nationalCodeController.text
@@ -456,6 +474,9 @@ class AuthController extends GetxController {
 
   void startTimer() {
     timeLeft.value = 120;
+    if (canResend.value) {
+      sendOtp();
+    }
     canResend.value = false;
 
     _timer?.cancel();
