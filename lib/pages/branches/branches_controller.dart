@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:io';
 import 'dart:ui';
 
 // map_screen.dart
@@ -277,13 +278,24 @@ class BranchesController extends GetxController {
 
   // Navigation
   Future<void> launchNavigation() async {
+    var lat = selectedLat.value;
+    var lng = selectedLong.value;
     try {
-      await launchUrl(
-        Uri(scheme: 'geo', queryParameters: {
-          'q': '${selectedLat.value},${selectedLong.value}'
-        }),
-        mode: LaunchMode.externalApplication,
-      );
+      Uri uri;
+
+      if (Platform.isIOS) {
+        // Prefer Apple Maps
+        uri = Uri.parse("http://maps.apple.com/?q=$lat,$lng");
+      } else {
+        // Android (geo scheme works)
+        uri = Uri.parse("geo:$lat,$lng");
+      }
+
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        Get.snackbar('خطا', 'امکان باز کردن نقشه وجود ندارد');
+      }
     } catch (e) {
       Get.snackbar('خطا', 'امکان باز کردن نقشه وجود ندارد');
       print('Error launching navigation: $e');
