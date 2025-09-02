@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,6 +13,7 @@ import 'package:sigma/helper/helper.dart';
 import 'package:sigma/helper/route_names.dart';
 import 'package:sigma/models/all_cars_json_model.dart';
 import 'package:sigma/helper/strings.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class BuyController extends GetxController {
   // Observable variables
@@ -274,27 +277,28 @@ class BuyController extends GetxController {
   }
 
   void onFromYearSelected(String? str) {
-    print('1');
-    if (str == null) return;
-    print(2);
+    if (str == null) return carTypeManufactureYearsTo.clear();
     carTypeManufactureYearsTo.clear();
-
+    selectedToYear.value = null;
     carTypeManufactureYearsFrom.forEach((key, value) {
       if (value == str) {
         fromYearId = key;
       }
+    });
+    selectedFromYear.value = str;
 
-      // Use 'str' directly instead of selectedFromYear.value
-      int selectedYear = int.tryParse((str).substring(0, 4)) ?? 0;
-      int currentYear = int.tryParse(value.substring(0, 4)) ?? 0;
+    // Use 'str' directly instead of selectedFromYear.value
+    int selectedYear = int.tryParse((str).substring(0, 4)) ?? 0;
+
+    carTypeManufactureYearsFrom.forEach((key, value) {
+      int currentYear = int.tryParse(key?.substring(0, 4) ?? "0000") ?? 0;
+      print(currentYear);
 
       if (currentYear >= selectedYear) {
         carTypeManufactureYearsTo[key] = value;
       }
     });
-
     // Set the reactive value after processing
-    selectedFromYear.value = str;
     turn.value = 5;
   }
 
@@ -434,6 +438,17 @@ class BuyController extends GetxController {
 
       // Show success dialog
       if (response?.message == 'OK') {
+        carModels.clear();
+        carTypes.clear();
+        selectedCarModel.value = null;
+        selectedCarType.value = null;
+        selectedKiloMeteTo.value = null;
+        selectedFromYear.value = null;
+        selectedKiloMeterFrom.value = null;
+        selectedKiloMeterFrom.value = null;
+        selectedToYear.value = null;
+        selectedCity.value = null;
+        amountController.text = '';
         _showSuccessDialog(context, response);
       }
     } catch (e) {
@@ -460,7 +475,6 @@ class BuyController extends GetxController {
         barrierDismissible: true,
         context: context,
         builder: (_) => AlertDialog(
-              title: Container(),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -475,6 +489,60 @@ class BuyController extends GetxController {
                   _buildOrderNumberBox(response),
                   SizedBox(height: 16),
                   _buildActionButtons(context),
+
+                ],
+              ),
+            ));
+  }
+
+  void _showPelakSefidDialog(BuildContext context) {
+    showDialog(
+        barrierDismissible: true,
+        context: context,
+
+        builder: (_) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8), // Corner radius of 8
+          ),
+          insetPadding: EdgeInsets.all(16),
+              content: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Row(
+                    children: [
+                      SizedBox(
+                        height: 26,
+                      ),
+                      InkWell(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            Get.toNamed(RouteName.advertise);
+                          },
+                          child: Icon(
+                            Icons.close_outlined,
+                            color: Colors.black,
+                          )),
+                    ],
+                  ),
+                  Image.asset('assets/pelaksefid.png'),
+
+                  SizedBox(
+                    height: 36,
+                  ),
+                  CustomText(
+                      'اگر مایل هستید آگهی های پلاک سفید را هم مشاهده نمائید.',
+                      textAlign: TextAlign.center,
+                      isRtl: true,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold),
+                  SizedBox(height: 92),
+                  ConfirmButton(
+                      () => {
+                            launchUrl(
+                                Uri.parse('https://pelaksefid.ir/ads/all/'),
+                                mode: LaunchMode.inAppWebView)
+                          },
+                      'پلاک سفید')
                 ],
               ),
             ));
@@ -520,24 +588,15 @@ class BuyController extends GetxController {
     return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
       Expanded(
         child: ConfirmButton(
-          () {
+          () async {
             Navigator.of(context).pop();
+            _showPelakSefidDialog(context);
           },
-          'بازگشت',
+          'مشاهده آگهی ها',
+          borderRadius: 8,
+          fontSize: 12,
         ),
-      ),
-      SizedBox(width: 4),
-      Expanded(
-          child: ConfirmButton(
-        () async {
-          Navigator.of(context).pop();
-          Navigator.of(context).pop();
-          Get.toNamed(RouteName.advertise);
-        },
-        'مشاهده آگهی ها',
-        borderRadius: 8,
-        fontSize: 12,
-      ))
+      )
     ]);
   }
 }

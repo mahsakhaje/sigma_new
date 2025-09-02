@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_getx_widget.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:sigma/global_custom_widgets/CustomPinCodeField.dart';
 import 'package:sigma/global_custom_widgets/confirm_button.dart';
 import 'package:sigma/global_custom_widgets/custom_text.dart';
 import 'package:sigma/global_custom_widgets/custom_textFiels.dart';
@@ -26,99 +25,77 @@ Widget buildLogin() {
   FocusNode confirmButton = FocusNode();
 
   Widget _buildEnterCode() {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        SizedBox(
-          height: 52,
-        ),
-        back(authController),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CustomText('کد تایید را وارد نمائید.',
-                size: 16, isRtl: true, fontWeight: FontWeight.bold),
-          ],
-        ),
-        SizedBox(
-          height: 62,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            CustomText(
-              ' کد تایید فرستاده شده برای${authController.loginMobileNumberController.text} را وارد نمایید'
-                  .usePersianNumbers(),
-              size: 14,
-              fontWeight: FontWeight.w500,
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        PinCodeTextField(
-          length: 5,
-          obscureText: false,
-          autoDisposeControllers: false,
-          keyboardType: TextInputType.number,
-          pinTheme: PinTheme(
-            shape: PinCodeFieldShape.box,
-            borderRadius: BorderRadius.circular(5),
-            fieldHeight: 50,
-
-            fieldWidth: 50,
-            fieldOuterPadding: const EdgeInsets.all(4),
-            activeFillColor: AppColors.grey,
-            disabledColor: AppColors.grey,
-            errorBorderColor: Colors.white,
-            activeColor: AppColors.grey,
-            inactiveColor: AppColors.grey,
-            inactiveFillColor: AppColors.grey,
-            selectedColor: AppColors.grey,
-            selectedFillColor: AppColors.grey,
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SizedBox(
+            height: 52,
           ),
-          textStyle: const TextStyle(fontSize: 18, height: 1.6,fontFamily: 'Peyda'),
-          enableActiveFill: true,
-          controller: authController.otpCodeController,
-          onChanged: (value) {
-            authController.otpCodeController.text = value.usePersianNumbers();
-          },
-          appContext: Get.context!,
-        ),
-        SizedBox(height: 10),
-        Obx(() => CustomText(
-            '${authController.formattedTime} باقیمانده تا ارسال مجدد کد'
-                .usePersianNumbers(),
-            isRtl: true)),
-        SizedBox(height: 30),
-        Obx(() => authController.isLoading.value
-            ?  Center(
-                child: SizedBox(
-                  width: 60,
-                  height: 60,
-                  child: loading(),
-                ),
-              )
-            : ConfirmButton(
-                () {
-                  hideKeyboard(Get.context!);
-                  if (authController.otpCodeController.text.length >= 5 &&
-                      authController.otpCodeController.text.length < 8) {
+          back(authController),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CustomText('کد تایید را وارد نمائید.',
+                  size: 16, isRtl: true, fontWeight: FontWeight.bold),
+            ],
+          ),
+          SizedBox(
+            height: 62,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              CustomText(
+                ' کد تایید فرستاده شده برای${authController.loginMobileNumberController.text} را وارد نمایید.'
+                    .usePersianNumbers(),
+                size: 14,
+                isRtl: true,
+                fontWeight: FontWeight.w500,
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          CustomPinput(
+            textController: authController.otpCodeController,
+            onCompleted: (value) {
+              authController.confirmOtp();
+            },
+          ),
+          SizedBox(height: 10),
+          Obx(() => CustomText(
+              '${authController.formattedTime} باقیمانده تا ارسال مجدد کد'
+                  .usePersianNumbers(),
+              isRtl: true)),
+          SizedBox(height: 30),
+          Obx(() => authController.isLoading.value
+              ? Center(
+                  child: SizedBox(
+                    width: 60,
+                    height: 60,
+                    child: loading(),
+                  ),
+                )
+              : ConfirmButton(
+                  () {
                     authController.confirmOtp();
-                  }
-                },
-                'تایید',
+                  },
+                  'تایید',
+                )),
+          Obx(() => TextButton(
+                onPressed: authController.canResend.value
+                    ? authController.startTimer
+                    : null,
+                child: CustomText('ارسال مجدد کد'),
               )),
-        Obx(() => TextButton(
-              onPressed: authController.canResend.value
-                  ? authController.startTimer
-                  : null,
-              child: CustomText('ارسال مجدد کد'),
-            )),
-        Divider(color: Colors.white24),
-        SizedBox(height: 10,),
-        SupportCall(authController.supportNumber.value)
-      ],
+          Divider(color: Colors.white24),
+          SizedBox(
+            height: 10,
+          ),
+          SupportCall(authController.supportNumber.value)
+        ],
+      ),
     );
   }
 
@@ -225,7 +202,8 @@ SizedBox buildMobileGetData(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                CustomText(Strings.doRegister, fontWeight: FontWeight.bold,isRtl:true),
+                CustomText(Strings.doRegister,
+                    fontWeight: FontWeight.bold, isRtl: true),
                 const SizedBox(
                   width: 4,
                 ),

@@ -11,6 +11,7 @@ import 'package:sigma/helper/colors.dart';
 import 'package:sigma/helper/helper.dart';
 import 'package:sigma/helper/route_names.dart';
 import 'package:sigma/helper/strings.dart';
+import 'package:sigma/pages/home/home_controller.dart';
 import 'package:sigma/pages/menu/menu_controller.dart';
 
 class HomePge extends StatefulWidget {
@@ -23,7 +24,7 @@ class HomePge extends StatefulWidget {
 class _HomePgeState extends State<HomePge> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   double _logoOffsetX = 0.0;
-
+  HomeController controller = Get.put(HomeController());
   bool _isLeftDrawerOpen = false;
   bool _isRightDrawerOpen = false;
   double _leftIconOffset = 0.0;
@@ -183,9 +184,14 @@ class _HomePgeState extends State<HomePge> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       CustomText(version.usePersianNumbers(),
-                          fontWeight: FontWeight.bold, size: 12,color: AppColors.grey),
+                          fontWeight: FontWeight.bold,
+                          size: 12,
+                          color: AppColors.grey),
                       CustomText('       نسخه    ',
-                          isRtl: true, fontWeight: FontWeight.bold, size: 12,color: AppColors.grey),
+                          isRtl: true,
+                          fontWeight: FontWeight.bold,
+                          size: 12,
+                          color: AppColors.grey),
                     ],
                   ),
                 )),
@@ -235,44 +241,70 @@ class _HomePgeState extends State<HomePge> {
               width: 120,
               child: Material(
                 color: AppColors.grey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      children: [
-                        const SizedBox(height: 8),
-                        drawerIcon(
-                            path: 'assets/profile.svg',
-                            route: RouteName.profile),
-                        drawerIcon(
-                            path: 'assets/requests.svg',
-                            route: RouteName.requests),
-                        drawerIcon(
-                            path: 'assets/refferal.svg',
-                            route: RouteName.referral),
-                        drawerIcon(
-                            path: 'assets/about_us.svg',
-                            route: RouteName.about),
-                        // drawerIcon(
-                        //     path: 'assets/questions.svg',
-                        //     route: RouteName.),
-                        drawerIcon(
-                            path: 'assets/frequent.svg',
-                            route: RouteName.questions),
-                        drawerIcon(
-                            path: 'assets/ghavanin.svg',
-                            route: RouteName.rules),
-                        // drawerIcon(
-                        //     path: 'assets/ghavanin.svg',
-                        //     route: RouteName.chat),
-                        drawerIcon(
-                            path: 'assets/social.svg', route: RouteName.social),
-                        drawerIcon(
-                            path: 'assets/chat.svg', route: RouteName.chat),
-                      ],
-                    ),
-                    drawerIcon(path: 'assets/exit.svg', route: 'exit')
-                  ],
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        children: [
+                          const SizedBox(height: 8),
+                          drawerIcon(
+                              path: 'assets/profile.svg',
+                              route: RouteName.profile),
+                          drawerIcon(
+                              path: 'assets/requests.svg',
+                              route: RouteName.requests),
+                          Stack(children: [
+                            drawerIcon(
+                                path: 'assets/notif.svg',
+                                route: RouteName.notifs,
+                                isItsSize: false),
+                              if(controller.unreadCount>0)
+
+                               Positioned(
+                                  child: SvgPicture.asset('assets/info.svg',color: AppColors.orange,),
+                                  // child: Container(
+                                  //   padding: EdgeInsets.all(7),
+                                  //   decoration: BoxDecoration(
+                                  //       color: AppColors.orange,
+                                  //       shape: BoxShape.circle),
+                                  //   child: CustomText(
+                                  //       controller.unreadCount
+                                  //           .toString()
+                                  //           .usePersianNumbers(),
+                                  //       size: 15),
+                                  // )
+                               ),
+
+                          ]),
+                          drawerIcon(
+                              path: 'assets/refferal.svg',
+                              route: RouteName.referral),
+                          drawerIcon(
+                              path: 'assets/about_us.svg',
+                              route: RouteName.about),
+                          // drawerIcon(
+                          //     path: 'assets/questions.svg',
+                          //     route: RouteName.),
+                          drawerIcon(
+                              path: 'assets/frequent.svg',
+                              route: RouteName.questions),
+                          drawerIcon(
+                              path: 'assets/ghavanin.svg',
+                              route: RouteName.rules),
+                          // drawerIcon(
+                          //     path: 'assets/ghavanin.svg',
+                          //     route: RouteName.chat),
+                          drawerIcon(
+                              path: 'assets/social.svg',
+                              route: RouteName.social),
+                          drawerIcon(
+                              path: 'assets/chat.svg', route: RouteName.chat),
+                        ],
+                      ),
+                      drawerIcon(path: 'assets/exit.svg', route: 'exit')
+                    ],
+                  ),
                 ),
               ),
             ),

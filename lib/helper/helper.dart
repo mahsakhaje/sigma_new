@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:core';
 import 'dart:io';
-
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -18,67 +18,63 @@ import 'package:universal_platform/universal_platform.dart';
 void showToast(ToastState state, String msg, {bool isIos = false}) {
 //popup a attachments toast
 
-    Fluttertoast.showToast(
-        msg: msg,
-
-        toastLength: Toast.LENGTH_LONG,
-
-        backgroundColor: state == ToastState.ERROR
-            ? Colors.red
-            : state == ToastState.SUCCESS
-            ? Colors.green
-            : state == ToastState.INFO
-            ? AppColors.orange
-            : Colors.blueGrey,
-        gravity: ToastGravity.BOTTOM,
-        webBgColor: state == ToastState.ERROR
-            ? "linear-gradient(to right, #dc1c13, #dc1c13)"
-            : state == ToastState.SUCCESS
-            ? "linear-gradient(to right, #40d12a, #40d12a)"
-            : state == ToastState.INFO
-            ? "linear-gradient(to right, #c5c8c9, #c5c8c9)"
-            : Colors.blueGrey,
-        textColor: Colors.white,
-
-    fontSize: 14
-    );
-    return;
+  Fluttertoast.showToast(
+      msg: msg,
+      toastLength: Toast.LENGTH_LONG,
+      fontAsset: 'fonts/Peyda-Medium.ttf',
+      backgroundColor: state == ToastState.ERROR
+          ? Colors.red
+          : state == ToastState.SUCCESS
+              ? Colors.green
+              : state == ToastState.INFO
+                  ? AppColors.orange
+                  : Colors.blueGrey,
+      gravity: ToastGravity.BOTTOM,
+      webBgColor: state == ToastState.ERROR
+          ? "linear-gradient(to right, #dc1c13, #dc1c13)"
+          : state == ToastState.SUCCESS
+              ? "linear-gradient(to right, #40d12a, #40d12a)"
+              : state == ToastState.INFO
+                  ? "linear-gradient(to right, #c5c8c9, #c5c8c9)"
+                  : Colors.blueGrey,
+      textColor: Colors.white,
+      fontSize: 14);
+  return;
 
   var cancel = BotToast.showAttachedWidget(
       preferDirection: PreferDirection.bottomCenter,
       attachedBuilder: (_) => Card(
-        color: state == ToastState.ERROR
-            ? Colors.red.shade400
-            : state == ToastState.SUCCESS
-            ? Colors.green
-            : state == ToastState.INFO
-            ? Colors.grey
-            : Colors.blueGrey,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Image.asset(
-                'assets/sigmapng.png',
-                width: 40,
-                height: 40,
+            color: state == ToastState.ERROR
+                ? Colors.red.shade400
+                : state == ToastState.SUCCESS
+                    ? Colors.green
+                    : state == ToastState.INFO
+                        ? Colors.grey
+                        : Colors.blueGrey,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Image.asset(
+                    'assets/sigmapng.png',
+                    width: 40,
+                    height: 40,
+                  ),
+                  CustomText(msg,
+                      color: Colors.white, isRtl: true, maxLine: 3, size: 12),
+                  SizedBox(
+                    width: 4,
+                  )
+                ],
               ),
-              CustomText(msg,
-                  color: Colors.white, isRtl: true, maxLine: 3, size: 12),
-              SizedBox(
-                width: 4,
-              )
-            ],
+            ),
           ),
-        ),
-      ),
       duration: Duration(seconds: 2),
       target: Offset(520, 520));
 }
 
 enum ToastState { ERROR, INFO, SUCCESS }
-
 
 Image imageFromBase64String(String base64String, double height,
     {double? width}) {
@@ -107,6 +103,17 @@ Future<bool> isVpnActive() async {
   // return isVpnActive;
 }
 
+
+
+Future<bool> hasConnection() async {
+  bool connected = await NetworkChecker.hasInternetConnection();
+
+  if (!connected) {
+    return false;
+  } else {
+    return true;
+  }
+}
 // Widget DarkBackgroundWidget({required Widget child}) {
 //   return Container(
 //       decoration: new BoxDecoration(gradient: getBgGradient()), child: child);
@@ -219,12 +226,10 @@ String separateThousand(int amount) {
   return _numberFormat.format(amount);
 }
 
-
 class PersianLettersFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
       TextEditingValue oldValue, TextEditingValue newValue) {
-
     // Filter to only allow Persian letters and space
     String filteredText = newValue.text.replaceAll(RegExp(r'[^آ-ی\s]'), '');
 
@@ -240,12 +245,9 @@ class PersianLettersFormatterExtended extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
       TextEditingValue oldValue, TextEditingValue newValue) {
-
     // More comprehensive Persian character range including additional characters
     String filteredText = newValue.text.replaceAll(
-        RegExp(r'[^ابپتثجچحخدذرزژسشصضطظعغفقکگلمنوهیئءآأإؤة\s]'),
-        ''
-    );
+        RegExp(r'[^ابپتثجچحخدذرزژسشصضطظعغفقکگلمنوهیئءآأإؤة\s]'), '');
 
     return newValue.copyWith(
       text: filteredText,
@@ -253,11 +255,11 @@ class PersianLettersFormatterExtended extends TextInputFormatter {
     );
   }
 }
+
 class PersianFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
       TextEditingValue oldValue, TextEditingValue newValue) {
-
     // First, filter to only allow digits (both English and Persian)
     String filteredText = newValue.text.replaceAll(RegExp(r'[^0-9۰-۹]'), '');
 
@@ -318,7 +320,7 @@ String persianToEnglish(String persianText) {
 
   // Replace Persian and Arabic-Indic numbers in the text
   String result =
-  persianText.replaceAllMapped(persianNumberRegex, replacePersianNumbers);
+      persianText.replaceAllMapped(persianNumberRegex, replacePersianNumbers);
   result = result.replaceAllMapped(
       arabicIndicNumberRegex, replaceArabicIndicNumbers);
 
@@ -408,7 +410,6 @@ Future<String> getVersion() async {
   return version;
 }
 
-
 Future<String> saveFile(String fileName, List<int> bytes) async {
   try {
     Directory directory;
@@ -416,12 +417,15 @@ Future<String> saveFile(String fileName, List<int> bytes) async {
     if (defaultTargetPlatform == TargetPlatform.android) {
       // Try to get Downloads directory first
       try {
-        final List<Directory>? downloadsDir = await getExternalStorageDirectories(type: StorageDirectory.downloads);
+        final List<Directory>? downloadsDir =
+            await getExternalStorageDirectories(
+                type: StorageDirectory.downloads);
         if (downloadsDir != null && downloadsDir.isNotEmpty) {
           directory = downloadsDir.first;
         } else {
           // Fallback to external storage
-          directory = await getExternalStorageDirectory() ?? await getApplicationDocumentsDirectory();
+          directory = await getExternalStorageDirectory() ??
+              await getApplicationDocumentsDirectory();
           // Create Downloads subfolder
           directory = Directory('${directory.path}/Download');
         }
@@ -440,7 +444,8 @@ Future<String> saveFile(String fileName, List<int> bytes) async {
 
     // Clean filename to avoid path issues
     final cleanFileName = fileName.replaceAll(RegExp(r'[<>:"/\\|?*]'), '_');
-    final filePath = '${directory.path}${Platform.pathSeparator}$cleanFileName.pdf';
+    final filePath =
+        '${directory.path}${Platform.pathSeparator}$cleanFileName.pdf';
 
     print('Saving to: $filePath');
 
@@ -457,7 +462,6 @@ Future<String> saveFile(String fileName, List<int> bytes) async {
     } else {
       throw Exception('File was not created properly');
     }
-
   } on FileSystemException catch (e) {
     print('FileSystemException: ${e.message}');
     showToast(ToastState.ERROR, 'خطا در ذخیره فایل');
@@ -504,10 +508,31 @@ Future<String> saveFileToDownloads(String fileName, List<int> bytes) async {
 
     // Fallback for other platforms
     return await saveFile(fileName, bytes);
-
   } catch (e) {
     print('Error saving to Downloads: $e');
     // Fallback to app directory
     return await saveFile(fileName, bytes);
+  }
+}
+class NetworkChecker {
+  /// Checks both connectivity and actual internet access
+  static Future<bool> hasInternetConnection() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+
+    if (connectivityResult == ConnectivityResult.none) {
+      return false; // No network at all
+    }
+
+    // Check actual internet access by pinging a reliable server
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        return true;
+      }
+    } on SocketException catch (_) {
+      return false;
+    }
+
+    return false;
   }
 }

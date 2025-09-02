@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:sigma/global_custom_widgets/CustomPinCodeField.dart';
 import 'package:sigma/global_custom_widgets/confirm_button.dart';
 import 'package:sigma/global_custom_widgets/custom_check_box.dart';
 import 'package:sigma/global_custom_widgets/custom_drop_box.dart';
@@ -12,6 +12,7 @@ import 'package:sigma/global_custom_widgets/dual_widget.dart';
 import 'package:sigma/global_custom_widgets/mobile_text_fiels.dart';
 import 'package:sigma/global_custom_widgets/radio_list_tile.dart';
 import 'package:sigma/helper/colors.dart';
+import 'package:sigma/helper/helper.dart';
 import 'package:sigma/helper/route_names.dart';
 import 'package:sigma/helper/strings.dart';
 import 'package:sigma/pages/auth/auth_controller.dart';
@@ -31,37 +32,16 @@ Widget buildRegister() {
               isRtl: true),
           SizedBox(height: 30),
           SizedBox(
-            child: PinCodeTextField(
-              autoDisposeControllers: false,
-              length: 5,
-              controller: authController.codeController,
-              animationType: AnimationType.fade,
-              enableActiveFill: true,
-              keyboardType: TextInputType.number,
-              pinTheme: PinTheme(
-                shape: PinCodeFieldShape.box,
-                borderRadius: BorderRadius.circular(5),
-                fieldHeight: 50,
-                fieldWidth: 50,
-                activeFillColor: AppColors.grey,
-                disabledColor: AppColors.grey,
-                errorBorderColor: Colors.white,
-                activeColor: AppColors.grey,
-                inactiveColor: AppColors.grey,
-                inactiveFillColor: AppColors.grey,
-                selectedColor: AppColors.grey,
-                selectedFillColor: AppColors.grey,
-              ),
-              textStyle: const TextStyle(
-                  fontSize: 18, height: 1.6, fontFamily: 'Peyda'),
-              onCompleted: authController.onPinCompleted,
-              appContext: Get.context!,
+            child: CustomPinput(
+              textController: authController.codeController,
+              onCompleted: (value) {
+                authController.confirmCode();
+              },
             ),
           ),
           SizedBox(height: 10),
-          Obx(() => Text(
+          Obx(() => CustomText(
                 '${authController.formattedTime} باقیمانده تا ارسال مجدد کد',
-                style: TextStyle(color: Colors.white60, fontSize: 12),
               )),
           SizedBox(height: 30),
           ConfirmButton(
@@ -309,7 +289,7 @@ Widget buildRegister() {
           children: [
             Flexible(
               child: CustomText(' سیگما را مطالعه نمودم و می پذیرم.',
-                  size: 12, maxLine: 2,isRtl: true),
+                  size: 12, maxLine: 2, isRtl: true),
             ),
             InkWell(
               onTap: () => Get.toNamed(RouteName.rules),

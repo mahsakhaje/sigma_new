@@ -15,6 +15,7 @@ import 'package:sigma/pages/compare_cars/binding.dart';
 import 'package:sigma/pages/compare_cars/compare_cars_page.dart';
 import 'package:sigma/pages/home/home_page.dart';
 import 'package:sigma/pages/my_cars/my_cars_page.dart';
+import 'package:sigma/pages/notifs/notifs_page.dart';
 import 'package:sigma/pages/price/price_page.dart';
 import 'package:sigma/pages/privacy/privacy_rules_page.dart';
 import 'package:sigma/pages/profile/about_us/about_us_page.dart';
@@ -50,6 +51,12 @@ class AppRoutes {
         GetPage(
           name: RouteName.auth,
           page: () => AuthPage(),
+          transitionDuration: const Duration(milliseconds: 10),
+          transition: Transition.native,
+        ),
+        GetPage(
+          name: RouteName.notifs,
+          page: () => NotifsListPage(),
           transitionDuration: const Duration(milliseconds: 10),
           transition: Transition.native,
         ),

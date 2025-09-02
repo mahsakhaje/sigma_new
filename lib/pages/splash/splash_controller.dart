@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -22,12 +23,14 @@ class SplashController extends GetxController {
   late VideoPlayerController videoController;
   var isVideoReady = false.obs;
   var showUpdateDialog = false.obs;
+  var hasInternet = true.obs;
+  var loading = false.obs;
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
     _initializeVideo();
-    getInfo();
+    await checkInternet();
   }
 
   void _videoListener() {
@@ -54,7 +57,6 @@ class SplashController extends GetxController {
   }
 
   Future<void> getInfo() async {
-    await Future.delayed(const Duration(seconds: 2));
     bool isLogedIn = await StorageHelper().getIsLogedIn() ?? false;
 
     // Check for updates first
@@ -80,17 +82,30 @@ class SplashController extends GetxController {
     }
   }
 
+  Future<void> checkInternet() async {
+    await Future.delayed(const Duration(seconds: 2));
+    loading.value = true;
+    hasInternet.value = await hasConnection();
+    loading.value = false;
+    print('**************');
+    print(hasInternet.value);
+    print('**************');
+
+    if (hasInternet.value) {
+      getInfo();
+    }
+  }
+
   Future<void> _checkForUpdates() async {
     print('check version called');
     try {
       // Get current version
       String currentVersion = '';
 
-
       currentVersion = await getVersion();
       // Call your API to check for updates (replace with your actual API call)
       var verResponse = await DioClient.instance.checkVersion();
-      print((verResponse?.newVersion ?? "") );
+      print((verResponse?.newVersion ?? ""));
       print(currentVersion);
       if (verResponse != null && verResponse.status == 0) {
         if (verResponse.forceUpdate == '1') {

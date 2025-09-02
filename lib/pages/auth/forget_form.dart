@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sigma/global_custom_widgets/CustomPinCodeField.dart';
 import 'package:sigma/global_custom_widgets/loading.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:sigma/global_custom_widgets/confirm_button.dart';
 import 'package:sigma/global_custom_widgets/custom_text.dart';
 import 'package:sigma/global_custom_widgets/custom_textFiels.dart';
@@ -44,7 +44,7 @@ Widget buildForgetPassword() {
         ),
         const SizedBox(height: 8),
         Obx(() => authController.isLoading.value
-            ?  Center(
+            ? Center(
                 child: SizedBox(
                   width: 60,
                   height: 60,
@@ -80,39 +80,18 @@ Widget buildForgetPassword() {
           ],
         ),
         const SizedBox(height: 16),
-        PinCodeTextField(
-          length: 5,
-          autoDisposeControllers: false,
-          obscureText: false,
-          keyboardType: TextInputType.number,
-          pinTheme: PinTheme(
-            shape: PinCodeFieldShape.box,
-            borderRadius: BorderRadius.circular(5),
-            fieldHeight: 50,
-            fieldWidth: 50,
-
-            fieldOuterPadding: const EdgeInsets.all(4),
-            activeFillColor: AppColors.grey,
-            disabledColor: AppColors.grey,
-            errorBorderColor: Colors.white,
-            activeColor: AppColors.grey,
-            inactiveColor: AppColors.grey,
-            inactiveFillColor: AppColors.grey,
-            selectedColor: AppColors.grey,
-            selectedFillColor: AppColors.grey,
-          ),
-          textStyle: const TextStyle(fontSize: 18, height: 1.6,fontFamily: 'Peyda'),
-          enableActiveFill: true,
-
-          controller: authController.codeController,
-          onChanged: (value) {
-            authController.codeController.text = value.usePersianNumbers();
+        CustomPinput(
+          textController: authController.codeController,
+          onCompleted: (value) {
+            authController.verifyResetPassword(
+              cellNumber: authController.forgetMobileNumberController.text,
+              password: englishToPersian(authController.codeController.text),
+            );
           },
-          appContext: Get.context!,
         ),
         const SizedBox(height: 12),
         Obx(() => authController.isLoading.value
-            ?  Center(
+            ? Center(
                 child: SizedBox(
                   width: 60,
                   height: 60,
@@ -163,7 +142,7 @@ Widget buildForgetPassword() {
           ),
           const SizedBox(height: 12),
           Obx(() => authController.isLoading.value
-              ?  Center(
+              ? Center(
                   child: SizedBox(
                     width: 60,
                     height: 60,

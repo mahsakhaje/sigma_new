@@ -54,4 +54,5 @@ class RouteName {
   static const String info = '/info';
   static const String loan = '/loan';
   static const String referral = '/referral';
+  static const String notifs = '/notifs';
 }

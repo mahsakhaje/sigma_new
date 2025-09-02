@@ -40,6 +40,8 @@ import 'package:sigma/models/my_cars_model.dart';
 import 'package:sigma/models/my_purchase_order_response.dart';
 import 'package:sigma/models/my_reservation_model.dart';
 import 'package:sigma/models/my_sell_cars_response.dart';
+import 'package:sigma/models/notif_count_response.dart';
+import 'package:sigma/models/notif_list_response.dart';
 import 'package:sigma/models/online_pay_model.dart';
 import 'package:sigma/models/published_transaction_response.dart';
 import 'package:sigma/models/questions_model.dart';
@@ -840,6 +842,36 @@ class DioClient {
     });
     return response?.statusCode == 200
         ? UpdateResponse.fromJson(response?.data)
+        : null;
+  }
+
+  Future<NotifCountResponse?> getNotifCount() async {
+    final response = await _makePostRequest(URLs.GetAppAccountNotifsCountUrl, {
+      'token': getShortToken(),
+      'version': await getVersion(),
+    });
+    return response?.statusCode == 200
+        ? NotifCountResponse.fromJson(response?.data)
+        : null;
+  }
+
+  Future<NotifListResponse?> getNotifList() async {
+    final response = await _makePostRequest(URLs.GetNotifsListUrl, {
+      'token': getShortToken(),
+      'version': await getVersion(),
+    });
+    return response?.statusCode == 200
+        ? NotifListResponse.fromJson(response?.data)
+        : null;
+  }
+
+  Future<LoginResponse?> setSeenNotifs() async {
+    final response = await _makePostRequest(URLs.SeenNotifsUrl, {
+      'token': getShortToken(),
+      'version': await getVersion(),
+    });
+    return response?.statusCode == 200
+        ? LoginResponse.fromJson(response?.data)
         : null;
   }
 

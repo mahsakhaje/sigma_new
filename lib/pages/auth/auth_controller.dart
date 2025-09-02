@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
+import 'package:pinput/pinput.dart';
+import 'package:sigma/global_custom_widgets/CustomPinCodeField.dart';
 import 'package:sigma/helper/dio_repository.dart';
 import 'package:sigma/helper/helper.dart';
 import 'package:sigma/helper/route_names.dart';
@@ -54,6 +56,9 @@ class AuthController extends GetxController {
 
   final RxString provinceId = ''.obs;
   final RxString cityId = ''.obs;
+  late TextEditingController pinController;
+  late FocusNode focusNode;
+ // late SmsRetriever smsRetriever;
 
   void goToLogin() => currentPage.value = AuthPageState.login;
 
@@ -75,9 +80,19 @@ class AuthController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    pinController = TextEditingController();
+    focusNode = FocusNode();
+    //smsRetriever = SmsRetrieverImpl(SmartAuth.instance);
     _getSupportNumber();
     _loadProvinces();
     _loadCities();
+  }
+
+  @override
+  void onClose() {
+    pinController.dispose();
+    focusNode.dispose();
+    super.onClose();
   }
 
   Future<void> _getSupportNumber() async {

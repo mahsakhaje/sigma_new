@@ -5,6 +5,7 @@ import 'package:persian_number_utility/persian_number_utility.dart';
 import 'package:sigma/global_custom_widgets/bottom_sheet.dart';
 import 'package:sigma/global_custom_widgets/confirm_button.dart';
 import 'package:sigma/global_custom_widgets/custom_check_box.dart';
+import 'package:syncfusion_flutter_core/theme.dart';
 
 import 'package:sigma/global_custom_widgets/custom_drop_box.dart';
 import 'package:sigma/global_custom_widgets/custom_text.dart';
@@ -64,14 +65,14 @@ class PricePage extends StatelessWidget {
                   onTap: () => controller.changeTab(0),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: controller.selectedTabIndex.value == 0
+                      color: controller.selectedTabIndex.value == 1
                           ? AppColors.grey
                           : Colors.transparent,
                     ),
                     child: Center(
                       child: CustomText(
                         Strings.dailyPrice,
-                        color: controller.selectedTabIndex.value == 0
+                        color: controller.selectedTabIndex.value == 1
                             ? Colors.black
                             : Colors.white,
                         fontWeight: FontWeight.bold,
@@ -85,14 +86,14 @@ class PricePage extends StatelessWidget {
                   onTap: () => controller.changeTab(1),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: controller.selectedTabIndex.value == 1
+                      color: controller.selectedTabIndex.value == 0
                           ? AppColors.grey
                           : Colors.transparent,
                     ),
                     child: Center(
                       child: CustomText(
                         Strings.estimatePrice,
-                        color: controller.selectedTabIndex.value == 1
+                        color: controller.selectedTabIndex.value == 0
                             ? Colors.black
                             : Colors.white,
                         fontWeight: FontWeight.bold,
@@ -136,7 +137,7 @@ class PricePage extends StatelessWidget {
       width: Get.width,
       child: Card(
         color: Colors.white,
-        margin: EdgeInsets.symmetric(vertical: 4,horizontal: 2),
+        margin: EdgeInsets.symmetric(vertical: 4, horizontal: 2),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -184,7 +185,8 @@ class PricePage extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      CustomText(' تومان' , fontWeight: FontWeight.bold,
+                      CustomText(' تومان',
+                          fontWeight: FontWeight.bold,
                           color: Colors.black87,
                           isRtl: true,
                           size: 12),
@@ -196,7 +198,6 @@ class PricePage extends StatelessWidget {
                           color: Colors.black87,
                           isRtl: true,
                           size: 12),
-
                     ],
                   ),
                   CustomText(price.carModel ?? '',
@@ -330,7 +331,12 @@ class PricePage extends StatelessWidget {
             },
             onChanged: (str) => controller.updateMileage(str),
           ),
-          Obx(() => SfRangeSlider(
+          Obx(
+            () => SfRangeSliderTheme(
+              data: SfRangeSliderThemeData(
+                tooltipBackgroundColor: AppColors.orange,
+              ),
+              child: SfRangeSlider(
                 min: 0,
                 max: 100000,
                 values: controller.kilometerValues.value,
@@ -343,7 +349,9 @@ class PricePage extends StatelessWidget {
                 minorTicksPerInterval: 1000,
                 onChanged: (SfRangeValues values) =>
                     controller.updateKilometerValues(values),
-              )),
+              ),
+            ),
+          ),
           CustomText('وضعیت بدنه',
               size: 16,
               fontWeight: FontWeight.bold,

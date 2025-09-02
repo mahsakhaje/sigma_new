@@ -35,6 +35,8 @@ class SellPageView extends StatelessWidget {
 
     return DarkBackgroundWidget(
       title: Strings.sell,
+      hasCustomBack: true,
+      onBackPressed: controller.getBack,
       child: Directionality(
         textDirection: TextDirection.rtl,
         child: Obx(() {
@@ -615,7 +617,7 @@ class UploadPhotoForm extends StatelessWidget {
   Future<bool?> showGetOtherInfoDialog(BuildContext context) async {
     return CustomBottomSheetAnimated.show(
       context: context, // Use the passed context instead of Get.context!
-      initialChildSize: 0.4,
+      initialChildSize: 0.45,
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Form(
@@ -623,6 +625,8 @@ class UploadPhotoForm extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              CustomText('برای تکمیل اطلاعات لطفا از حروف فارسی استفاده کنید.',isRtl: true,fontWeight: FontWeight.bold,color: Colors.black),
+              SizedBox(height: 12,),
               CustomTextFormField(
                 controller.nameController,
                 maxLen: 20,

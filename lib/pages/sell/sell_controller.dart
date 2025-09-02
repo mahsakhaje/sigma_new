@@ -94,7 +94,7 @@ class SellPageController extends GetxController {
   SellPageController(String? id) {
     if ((id?.isEmpty ?? false) || id == null) {
     } else {
-       isFromContinue = true;
+      isFromContinue = true;
 
       carId.value = int.tryParse(id!) ?? 0;
       print(carId);
@@ -106,6 +106,36 @@ class SellPageController extends GetxController {
   void onInit() {
     super.onInit();
     loadInitialData();
+  }
+
+  void getBack() {
+    switch (step.value) {
+      case SellPageStep.isFirstTime:
+        Get.back();
+        break;
+      case SellPageStep.isNotFirstTime:
+        Get.back();
+        break;
+      case SellPageStep.getMilage:
+        if (cars.value.isEmpty && searchController.text.isEmpty) {
+          step.value = SellPageStep.isFirstTime;
+        } else {
+          step.value = SellPageStep.isNotFirstTime;
+        }
+        break;
+      case SellPageStep.khodEzhari:
+        step.value = SellPageStep.getMilage;
+        break;
+      case SellPageStep.uploadPhoto:
+        step.value = SellPageStep.khodEzhari;
+        break;
+      case SellPageStep.showPaymentResult:
+        Get.back();
+        break;
+      default:
+        Get.back();
+        break;
+    }
   }
 
   Future<void> loadInitialData() async {
@@ -122,9 +152,9 @@ class SellPageController extends GetxController {
         }
       }
     }
-if(isFromContinue){
-  return;
-}
+    if (isFromContinue) {
+      return;
+    }
     scrollController.addListener(() async {
       if (scrollController.position.pixels ==
           scrollController.position.maxScrollExtent) {

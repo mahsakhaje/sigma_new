@@ -49,6 +49,8 @@ android {
     }
 
     defaultConfig {
+        compileSdkVersion 34
+
         applicationId "ir.sigmatec.sigma"
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion flutter.targetSdkVersion

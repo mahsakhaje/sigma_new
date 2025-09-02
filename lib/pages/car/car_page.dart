@@ -53,13 +53,16 @@ class CarWidget extends StatelessWidget {
   }
 
   Widget _buildDropdownRow1(CarController controller) {
+    print(controller.selectedBrand.value);
+    print(controller.brands.value);
+
     return Row(
       children: [
         Expanded(
             child: Obx(() => CustomDropdown(
                   hint: 'برند خودرو',
                   value: controller.selectedBrand.value,
-                  items: controller.brands,
+                  items: controller.brands.value,
                   isTurn: controller.turn.value == 2,
                   onChanged: controller.onBrandChanged,
                 ))),
