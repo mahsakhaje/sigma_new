@@ -46,7 +46,6 @@ class MapScreen extends GetView<BranchesController> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Obx(() {
-        // ✅ Use the existing MapController and update its properties
         controller.mapController.center = controller.currentCenter.value;
         controller.mapController.zoom = controller.currentZoom.value;
 
@@ -129,25 +128,6 @@ class MapScreen extends GetView<BranchesController> {
                       ],
                     ),
                   ),
-
-                  // Current zoom level display
-                  // Positioned(
-                  //   top: 50,
-                  //   left: 20,
-                  //   child: Container(
-                  //     padding: const EdgeInsets.all(8),
-                  //     decoration: BoxDecoration(
-                  //       color: Colors.white.withOpacity(0.8),
-                  //       borderRadius: BorderRadius.circular(8),
-                  //     ),
-                  //     child: Text(
-                  //       'Zoom: ${controller.currentZoom.value.toStringAsFixed(1)}',
-                  //       style: const TextStyle(fontSize: 12),
-                  //     ),
-                  //   ),
-                  // ),
-
-                  // Markers
                   ...markerWidgets,
                 ],
               ),

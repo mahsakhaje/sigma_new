@@ -36,7 +36,6 @@ enum MultiSelectListType { Brand, Model, Type, Color, City, None }
 
 class AdvertiseController extends GetxController {
   AdvertiseController(dynamic state) {
-    print('4');
     print(state =='NEW');
     if (state =='NEW') {
       orderState = 'NEW';
@@ -52,6 +51,7 @@ class AdvertiseController extends GetxController {
 
   final RxList<SalesOrders> orders = <SalesOrders>[].obs;
   final RxBool isLoading = false.obs;
+  final RxBool notifyAdvertise = false.obs;
   final RxBool filterLoading = false.obs;
   final RxBool hasMore = true.obs;
   final RxBool showFilterModal = false.obs;

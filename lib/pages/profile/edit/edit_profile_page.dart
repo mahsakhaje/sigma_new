@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:sigma/global_custom_widgets/confirm_button.dart';
 import 'package:sigma/global_custom_widgets/custom_drop_box.dart';
 import 'package:sigma/global_custom_widgets/custom_text.dart';
@@ -226,14 +228,21 @@ class EditProfileInfo extends StatelessWidget {
   }
 
   Widget _buildEmailField() {
-    return CustomTextFormField(
-      controller.emailController,
-      hintText: Strings.email,
-      maxLen: 50,
-      autovalidateMode: AutovalidateMode.disabled,
-      enabled: controller.isEnabled.value,
-      isEmail: true,
-    );
+    return Obx(() {
+      final text = controller.emailController.text;
+      print(text.isNotEmpty);
+      return CustomTextFormField(
+        controller.emailController,
+        hintText: Strings.email,
+        maxLen: 50,
+        onChanged: (val){
+
+        },
+        autovalidateMode:AutovalidateMode.onUserInteraction,
+        enabled: controller.isEnabled.value,
+        isEmail: true,
+      );
+    });
   }
 
   Widget _buildSubmitButton() {

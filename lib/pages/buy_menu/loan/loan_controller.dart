@@ -39,6 +39,7 @@ class CalculateLoanController extends GetxController {
       var response = await DioClient.instance.getLoanDuration();
       if (response != null && response.message == 'OK') {
         pdfLink.value = response.infoLink ?? '';
+        print(response.toJson());
         response.loanDurations?.forEach((element) {
           durations[element.id ?? ''] = element.description ?? '';
         });

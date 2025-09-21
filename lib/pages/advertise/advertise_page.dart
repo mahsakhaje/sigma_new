@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_switch/flutter_switch.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:shimmer/shimmer.dart';
@@ -25,15 +26,12 @@ class AdvertisePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final args = Get.arguments;
-    print('6');
-    print(args);
     AdvertiseController controller = Get.put(AdvertiseController(args));
     ever(controller.showFilterModal, (bool show) {
       if (!controller.showFilterModal.value) {
         return;
       }
       if (show && controller.pageState.value == AdvertisePageState.list) {
-        // Use Future.delayed to avoid calling during build
         Future.delayed(Duration.zero, () {
           CustomBottomSheet.show(
             context: Get.context!,
@@ -73,14 +71,32 @@ class AdvertisePage extends StatelessWidget {
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                GestureDetector(
-                  onTap: () {
-                    controller.togglePageState();
-                  },
-                  child: SvgPicture.asset('assets/filter.svg'),
-                )
-              ]),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        FlutterSwitch(
+                          value: controller.notifyAdvertise.value,
+                          onToggle: (val) =>
+                              controller.notifyAdvertise.value = val,
+                          height: 24,
+                          width: 54,
+                          activeColor: AppColors.blue,
+                          inactiveColor: AppColors.grey,
+                          toggleColor: Colors.white,
+                        ),
+                        SizedBox(width: 8,),
+                        CustomText('خبرم کن',size: 14)
+                      ],
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        controller.togglePageState();
+                      },
+                      child: SvgPicture.asset('assets/filter.svg'),
+                    )
+                  ]),
             ),
           ),
 
@@ -761,9 +777,9 @@ class advertiseItem extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        CustomText(order.provinceDescription??'', color: Colors.black87),
+                        CustomText(order.provinceDescription ?? '',
+                            color: Colors.black87),
                         CustomText('  ', color: Colors.black87),
-
                         SizedBox(width: 4),
                         CustomText('شهر', color: Colors.black87),
                       ],

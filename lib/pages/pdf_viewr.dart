@@ -1,11 +1,13 @@
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:sigma/global_custom_widgets/confirm_button.dart';
+import 'package:sigma/global_custom_widgets/custom_text.dart';
 import 'package:sigma/global_custom_widgets/dark_main_widget.dart';
 import 'package:sigma/helper/helper.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
@@ -29,8 +31,8 @@ class _PdfState extends State<Pdf> {
     if (args == null || args is! Map<String, dynamic>) {
       return DarkBackgroundWidget(
         title: '',
-        child: const Center(
-          child: Text('Error: No PDF URL provided'),
+        child:  Center(
+          child: CustomText('متاسفانه فایل یافت نشد!',isRtl: true,fontWeight: FontWeight.bold),
         ),
       );
     }
@@ -41,8 +43,8 @@ class _PdfState extends State<Pdf> {
     if (url == null || url is! String || url.isEmpty) {
       return DarkBackgroundWidget(
         title: '',
-        child: const Center(
-          child: Text('Error: Invalid PDF URL'),
+        child:  Center(
+          child: CustomText('متاسفانه فایل یافت نشد!',isRtl: true,fontWeight: FontWeight.bold),
         ),
       );
     }
@@ -70,9 +72,14 @@ class _PdfState extends State<Pdf> {
                   try {
                     final response = await http.get(Uri.parse(url));
                     final bytes = response.bodyBytes;
-                    var rng = Random();
-                    var path = await saveFile('loan${rng.nextInt(100)}', bytes);
-                    print(path);
+                    if(defaultTargetPlatform == TargetPlatform.android){
+                      var path = await saveFileToDownloads('loan', bytes);
+                      print(path);
+
+                    }else{
+                      var path = await saveFile('loan', bytes);
+                      print(path);
+                    }
                   } catch (e) {
                     print('Download failed: $e');
                     // Show error message to user

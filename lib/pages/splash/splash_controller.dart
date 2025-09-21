@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -60,9 +59,9 @@ class SplashController extends GetxController {
     bool isLogedIn = await StorageHelper().getIsLogedIn() ?? false;
 
     // Check for updates first
-    if (!kIsWeb) {
+    // if (!kIsWeb) {
       await _checkForUpdates();
-    }
+ //   }
     var response = await DioClient.instance.getBanners();
     if (response != null && response.message == 'OK') {
       GlobalAppData().setPelaksefid(response?.pelakSefidLink ?? "");

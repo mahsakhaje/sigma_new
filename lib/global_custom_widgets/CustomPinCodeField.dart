@@ -50,7 +50,7 @@ class CustomPinput extends StatelessWidget {
             controller:textController,
             length: 5,
             closeKeyboardWhenCompleted: true,
-
+            autofillHints: const [AutofillHints.oneTimeCode],
             defaultPinTheme: defaultPinTheme,
             separatorBuilder: (index) => const SizedBox(width: 8),
             //validator: validator ?? controller.validatePin,
@@ -92,28 +92,28 @@ class CustomPinput extends StatelessWidget {
   }
 }
 
-/// SmsRetriever Implementation with SmartAuth
+
 // class SmsRetrieverImpl implements SmsRetriever {
 //   const SmsRetrieverImpl(this.smartAuth);
 //
 //   final SmartAuth smartAuth;
-
-  // @override
-  // Future<void> dispose() {
-  //   return smartAuth.removeSmsRetrieverApiListener();
-  // }
-  //
-  // @override
-  // Future<String?> getSmsCode() async {
-  //   final signature = await smartAuth.getAppSignature();
-  //   debugPrint('App Signature: $signature');
-  //   final res = await smartAuth.getSmsWithRetrieverApi(
-  //   );
-  //   if (res.hasData) {
-  //     return res.data?.code!;
-  //   }
-  //   return null;
-  // }
+//
+//   @override
+//   Future<void> dispose() {
+//     return smartAuth.removeSmsRetrieverApiListener();
+//   }
+//
+//   @override
+//   Future<String?> getSmsCode() async {
+//     final signature = await smartAuth.getAppSignature();
+//     debugPrint('App Signature: $signature');
+//     final res = await smartAuth.getSmsWithRetrieverApi(
+//     );
+//     if (res.hasData) {
+//       return res.data?.code!;
+//     }
+//     return null;
+//   }
 //
 //   @override
 //   bool get listenForMultipleSms => false;

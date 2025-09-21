@@ -9,6 +9,7 @@ import 'package:sigma/helper/dio_repository.dart';
 import 'package:sigma/helper/helper.dart';
 import 'package:sigma/helper/route_names.dart';
 import 'package:sigma/helper/storage_helper.dart';
+//import 'package:sms_autofill/sms_autofill.dart';
 
 class AuthController extends GetxController {
   var currentPage = AuthPageState.welcome.obs;
@@ -58,7 +59,19 @@ class AuthController extends GetxController {
   final RxString cityId = ''.obs;
   late TextEditingController pinController;
   late FocusNode focusNode;
- // late SmsRetriever smsRetriever;
+
+  // late SmsRetriever smsRetriever;
+  String _code = "";
+  String signature = "";
+
+  Future<void> _getAppSignature() async {
+   // final sig = await SmsAutoFill().getAppSignature;
+
+    // signature = sig;
+    // print('***********=88');
+    // print(signature);
+   // await SmsAutoFill().listenForCode();
+  }
 
   void goToLogin() => currentPage.value = AuthPageState.login;
 
@@ -78,11 +91,15 @@ class AuthController extends GetxController {
   void setRegisterState(RegisterPageState state) => registerState.value = state;
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
     pinController = TextEditingController();
     focusNode = FocusNode();
-    //smsRetriever = SmsRetrieverImpl(SmartAuth.instance);
+    await _getAppSignature();
+
+   // await SmsAutoFill().listenForCode();
+
+   // smsRetriever = SmsRetrieverImpl(SmartAuth.instance);
     _getSupportNumber();
     _loadProvinces();
     _loadCities();

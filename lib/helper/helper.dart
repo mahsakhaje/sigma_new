@@ -3,6 +3,7 @@ import 'dart:core';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:bot_toast/bot_toast.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -477,32 +478,97 @@ Future<String> saveFile(String fileName, List<int> bytes) async {
 Future<String> saveFileToDownloads(String fileName, List<int> bytes) async {
   try {
     if (defaultTargetPlatform == TargetPlatform.android) {
-      // Request storage permission if needed
-      var status = await Permission.storage.status;
-      if (!status.isGranted) {
-        status = await Permission.storage.request();
+      // Get Android SDK version
+      final deviceInfo = DeviceInfoPlugin();
+      final androidInfo = await deviceInfo.androidInfo;
+      final sdkInt = androidInfo.version.sdkInt;
+
+      // Request appropriate permissions based on Android version
+      if (sdkInt >= 33) {
+        // Android 13+ (API 33+) - Request photos permission for media files
+        var status = await Permission.photos.status;
         if (!status.isGranted) {
-          throw Exception('Storage permission denied');
+          status = await Permission.photos.request();
+          if (!status.isGranted) {
+            print('Photos permission denied, trying without permission...');
+          }
+        }
+      } else if (sdkInt >= 30) {
+        // Android 11+ (API 30+) - Request manage external storage
+        var status = await Permission.manageExternalStorage.status;
+        if (!status.isGranted) {
+          status = await Permission.manageExternalStorage.request();
+          if (!status.isGranted) {
+            print('Manage external storage permission denied, trying limited access...');
+          }
+        }
+      } else {
+        // Android 10 and below - Use legacy storage permission
+        var status = await Permission.storage.status;
+        if (!status.isGranted) {
+          status = await Permission.storage.request();
+          if (!status.isGranted) {
+            throw Exception('Storage permission denied');
+          }
         }
       }
 
-      // Use Downloads directory
-      final directory = Directory('/storage/emulated/0/Download');
-      if (!await directory.exists()) {
-        await directory.create(recursive: true);
+      // Try multiple approaches to get Downloads directory
+      Directory? directory;
+
+      // Method 1: Try using getExternalStorageDirectory
+      try {
+        final externalDir = await getExternalStorageDirectory();
+        if (externalDir != null) {
+          directory = Directory('${externalDir.parent.parent.parent.parent.path}/Download');
+        }
+      } catch (e) {
+        print('Method 1 failed: $e');
       }
 
+      // Method 2: Direct path (fallback)
+      if (directory == null || !await directory.exists()) {
+        directory = Directory('/storage/emulated/0/Download');
+      }
+
+      // Method 3: Alternative direct path
+      if (!await directory.exists()) {
+        directory = Directory('/sdcard/Download');
+      }
+
+      // Create directory if it doesn't exist
+      if (!await directory.exists()) {
+        try {
+          await directory.create(recursive: true);
+        } catch (e) {
+          print('Failed to create directory: $e');
+          throw Exception('Cannot create Downloads directory');
+        }
+      }
+
+      print('Using directory: ${directory.path}');
+
+      // Clean filename and create file
       final cleanFileName = fileName.replaceAll(RegExp(r'[<>:"/\\|?*]'), '_');
       final filePath = '${directory.path}/$cleanFileName.pdf';
 
       final file = File(filePath);
-      await file.writeAsBytes(bytes);
 
-      if (await file.exists() && await file.length() > 0) {
-        showToast(ToastState.SUCCESS, 'فایل در پوشه دانلود ذخیره شد');
-        return filePath;
-      } else {
-        throw Exception('File not created');
+      // Write file with error handling
+      try {
+        await file.writeAsBytes(bytes);
+
+        // Verify file was written successfully
+        if (await file.exists() && await file.length() > 0) {
+          print('File successfully saved to: $filePath');
+          showToast(ToastState.SUCCESS, 'فایل در پوشه دانلود ذخیره شد');
+          return filePath;
+        } else {
+          throw Exception('File not created or is empty');
+        }
+      } catch (e) {
+        print('Error writing file: $e');
+        throw Exception('Failed to write file: $e');
       }
     }
 

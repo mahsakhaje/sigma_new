@@ -29,6 +29,7 @@ Widget CustomDropdown({
       textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
       child: DropdownButtonHideUnderline(
         child: DropdownButton2<String>(
+
           hint: CustomText(hint, color:isDark?Colors.black: Colors.white, size: 14),
           alignment: Alignment.center,
           isExpanded: true,
@@ -40,6 +41,7 @@ Widget CustomDropdown({
           value: value,
           items: items.entries.map((entry) {
             return DropdownMenuItem<String>(
+
               alignment: AlignmentDirectional.center,
               value: entry.key, // Return the key
               child: _buildDropdownItem(
@@ -82,7 +84,6 @@ Widget _buildDropdownItem(
 
   if (isFullLine && !isEng) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         mainAxisSize: MainAxisSize.max,

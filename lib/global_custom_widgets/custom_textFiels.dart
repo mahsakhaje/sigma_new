@@ -92,6 +92,17 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       }
       return null;
     }
+    if (widget.isEmail) {
+      final emailRegExp =
+          RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+      if (value == null || value.isEmpty) {
+        return null;
+      }
+
+      if (!emailRegExp.hasMatch(value ?? '')) {
+        return 'ایمیل وارد شده صحیح نمی باشد.';
+      }
+    }
     if (value == null || value.isEmpty) {
       return 'اطلاعات را وارد نمایید.';
     }
@@ -185,10 +196,13 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
             ),
           ),
           hintStyle: TextStyle(
-            color: widget.isDark ? Colors.black87 : widget.enabled?Colors.white: Colors.grey,
+            color: widget.isDark
+                ? Colors.black87
+                : widget.enabled
+                    ? Colors.white
+                    : Colors.grey,
             fontSize: 12,
           ),
-
           counterText: "",
           prefixIcon: _isPasswordField
               ? IconButton(
@@ -214,6 +228,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       ),
     );
   }
+
   bool isValidCoNationalId(String value) {
     bool isValidNationalId = true; // Initialize as true
 
@@ -253,6 +268,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
 
     return isValidNationalId;
   }
+
   List<TextInputFormatter> getFormatter() {
     if (widget.isOnlyNumber || widget.isNationalId) {
       return [PersianFormatter()];
@@ -267,7 +283,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
     if (widget.hintText!.contains('رمز')) {
       return [];
     }
-    if (widget.isEmail|| widget.acceptAll) {
+    if (widget.isEmail || widget.acceptAll) {
       return [];
     }
     return [PersianLettersFormatter()];

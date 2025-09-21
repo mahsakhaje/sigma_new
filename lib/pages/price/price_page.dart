@@ -235,7 +235,7 @@ class PricePage extends StatelessWidget {
       child: ListView(
         children: [
           CustomText('اطلاعات پایه خودرو',
-              size: 12,
+              size: 16,
               fontWeight: FontWeight.bold,
               textAlign: TextAlign.right),
           SizedBox(height: 12),
@@ -252,7 +252,7 @@ class PricePage extends StatelessWidget {
                           controller.updateCarModel(str),
                     )),
               ),
-              SizedBox(width: 12),
+              SizedBox(width: 8),
               Expanded(
                 child: Obx(() => CustomDropdown(
                       hint: 'برند خودرو',
@@ -270,14 +270,14 @@ class PricePage extends StatelessWidget {
               Expanded(
                 child: Obx(() => CustomDropdown(
                       hint: 'رنگ خودرو',
-                      isRtl: true,
+                isRtl: true,
                       isTurn: controller.turn.value == 4,
                       value: controller.selectedColors.value,
                       items: controller.colorsCars.value,
                       onChanged: (String? str) => controller.updateColors(str),
                     )),
               ),
-              SizedBox(width: 12),
+              SizedBox(width: 8),
               Expanded(
                 child: Obx(() => CustomDropdown(
                       hint: 'تیپ خودرو',
@@ -302,7 +302,7 @@ class PricePage extends StatelessWidget {
                           controller.updateGuarantee(str),
                     )),
               ),
-              SizedBox(width: 12),
+              SizedBox(width: 8),
               Expanded(
                 child: Obx(() => CustomDropdown(
                       hint: 'سال ساخت ',

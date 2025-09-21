@@ -177,8 +177,9 @@ SizedBox buildMobileGetData(
           ),
           customOutlinedButton(() {
             if (_otpFormKey.currentState!.validate()) {
-              authController.sendOtp();
+             authController.sendOtp();
             }
+            //authController.currentPage.value = AuthPageState.otp;
           }, 'ورود با رمز یکبارمصرف'),
           const SizedBox(
             height: 12,
