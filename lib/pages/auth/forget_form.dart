@@ -81,11 +81,12 @@ Widget buildForgetPassword() {
         ),
         const SizedBox(height: 16),
         CustomPinput(
-          textController: authController.codeController,
+          code: authController.autoFilledCode.value,
+          textController: authController.forgetCodeController,
           onCompleted: (value) {
             authController.verifyResetPassword(
               cellNumber: authController.forgetMobileNumberController.text,
-              password: englishToPersian(authController.codeController.text),
+              password: englishToPersian(authController.forgetCodeController.text),
             );
           },
         ),
@@ -102,12 +103,12 @@ Widget buildForgetPassword() {
                 () {
                   hideKeyboard(Get.context!);
                   if (authController.codeController.text.length >= 5 &&
-                      authController.codeController.text.length < 8) {
+                      authController.forgetCodeController.text.length < 8) {
                     authController.verifyResetPassword(
                       cellNumber:
                           authController.forgetMobileNumberController.text,
                       password:
-                          englishToPersian(authController.codeController.text),
+                          englishToPersian(authController.forgetCodeController.text),
                     );
                   }
                 },

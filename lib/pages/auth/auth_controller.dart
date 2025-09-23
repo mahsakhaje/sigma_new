@@ -9,6 +9,7 @@ import 'package:sigma/helper/dio_repository.dart';
 import 'package:sigma/helper/helper.dart';
 import 'package:sigma/helper/route_names.dart';
 import 'package:sigma/helper/storage_helper.dart';
+import 'package:sms_autofill/sms_autofill.dart';
 //import 'package:sms_autofill/sms_autofill.dart';
 
 class AuthController extends GetxController {
@@ -47,6 +48,7 @@ class AuthController extends GetxController {
   final coNameController = TextEditingController();
   final coNationalCodeController = TextEditingController();
   final codeController = TextEditingController();
+  final forgetCodeController = TextEditingController();
   final otpCodeController = TextEditingController();
   final RxMap<String, String> geoNames = <String, String>{}.obs;
   final RxMap<String, String> geoCityNames = <String, String>{}.obs;
@@ -60,19 +62,48 @@ class AuthController extends GetxController {
   late TextEditingController pinController;
   late FocusNode focusNode;
 
-  // late SmsRetriever smsRetriever;
-  String _code = "";
-  String signature = "";
+  String code="";
+  String signature = "{{ app signature }}";
+  var autoFilledCode = ''.obs;
+  @override
+  void dispose() {
+    SmsAutoFill().unregisterListener();
+    super.dispose();
+  }
+  // Override from CodeAutoFill mixin
+  @override
+  void codeUpdated() {
+    // This method is called when SMS code is received
+    final receivedCode = code;
+    print('Received SMS code: $receivedCode');
 
-  Future<void> _getAppSignature() async {
-   // final sig = await SmsAutoFill().getAppSignature;
+    if (receivedCode != null && receivedCode.isNotEmpty) {
+      // Update the observable
+      autoFilledCode.value = receivedCode;
 
-    // signature = sig;
-    // print('***********=88');
-    // print(signature);
-   // await SmsAutoFill().listenForCode();
+      // Update the appropriate controller based on current page
+      if(currentState==PageState.EnterCode){
+        forgetCodeController.text=receivedCode;
+      }
+      if (currentPage.value == AuthPageState.otp) {
+        otpCodeController.text = receivedCode;
+        // Auto-submit if code is complete
+
+      } else if (registerState.value == RegisterPageState.otp) {
+        codeController.text = receivedCode;
+      }
+    }
   }
 
+  Future<void> _getAppSignature() async {
+    try {
+      final sig = await SmsAutoFill().getAppSignature;
+      signature = sig;
+      print('App Signature: $signature');
+    } catch (e) {
+      print('Error getting app signature: $e');
+    }
+  }
   void goToLogin() => currentPage.value = AuthPageState.login;
 
   void goToRegister() => currentPage.value = AuthPageState.register;
@@ -97,6 +128,9 @@ class AuthController extends GetxController {
     focusNode = FocusNode();
     await _getAppSignature();
 
+    // Set up SMS auto-fill listener
+    await SmsAutoFill().listenForCode();
+
    // await SmsAutoFill().listenForCode();
 
    // smsRetriever = SmsRetrieverImpl(SmartAuth.instance);
@@ -105,12 +139,7 @@ class AuthController extends GetxController {
     _loadCities();
   }
 
-  @override
-  void onClose() {
-    pinController.dispose();
-    focusNode.dispose();
-    super.onClose();
-  }
+
 
   Future<void> _getSupportNumber() async {
     try {
@@ -216,7 +245,7 @@ class AuthController extends GetxController {
       var response = await DioClient.instance.confirmNewPassword(
         newPassword: forgetPasswordController.text,
         cellNumber: forgetMobileNumberController.text,
-        code: codeController.text,
+        code: forgetCodeController.text,
       );
 
       if (response == null) {
@@ -412,7 +441,7 @@ class AuthController extends GetxController {
   }
 
 // Add this new method for code confirmation
-  Future<void> confirmCode() async {
+  Future<void> confirmRegisterCode() async {
     isLoading.value = true;
     codeConfirmationSuccess.value = false;
     errorMessage.value = '';

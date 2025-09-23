@@ -33,9 +33,10 @@ Widget buildRegister() {
           SizedBox(height: 30),
           SizedBox(
             child: CustomPinput(
+              code: authController.autoFilledCode.value,
               textController: authController.codeController,
               onCompleted: (value) {
-                authController.confirmCode();
+                authController.confirmRegisterCode();
               },
             ),
           ),
@@ -45,7 +46,7 @@ Widget buildRegister() {
               )),
           SizedBox(height: 30),
           ConfirmButton(
-            () => authController.confirmCode(),
+            () => authController.confirmRegisterCode(),
             'تایید',
           ),
           Obx(() => TextButton(

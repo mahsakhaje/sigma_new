@@ -49,6 +49,7 @@ class Banners {
   String? fromDate;
   String? toDate;
   String? isActive;
+  String? url;
 
   Banners(
       {this.id,
@@ -57,6 +58,7 @@ class Banners {
       this.web,
       this.docId,
       this.fromDate,
+      this.url,
       this.toDate,
       this.isActive});
 
@@ -66,6 +68,7 @@ class Banners {
     application = json['application'];
     web = json['web'];
     docId = json['docId'];
+    url = json['url'];
     fromDate = json['fromDate'];
     toDate = json['toDate'];
     isActive = json['isActive'];
@@ -78,6 +81,7 @@ class Banners {
     data['application'] = this.application;
     data['web'] = this.web;
     data['docId'] = this.docId;
+    data['url'] = this.url;
     data['fromDate'] = this.fromDate;
     data['toDate'] = this.toDate;
     data['isActive'] = this.isActive;

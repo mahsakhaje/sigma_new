@@ -12,6 +12,7 @@ import 'package:sigma/models/sigma_rales_response_model.dart';
 import 'package:sigma/models/trim_color_response.dart';
 import 'package:sigma/pages/buy_menu/buy_menu_page.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../compare_cars/compare_cars_controller.dart';
 
@@ -36,8 +37,8 @@ enum MultiSelectListType { Brand, Model, Type, Color, City, None }
 
 class AdvertiseController extends GetxController {
   AdvertiseController(dynamic state) {
-    print(state =='NEW');
-    if (state =='NEW') {
+    print(state == 'NEW');
+    if (state == 'NEW') {
       orderState = 'NEW';
     }
     if (state == 'USED') {
@@ -186,6 +187,16 @@ class AdvertiseController extends GetxController {
     } catch (e) {
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  void launchBannerUrl(String? uri) {
+    print(uri);
+    if (uri?.isNullOrBlank ?? true) {
+      return;
+    }
+    else{
+      launchUrl(Uri.parse(uri??""));
     }
   }
 

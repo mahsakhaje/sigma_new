@@ -58,6 +58,7 @@ Widget buildLogin() {
           ),
           const SizedBox(height: 16),
           CustomPinput(
+            code: authController.autoFilledCode.value,
             textController: authController.otpCodeController,
             onCompleted: (value) {
               authController.confirmOtp();

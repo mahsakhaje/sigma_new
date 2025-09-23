@@ -21,6 +21,7 @@ import 'package:sigma/helper/url_addresses.dart';
 import 'package:sigma/models/sigma_rales_response_model.dart';
 import 'package:sigma/pages/advertise/advertise_controller.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AdvertisePage extends StatelessWidget {
   @override
@@ -76,12 +77,14 @@ class AdvertisePage extends StatelessWidget {
                   children: [
                     Row(
                       children: [
+                        SizedBox(width: 8,),
+
                         FlutterSwitch(
                           value: controller.notifyAdvertise.value,
                           onToggle: (val) =>
                               controller.notifyAdvertise.value = val,
-                          height: 24,
-                          width: 54,
+                          height: 22,
+                          width: 50,
                           activeColor: AppColors.blue,
                           inactiveColor: AppColors.grey,
                           toggleColor: Colors.white,
@@ -145,6 +148,7 @@ class AdvertisePage extends StatelessWidget {
             : SliverPadding(
                 padding: const EdgeInsets.all(8.0),
                 sliver: SliverGrid(
+
                   delegate: SliverChildBuilderDelegate(
                     (ctx, index) {
                       if (index == 0 && controller.orders.isEmpty) {
@@ -231,29 +235,32 @@ class AdvertisePage extends StatelessWidget {
               onPageChanged: controller.onPageChanged,
               itemCount: controller.banners.length,
               itemBuilder: (BuildContext context, int index) {
-                return Container(
-                  margin: EdgeInsets.all(2),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
-                    child: Image.network(
-                      '${URLs.imageLinks}${controller.banners[index].docId}',
-                      //width: 340,height: 180,
-                      fit: BoxFit.fill,
-                      loadingBuilder: (BuildContext context, Widget image,
-                          ImageChunkEvent? loadingProgress) {
-                        if (loadingProgress == null) return image;
-                        return SizedBox(
-                          height: 60,
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              value: loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded /
-                                      loadingProgress.expectedTotalBytes!
-                                  : null,
+                return InkWell(
+                  onTap: ()=> controller.launchBannerUrl(controller.banners[index].url),
+                  child: Container(
+                    margin: EdgeInsets.all(2),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: Image.network(
+                        '${URLs.imageLinks}${controller.banners[index].docId}',
+                        //width: 340,height: 180,
+                        fit: BoxFit.fill,
+                        loadingBuilder: (BuildContext context, Widget image,
+                            ImageChunkEvent? loadingProgress) {
+                          if (loadingProgress == null) return image;
+                          return SizedBox(
+                            height: 60,
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                value: loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                    : null,
+                              ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
                   ),
                 );
@@ -380,7 +387,7 @@ class AdvertisePage extends StatelessWidget {
                       timeValue, MultiSelectListType.Color, controller))
                   .toList(),
             ),
-            controller.colorsCars.length * 36,
+            240,
             4,
             MultiSelectListType.Color,
             controller),
