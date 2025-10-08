@@ -194,9 +194,8 @@ class AdvertiseController extends GetxController {
     print(uri);
     if (uri?.isNullOrBlank ?? true) {
       return;
-    }
-    else{
-      launchUrl(Uri.parse(uri??""));
+    } else {
+      launchUrl(Uri.parse(uri ?? ""));
     }
   }
 
@@ -527,12 +526,13 @@ class AdvertiseController extends GetxController {
         } else {
           currentPage.value = 0;
         }
-
-        pageController.animateToPage(
-          currentPage.value,
-          duration: Duration(milliseconds: 2000),
-          curve: Curves.linear,
-        );
+        if (pageController.hasClients) {
+          pageController.animateToPage(
+            currentPage.value,
+            duration: Duration(milliseconds: 2000),
+            curve: Curves.linear,
+          );
+        }
       });
     }
   }

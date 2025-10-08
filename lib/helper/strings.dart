@@ -56,13 +56,17 @@ class Strings {
   static const aboutUs = 'درباره ما';
   static const info = 'اطلاعیه';
   static const expires = 'منقضی شده';
-  static const seeAllInfoes = 'تمامی رویدادهای سیگما را در اینجا مشاهده نمائید.';
+  static const seeAllInfoes =
+      'تمامی رویدادهای سیگما را در اینجا مشاهده نمائید.';
   static const sell = 'فروش خودرو';
   static const carPrice = 'قیمت خودرو';
   static const dailyPrice = 'قیمت روز';
   static const sigmaTransactions = 'معاملات سیگما';
   static const estimatePrice = 'تخمین قیمت';
   static const referral = 'معرفی دوستان';
+  static const technicalInfo = 'مشخصات فنی';
+  static const priceChange = 'تغییرات قیمت';
+  static const carCompare = 'مقایسه خودرو';
   static const sendReferralToFriends = 'ارسال دعوتنامه به دوستان';
   static const sendReferral =
       'با ارسال کد دعوتنامه اختصاصی خود برای\n دوستانتان از مزایای ویژه سیگما بهره مند شوید.';

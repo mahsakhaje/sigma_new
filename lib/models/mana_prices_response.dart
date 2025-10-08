@@ -33,6 +33,7 @@ class ManaPricesResponse {
 class ManaPrices {
   String? id;
   String? carModel;
+  String? carTypeId;
   String? updatePriceDate;
   String? leastPrice;
   String? mostPrice;
@@ -45,6 +46,7 @@ class ManaPrices {
         this.carModel,
         this.updatePriceDate,
         this.leastPrice,
+        this.carTypeId,
         this.mostPrice,
         this.imagePath,
         this.carModelPersian,
@@ -53,6 +55,7 @@ class ManaPrices {
   ManaPrices.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     carModel = json['carModel'];
+    carTypeId = json['carTypeId'];
     updatePriceDate = json['updatePriceDate'];
     carModelPersian = json['carModelPersian'];
     leastPrice = json['leastPrice'];

@@ -17,6 +17,7 @@ import 'package:sigma/pages/home/home_page.dart';
 import 'package:sigma/pages/my_cars/my_cars_page.dart';
 import 'package:sigma/pages/notifs/notifs_page.dart';
 import 'package:sigma/pages/price/price_page.dart';
+import 'package:sigma/pages/price_chart/price_chart_page.dart';
 import 'package:sigma/pages/privacy/privacy_rules_page.dart';
 import 'package:sigma/pages/profile/about_us/about_us_page.dart';
 import 'package:sigma/pages/profile/favorites/favorite_page.dart';
@@ -31,6 +32,8 @@ import 'package:sigma/pages/rules/rules_page.dart';
 import 'package:sigma/pages/sell/sell_page.dart';
 import 'package:sigma/pages/splash/splash_page.dart';
 import 'package:sigma/pages/suggestions/suggestions_page.dart';
+import 'package:sigma/pages/technicalInfo/technicalInfo_page.dart';
+import 'package:sigma/pages/technical_compare/technical_compare_page.dart';
 import 'package:sigma/pages/track_orders/track_page.dart';
 import 'package:sigma/pages/transactions/all_transactions_page.dart';
 
@@ -63,6 +66,24 @@ class AppRoutes {
         GetPage(
           name: RouteName.home,
           page: () => const HomePge(),
+          transitionDuration: const Duration(milliseconds: 10),
+          transition: Transition.native,
+        ),
+        GetPage(
+          name: RouteName.technicalInfo,
+          page: () => const TechnicalInfoPage(),
+          transitionDuration: const Duration(milliseconds: 10),
+          transition: Transition.native,
+        ),
+        GetPage(
+          name: RouteName.priceChart,
+          page: () => PriceChartPage(),
+          transitionDuration: const Duration(milliseconds: 10),
+          transition: Transition.native,
+        ),
+        GetPage(
+          name: RouteName.technicalCompare,
+          page: () => TechnicalComparePage(),
           transitionDuration: const Duration(milliseconds: 10),
           transition: Transition.native,
         ),

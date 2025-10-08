@@ -218,6 +218,9 @@ class _HomePgeState extends State<HomePge> {
                     drawerIcon(
                         path: 'assets/price_car.svg', route: RouteName.prices),
                     drawerIcon(
+                        path: 'assets/technical.svg',
+                        route: RouteName.technicalInfo),
+                    drawerIcon(
                         path: 'assets/etelaie.svg', route: RouteName.info),
                     drawerIcon(
                         path: 'assets/branches.svg',
@@ -259,23 +262,24 @@ class _HomePgeState extends State<HomePge> {
                                 path: 'assets/notif.svg',
                                 route: RouteName.notifs,
                                 isItsSize: false),
-                              if(controller.unreadCount>0)
-
-                               Positioned(
-                                  child: SvgPicture.asset('assets/info.svg',color: AppColors.orange,),
-                                  // child: Container(
-                                  //   padding: EdgeInsets.all(7),
-                                  //   decoration: BoxDecoration(
-                                  //       color: AppColors.orange,
-                                  //       shape: BoxShape.circle),
-                                  //   child: CustomText(
-                                  //       controller.unreadCount
-                                  //           .toString()
-                                  //           .usePersianNumbers(),
-                                  //       size: 15),
-                                  // )
-                               ),
-
+                            if (controller.unreadCount > 0)
+                              Positioned(
+                                child: SvgPicture.asset(
+                                  'assets/info.svg',
+                                  color: AppColors.orange,
+                                ),
+                                // child: Container(
+                                //   padding: EdgeInsets.all(7),
+                                //   decoration: BoxDecoration(
+                                //       color: AppColors.orange,
+                                //       shape: BoxShape.circle),
+                                //   child: CustomText(
+                                //       controller.unreadCount
+                                //           .toString()
+                                //           .usePersianNumbers(),
+                                //       size: 15),
+                                // )
+                              ),
                           ]),
                           drawerIcon(
                               path: 'assets/refferal.svg',

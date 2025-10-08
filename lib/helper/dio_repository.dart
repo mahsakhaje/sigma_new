@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
@@ -25,6 +26,9 @@ import 'package:sigma/models/calculate_loan_payments_response.dart';
 import 'package:sigma/models/cancel_response.dart';
 import 'package:sigma/models/car_detail_response.dart';
 import 'package:sigma/models/car_info_response.dart';
+import 'package:sigma/models/car_type_equipment_model.dart';
+import 'package:sigma/models/car_type_spec_type.dart';
+import 'package:sigma/models/change_price_model.dart';
 import 'package:sigma/models/color_response_model.dart';
 import 'package:sigma/models/confirm_payment_model.dart';
 import 'package:sigma/models/discount_response.dart';
@@ -125,6 +129,22 @@ class DioClient {
     if (response?.statusCode == 200) {
       showMessage(response!.data);
       return BannersResponse.fromJson(response.data);
+    }
+
+    return null;
+  }
+
+  Future<ChangePriceResponse?> getPriceChange(String id, String year) async {
+    final response = await _makePostRequest(URLs.GetChangePriceReportUrl, {
+      'carTypeId': id,
+      'year': year,
+      'token': getShortToken(),
+      'version': await getVersion(),
+    });
+
+    if (response?.statusCode == 200) {
+      showMessage(response!.data);
+      return ChangePriceResponse.fromJson(response.data);
     }
 
     return null;
@@ -694,7 +714,7 @@ class DioClient {
       );
 
       if (response.statusCode == 200 && response.data != null) {
-        return await saveFile(
+        return await saveFileToDownloads(
           '${fileName}_${DateTime.now().millisecondsSinceEpoch}',
           response.data,
         );
@@ -725,7 +745,8 @@ class DioClient {
           mimeType: MimeType.pdf,
         );
       } else {
-        return await saveFile('expert_report_$id', response!.data);
+
+        return await saveFileToDownloads('expert_report_$id'+Random.secure().nextInt(100).toString(), response!.data);
       }
     }
     return null;
@@ -1356,6 +1377,30 @@ class DioClient {
 
     return response?.statusCode == 200
         ? AllCitiesResponse.fromJson(response?.data)
+        : null;
+  }
+
+  Future<CarTypeEquipmentInfoResponse?> getCarEquipments(String id) async {
+    final response = await _makePostRequest(URLs.GetCarTypeEquipmentInfoUrl, {
+      'carTypeId': id,
+      'token': getShortToken(),
+      'version': await getVersion(),
+    });
+
+    return response?.statusCode == 200
+        ? CarTypeEquipmentInfoResponse.fromJson(response?.data)
+        : null;
+  }
+
+  Future<CarTypeSpecTypeResponse?> getCarSpecTypes(String id) async {
+    final response = await _makePostRequest(URLs.GetCarTypeSpecTypesUrl, {
+      'carType': {'id': id},
+      'token': getShortToken(),
+      'version': await getVersion(),
+    });
+
+    return response?.statusCode == 200
+        ? CarTypeSpecTypeResponse.fromJson(response?.data)
         : null;
   }
 

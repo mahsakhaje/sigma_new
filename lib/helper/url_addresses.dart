@@ -1,17 +1,16 @@
 class URLs {
-  static const String BaseAddress = 'https://sigmatec.ir:8083/';
-  static const String BaseUrl = 'https://sigmatec.ir:8083/api/v1';
-  static const String TokenUrl = 'https://sigmatec.ir:8083/token';
-  static const String PWAError = 'https://pwa.sigmatec.ir/error';
-  static const String PWASuccess = 'https://pwa.sigmatec.ir/success';
-
+  // static const String BaseAddress = 'https://sigmatec.ir:8083/';
+  // static const String BaseUrl = 'https://sigmatec.ir:8083/api/v1';
+  // static const String TokenUrl = 'https://sigmatec.ir:8083/token';
+  // static const String PWAError = 'https://pwa.sigmatec.ir/error';
+  // static const String PWASuccess = 'https://pwa.sigmatec.ir/success';
 
   //
-  // static const String BaseAddress = 'https://test.sigmatec.ir:8081/';
-  // static const String BaseUrl = BaseAddress + 'api/v1';
-  // static const String TokenUrl = BaseAddress + 'token';
-  // static const String PWAError = 'https://test.sigmatec.ir:81/error';
-  // static const String PWASuccess = 'https://test.sigmatec.ir:81/success';
+  static const String BaseAddress = 'https://test.sigmatec.ir:8081/';
+  static const String BaseUrl = BaseAddress + 'api/v1';
+  static const String TokenUrl = BaseAddress + 'token';
+  static const String PWAError = 'https://test.sigmatec.ir:81/error';
+  static const String PWASuccess = 'https://test.sigmatec.ir:81/success';
 
 // static const String IosBankCallBackFailureUrl = 'https://test.sigmatec.ir/ios-app-pay-error';
 // static const String IosBankCallBackSuccessUrl = 'https://test.sigmatec.ir/ios-app-pay-success';
@@ -144,8 +143,12 @@ class URLs {
       '/loans/calculateLoanPayments';
   static const String GetAppAccountNotifsCountUrl =
       '/accountnotifs/getAppAccountNotifsCount';
-  static const String SeenNotifsUrl =
-      '/accountnotifs/seenAppNotifByAccount';
+  static const String SeenNotifsUrl = '/accountnotifs/seenAppNotifByAccount';
   static const String GetNotifsListUrl =
       '/accountnotifs/getAppAccountNotifications';
+  static const String GetCarTypeEquipmentInfoUrl =
+      '/cartypeequipments/getCarTypeEquipmentInfo';
+  static const String GetCarTypeSpecTypesUrl = '/cartypes/getCarTypeSpecTypes';
+  static const String GetChangePriceReportUrl =
+      '/manaprices/getChangePriceReport';
 }

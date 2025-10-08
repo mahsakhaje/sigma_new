@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   static const Color grey = Color(0xFFC3C3C3);
+  static const Color cardGrey = Color(0xFF666666);
   static  Color lightGrey = Color(0xFFE7E7E7).withOpacity(0.5);
   static  Color modalGrey = Color(0xFFE0E0E0);
   static  Color containerBg = Color(0xFF343434);
@@ -15,4 +16,9 @@ class AppColors {
   static const Color zarebekhorde = Color(0xFFFF0000); // Red
   static const Color rangshode = Color(0xFF1E90FF); // Blue
   static const Color darkBlue = Color(0xFF0D47A1);
+
+  static const Color orangeChart = Color(0xFFFF6723);
+  static const Color greenChart = Color(0xFF14F5B4);
+
+
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:sigma/global_custom_widgets/confirm_button.dart';
 import 'package:sigma/global_custom_widgets/custom_text.dart';
@@ -46,8 +47,11 @@ class SplashScreen extends GetView<SplashController> {
         children: [
           CustomText('دسترسی به اینترنت وجود ندارد.',
               isRtl: true, size: 16, textAlign: TextAlign.justify),
-          CustomText(' لطفا بعد از بررسی مشکل مجددا تلاش کنید.',
+          CustomText(' لطفا پس از بررسی مشکل مجددا تلاش کنید.',
               isRtl: true, size: 16, textAlign: TextAlign.justify),
+          SizedBox(height: 40,),
+          SvgPicture.asset('assets/plug.svg'),
+          SizedBox(height: 20,),
           SizedBox(
             height: 16,
           ),

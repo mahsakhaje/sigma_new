@@ -87,7 +87,7 @@ class _CarDetailContent extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        CustomText(
+        if(order.firstAdvertiseDate != null) CustomText(
             'تاریخ انتشار${order.firstAdvertiseDate}'.usePersianNumbers(),
             color: AppColors.grey,
             size: 10),
@@ -127,7 +127,8 @@ class _CarDetailContent extends StatelessWidget {
             Divider(
               color: Colors.grey,
             ),
-            Obx(() => _buildBottomSheetItem(
+            Obx(() =>
+                _buildBottomSheetItem(
                   'assets/expert.svg',
                   'برگه کارشناسی',
                   controller.downloadExpertPdf,
@@ -136,7 +137,8 @@ class _CarDetailContent extends StatelessWidget {
             Divider(
               color: Colors.grey,
             ),
-            Obx(() => _buildBottomSheetItem(
+            Obx(() =>
+                _buildBottomSheetItem(
                   'assets/download.svg',
                   'دانلود کاتالوگ',
                   controller.downloadCatalog,
@@ -149,12 +151,11 @@ class _CarDetailContent extends StatelessWidget {
     );
   }
 
-  Widget _buildBottomSheetItem(
-    String iconPath,
-    String title,
-    VoidCallback onTap, {
-    bool isLoading = false,
-  }) {
+  Widget _buildBottomSheetItem(String iconPath,
+      String title,
+      VoidCallback onTap, {
+        bool isLoading = false,
+      }) {
     if (isLoading) {
       return SizedBox(
         height: 55,
@@ -190,7 +191,10 @@ class _CarDetailContent extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: SizedBox(
-        width: MediaQuery.of(context).size.width,
+        width: MediaQuery
+            .of(context)
+            .size
+            .width,
         height: 220,
         child: Obx(() {
           final images = controller.images;
@@ -199,7 +203,7 @@ class _CarDetailContent extends StatelessWidget {
               color: AppColors.grey,
               child: Padding(
                 padding:
-                    const EdgeInsets.symmetric(vertical: 46, horizontal: 12),
+                const EdgeInsets.symmetric(vertical: 46, horizontal: 12),
                 child: SvgPicture.asset('assets/no_pic.svg'),
               ),
             );
@@ -210,11 +214,12 @@ class _CarDetailContent extends StatelessWidget {
               PageView.builder(
                 itemCount: images.length,
                 onPageChanged: controller.onPageChanged,
-                itemBuilder: (context, index) => Image.network(
-                  images[index],
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                ),
+                itemBuilder: (context, index) =>
+                    Image.network(
+                      images[index],
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                    ),
               ),
               // if (controller.saleOrder.value?.justSwap == '1')
               //   _buildBadge('فقط\nتعویض', isOrange: true),
@@ -226,7 +231,8 @@ class _CarDetailContent extends StatelessWidget {
                 bottom: 20,
                 left: 0,
                 right: 0,
-                child: Obx(() => Row(
+                child: Obx(() =>
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: _buildIndicators(
                           images.length, controller.activePage.value),
@@ -240,12 +246,12 @@ class _CarDetailContent extends StatelessWidget {
   }
 
 
-
   List<Widget> _buildIndicators(int length, int current) {
     if (length < 2) return [];
     return List.generate(
         length,
-        (index) => Container(
+            (index) =>
+            Container(
               margin: const EdgeInsets.all(3),
               width: 10,
               height: 10,
@@ -261,7 +267,7 @@ class _CarDetailContent extends StatelessWidget {
       children: [
         const SizedBox(height: 8),
         _buildCarTitle(order),
-       // _buildOwnershipInfo(),
+        // _buildOwnershipInfo(),
         const SizedBox(height: 8),
         Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -290,7 +296,8 @@ class _CarDetailContent extends StatelessWidget {
               size: 14,
             ),
             CustomText(
-              ' ${order.brandDescription ?? ""} ${order.carModelDescription ?? ""}'
+              ' ${order.brandDescription ?? ""} ${order.carModelDescription ??
+                  ""}'
                   .usePersianNumbers(),
               size: 18,
               fontWeight: FontWeight.w600,
@@ -302,9 +309,10 @@ class _CarDetailContent extends StatelessWidget {
   }
 
   Widget _buildOwnershipInfo() {
-    return Obx(() => badge(controller.saleOrder.value?.justSwap == '1'
-        ? 'فقط تعویض'
-        : controller.saleOrder.value?.owner == '1'
+    return Obx(() =>
+        badge(controller.saleOrder.value?.justSwap == '1'
+            ? 'فقط تعویض'
+            : controller.saleOrder.value?.owner == '1'
             ? 'خودرو مانا'
             : 'خودرو امانی'));
   }
@@ -314,9 +322,10 @@ class _CarDetailContent extends StatelessWidget {
       ('کارکرد', order.mileage ?? "0"),
       ('رنگ خودرو', order.colorDescription ?? "0"),
       (
-        'قیمت',
-        NumberUtils.separateThousand(
-            int.tryParse(order.advertiseAmount ?? '0'.usePersianNumbers()) ?? 0)+'   تومان '
+      'قیمت',
+      NumberUtils.separateThousand(
+          int.tryParse(order.advertiseAmount ?? '0'.usePersianNumbers()) ?? 0) +
+          '   تومان '
       ),
       // ('توضیحات فروشنده', order.advertiseComment ?? "0"),
       ('نام شوروم', order.showRoomName ?? ""),
@@ -326,10 +335,11 @@ class _CarDetailContent extends StatelessWidget {
 
     return Column(
       children: details
-          .map((detail) => Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: _buildDetailRow(detail.$1, detail.$2),
-              ))
+          .map((detail) =>
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: _buildDetailRow(detail.$1, detail.$2),
+          ))
           .toList(),
     );
   }
