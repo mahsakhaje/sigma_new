@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:latlng/latlng.dart';
 import 'package:map/map.dart';
+import 'package:sigma/helper/helper.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../helper/dio_repository.dart';
@@ -290,14 +291,11 @@ class BranchesController extends GetxController {
         // Android (geo scheme works)
         uri = Uri.parse("geo:$lat,$lng");
       }
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
 
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
-      } else {
-        Get.snackbar('خطا', 'امکان باز کردن نقشه وجود ندارد');
-      }
+
     } catch (e) {
-      Get.snackbar('خطا', 'امکان باز کردن نقشه وجود ندارد');
+      showToast(ToastState.ERROR, 'امکان باز کردن نقشه وجود ندارد');
       print('Error launching navigation: $e');
     }
   }

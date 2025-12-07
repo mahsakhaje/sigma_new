@@ -9,8 +9,10 @@ import 'package:sigma/global_custom_widgets/dark_main_widget.dart';
 import 'package:sigma/global_custom_widgets/loading.dart';
 import 'package:sigma/global_custom_widgets/network_error_widget.dart';
 import 'package:sigma/helper/colors.dart';
+import 'package:sigma/helper/route_names.dart';
 import 'package:sigma/pages/car_detail/car_detail_controller.dart'
     show CarDetailController;
+import 'package:sigma/pages/technical_menu/technicalInfro_controller.dart';
 
 import '../../helper/helper.dart';
 import '../../models/car_detail_response.dart' show SalesOrder;
@@ -62,8 +64,8 @@ class CarDetailPage extends StatelessWidget {
 // Content Widget
 class _CarDetailContent extends StatelessWidget {
   final CarDetailController controller;
-
-  const _CarDetailContent({required this.controller});
+ 
+   _CarDetailContent({required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -87,10 +89,10 @@ class _CarDetailContent extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        if(order.firstAdvertiseDate != null) CustomText(
+       order.firstAdvertiseDate != null? CustomText(
             'تاریخ انتشار${order.firstAdvertiseDate}'.usePersianNumbers(),
             color: AppColors.grey,
-            size: 10),
+            size: 10):SizedBox(),
         InkWell(
           onTap: () => _showBottomSheet(context),
           child: Container(
@@ -142,6 +144,16 @@ class _CarDetailContent extends StatelessWidget {
                   'assets/download.svg',
                   'دانلود کاتالوگ',
                   controller.downloadCatalog,
+                  isLoading: controller.isDownloading.value,
+                )),
+            Divider(
+              color: Colors.grey,
+            ),
+            Obx(() =>
+                _buildBottomSheetItem(
+                  'assets/spec.svg',
+                  'مشخصات فنی',
+                  ()=>Get.toNamed(RouteName.technicalInfo,arguments: technicalPageState.info),
                   isLoading: controller.isDownloading.value,
                 )),
             const SizedBox(height: 20),

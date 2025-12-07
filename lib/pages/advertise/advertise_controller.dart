@@ -2,15 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:sigma/helper/dio_repository.dart';
+import 'package:sigma/helper/helper.dart';
 import 'package:sigma/helper/route_names.dart';
 import 'package:sigma/models/all_cars_json_model.dart';
 import 'package:sigma/models/banners_response.dart';
 import 'package:sigma/models/color_response_model.dart';
 import 'package:sigma/models/sigma_rales_response_model.dart';
 import 'package:sigma/models/trim_color_response.dart';
-import 'package:sigma/pages/buy_menu/buy_menu_page.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -33,7 +32,16 @@ class TimeValue {
   int get hashCode => id.hashCode;
 }
 
-enum MultiSelectListType { Brand, Model, Type, Color, City, None }
+enum MultiSelectListType {
+  Brand,
+  Model,
+  Type,
+  Color,
+  City,
+  None,
+  notifyBrand,
+  notifyModel
+}
 
 class AdvertiseController extends GetxController {
   AdvertiseController(dynamic state) {
@@ -52,7 +60,7 @@ class AdvertiseController extends GetxController {
 
   final RxList<SalesOrders> orders = <SalesOrders>[].obs;
   final RxBool isLoading = false.obs;
-  final RxBool notifyAdvertise = false.obs;
+  final RxBool enableNotify = false.obs;
   final RxBool filterLoading = false.obs;
   final RxBool hasMore = true.obs;
   final RxBool showFilterModal = false.obs;
@@ -68,7 +76,7 @@ class AdvertiseController extends GetxController {
   final RxInt pn = 0.obs;
   final RxInt total = 0.obs;
 
-  final RxList<bool> isExpandedList = List.generate(8, (index) => false).obs;
+  final RxList<bool> isExpandedList = List.generate(10, (index) => false).obs;
 
   final Rx<AllCarsJsonModel?> allCarsJsonModel = Rx<AllCarsJsonModel?>(null);
   final Rx<TrimColorResponse?> trimColorResponse = Rx<TrimColorResponse?>(null);
@@ -98,6 +106,12 @@ class AdvertiseController extends GetxController {
   late PageController pageController;
   final Rx<SfRangeValues> priceValues = SfRangeValues(200.0, 9000.0).obs;
   final Rx<SfRangeValues> yearValues = SfRangeValues(1380, 1404).obs;
+
+  final notifyAll = false.obs;
+  final RxList<TimeValue> selectedNotifyModels = <TimeValue>[].obs;
+  final RxList<TimeValue> selectedNotifyBrands = <TimeValue>[].obs;
+  final RxList<TimeValue> notifyModels = <TimeValue>[].obs;
+  final RxList<TimeValue> notifyBrands = <TimeValue>[].obs;
 
   final RxList<TimeValue> fromYears = <TimeValue>[
     TimeValue(1380, '1380'),
@@ -179,11 +193,13 @@ class AdvertiseController extends GetxController {
         fetchCities(),
       ]);
       await getOrders();
+
       // if (!kIsWeb) {
       //   await FirebaseAnalytics.instance.logEvent(name: advertise_key);
       // }
       pageController = PageController(initialPage: 0);
       fetchBanners();
+      await getAccountAnnouncementStatus();
     } catch (e) {
     } finally {
       isLoading.value = false;
@@ -211,6 +227,11 @@ class AdvertiseController extends GetxController {
     brands.clear();
     allCarsJsonModel.value?.brands?.forEach((element) {
       brands.add(
+          TimeValue(int.parse(element.id ?? '0'), element.description ?? ''));
+    });
+    notifyBrands.clear();
+    allCarsJsonModel.value?.brands?.forEach((element) {
+      notifyBrands.add(
           TimeValue(int.parse(element.id ?? '0'), element.description ?? ''));
     });
   }
@@ -405,6 +426,53 @@ class AdvertiseController extends GetxController {
     disabledFilter.value = false;
   }
 
+  void toggleNotifyBrand(TimeValue value, bool checked) {
+    print(value.value);
+    print(checked);
+
+    if (checked) {
+      selectedNotifyBrands.add(value);
+    } else {
+      selectedNotifyBrands.remove(value);
+    }
+
+    // پاک کردن لیست مدل‌ها و مدل‌های انتخاب شده
+    notifyModels.clear();
+    selectedNotifyModels.clear();
+
+    // اضافه کردن مدل‌های مربوط به همه برندهای انتخاب شده
+    for (var brand in selectedNotifyBrands) {
+      var selectedBrand = allCarsJsonModel.value?.brands?.firstWhere(
+        (b) => b.id == brand.id.toString(),
+      );
+
+      if (selectedBrand != null && selectedBrand.carModels != null) {
+        for (var model in selectedBrand.carModels!) {
+          // جلوگیری از اضافه شدن مدل‌های تکراری
+          if (!notifyModels.any((m) => m.id == int.parse(model.id!))) {
+            notifyModels
+                .add(TimeValue(int.parse(model.id!), model.description!));
+          }
+        }
+      }
+    }
+
+    disabledFilter.value = false;
+  }
+
+  void toggleNotifyModel(TimeValue value, bool checked) {
+    print(value.value);
+    print(checked);
+
+    if (checked) {
+      selectedNotifyModels.add(value);
+    } else {
+      selectedNotifyModels.remove(value);
+    }
+
+    disabledFilter.value = false;
+  }
+
   void updatePriceValues(SfRangeValues values) {
     priceValues.value = values;
     disabledFilter.value = false;
@@ -427,6 +495,10 @@ class AdvertiseController extends GetxController {
         return selectedTypes.contains(value.id);
       case MultiSelectListType.Color:
         return selectedCarColors.contains(value.id);
+      case MultiSelectListType.notifyBrand:
+        return selectedNotifyBrands.any((element) => element.id == value.id);
+      case MultiSelectListType.notifyModel:
+        return selectedNotifyModels.any((element) => element.id == value.id);
       default:
         return false;
     }
@@ -516,6 +588,95 @@ class AdvertiseController extends GetxController {
       banners.value = [];
       print('Error fetching banners: $e');
     } finally {}
+  }
+
+  Future<void> insertNotify() async {
+    if (enableNotify.value) {
+      if (notifyAll.value) {
+        var response = await DioClient.instance.updateAnnouncments('1', '');
+        if (response?.message == 'OK') {
+          showToast(ToastState.SUCCESS, 'اطلاع رسانی با موفقیت فعال شد.');
+          Get.back();
+        }
+        return;
+      }
+      var carModelIds = '';
+      selectedNotifyModels.value.forEach((element) {
+        carModelIds.isEmpty
+            ? carModelIds = element.id.toString()
+            : carModelIds = carModelIds + ',' + element.id.toString();
+      });
+      print(carModelIds);
+      var response =
+          await DioClient.instance.updateAnnouncments('0', carModelIds);
+      if (response?.message == 'OK') {
+        showToast(ToastState.SUCCESS, 'اطلاع رسانی با موفقیت فعال شد.');
+        Get.back();
+      }
+    } else {
+      var response = await DioClient.instance.updateAnnouncments('', '');
+      showToast(ToastState.SUCCESS, 'اطلاع رسانی با موفقیت غیرفعال شد.');
+      Get.back();
+    }
+  }
+
+  Future<void> getAccountAnnouncementStatus() async {
+    var response = await DioClient.instance.getAccountAnnouncementStatus();
+    print(response?.announcementStatus);
+    print(response?.carModelIds);
+    print(response?.all);
+
+    if (response?.message == 'OK' && response?.announcementStatus == '1') {
+      enableNotify.value = true;
+      if (response?.all == '1') {
+        notifyAll.value = true;
+        return;
+      }
+      var selectedModels = response?.carModelIds?.split(',');
+      print(selectedModels);
+      selectedModels?.forEach((id) {
+        print(id);
+        print(allCarsJsonModel);
+        allCarsJsonModel?.value?.brands?.forEach((brand) {
+          brand?.carModels?.forEach((model) {
+            if (model.id == id) {
+              selectedNotifyBrands.add(TimeValue(
+                  int.parse(brand.id ?? '0'), brand.description ?? ''));
+            }
+          });
+        });
+      });
+      print('**');
+      print(selectedNotifyBrands.value);
+      for (var brand in selectedNotifyBrands) {
+        var selectedBrand = allCarsJsonModel.value?.brands?.firstWhere(
+          (b) => b.id == brand.id.toString(),
+        );
+
+        if (selectedBrand != null && selectedBrand.carModels != null) {
+          for (var model in selectedBrand.carModels!) {
+            // جلوگیری از اضافه شدن مدل‌های تکراری
+            if (!notifyModels.any((m) => m.id == int.parse(model.id!))) {
+              notifyModels
+                  .add(TimeValue(int.parse(model.id!), model.description!));
+            }
+          }
+        }
+      }
+      print('***');
+      print(notifyModels.value);
+      selectedModels?.forEach((id) {
+        notifyModels.forEach((model) {
+          print(id);
+          print(model.id);
+          if (model.id.toString() == id.toString()) {
+            selectedNotifyModels.add(model);
+          }
+        });
+      });
+      print('****');
+      print(selectedNotifyModels.value);
+    }
   }
 
   void startAutoSlide() {

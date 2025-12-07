@@ -27,6 +27,7 @@ class RouteName {
   static const String mySalesOrder = '/my_sales_order';
   static const String myShowRooms = '/my_show_rooms';
   static const String myCars = '/my_cars';
+  static const String advertiseMenu = '/advertise_menu';
   static const String myExpertOrders = '/my_expert_orders';
   static const String myBuyRequests = '/my_buy_orders';
   static const String allTransactionsSales = '/all_sales_transactions';
@@ -56,6 +57,8 @@ class RouteName {
   static const String referral = '/referral';
   static const String notifs = '/notifs';
   static const String technicalInfo = '/technicalInfo';
+  static const String technicalMenu = '/technicalMenu';
   static const String priceChart = '/priceChart';
   static const String technicalCompare = '/technicalCompare';
+  static const String stocks = '/stocks';
 }

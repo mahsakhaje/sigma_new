@@ -16,14 +16,24 @@ class ParentMenuWidget extends StatelessWidget {
     required this.title,
   });
 
+  String getMenuImagePath() {
+    switch (title) {
+      case Strings.buyCar:
+        return 'assets/menue_bg.png';
+      case Strings.requests:
+        return 'assets/requestbg.png';
+      case Strings.profile:
+        return 'assets/profilebg.png';
+      case Strings.advertises:
+        return 'assets/advertise.png';
+      case Strings.carInfo:
+        return 'assets/technical_bg.png';
+    }
+    return 'assets/advertise.png';
+  }
+
   @override
   Widget build(BuildContext context) {
-    String imagePath = title == Strings.buyCar
-        ? 'assets/menue_bg.png'
-        : title == Strings.requests
-            ? 'assets/requestbg.png'
-            : 'assets/profilebg.png';
-
     final menuController = Get.find<MenuControllerDefault>();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await Future.delayed(Duration(milliseconds: 700));
@@ -98,7 +108,7 @@ class ParentMenuWidget extends StatelessWidget {
               child: Container(
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage(imagePath),
+                    image: AssetImage(getMenuImagePath()),
                     fit: BoxFit.cover,
                   ),
                 ),

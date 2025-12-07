@@ -1,4 +1,6 @@
 // Controller
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -12,6 +14,8 @@ import 'package:sigma/helper/dio_repository.dart';
 import 'package:sigma/helper/helper.dart';
 import 'package:sigma/models/car_detail_response.dart';
 import 'package:sigma/models/get_availeble_times.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class ReserveShowRoomController extends GetxController {
   final String id;
@@ -96,7 +100,27 @@ class ReserveShowRoomController extends GetxController {
       });
     });
   }
+  Future<void> launchNavigation() async {
+    var lat = _selectedLat.value;
+    var lng = _selectedLong.value;
+    try {
+      Uri uri;
 
+      if (Platform.isIOS) {
+        // Prefer Apple Maps
+        uri = Uri.parse("http://maps.apple.com/?q=$lat,$lng");
+      } else {
+        // Android (geo scheme works)
+        uri = Uri.parse("geo:$lat,$lng");
+      }
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+
+
+    } catch (e) {
+      showToast(ToastState.ERROR, 'امکان باز کردن نقشه وجود ندارد');
+      print('Error launching navigation: $e');
+    }
+  }
   void _setupMapLocation() {
     _selectedLat.value =
         double.tryParse(detailResponse?.salesOrder?.showRoomLat ?? '0') ?? 0;

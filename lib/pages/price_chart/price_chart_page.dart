@@ -39,12 +39,14 @@ print(imagePath+carModel+id);
     return Column(
       children: [
         // Legend
-        Image.network(
-          imagePath ?? "",
-          fit: BoxFit.cover,
-          width: Get.width,
-          height: 200,
-        ),
+       imagePath.isEmpty?SizedBox(): Padding(
+         padding: const EdgeInsets.all(12.0),
+         child: Image.network(
+            imagePath ?? "",
+            fit: BoxFit.contain,
+            width: Get.width,
+          ),
+       ),
         SizedBox(height: 16,),
         CustomText(carModel,size: 16,fontWeight: FontWeight.bold),
         // Chart
@@ -125,14 +127,12 @@ print(imagePath+carModel+id);
 
   List<CartesianSeries> _buildSeries(PriceChartController controller) {
     return controller.yearDataList.map((yearData) {
-      final validData =
-          yearData.data.where((data) => data.value != 0.0).toList();
-
+      // فیلتر رو حذف کن - همه داده‌ها رو نگه دار
       return LineSeries<ChartData, String>(
         name: yearData.year.toString(),
-        dataSource: validData,
+        dataSource: yearData.data, // بدون فیلتر
         xValueMapper: (ChartData data, _) => data.month,
-        yValueMapper: (ChartData data, _) => data.value,
+        yValueMapper: (ChartData data, _) => data.value == 0.0 ? null : data.value, // مقدار 0 رو به null تبدیل کن
         color: yearData.color,
         width: 2,
         markerSettings: MarkerSettings(
@@ -145,10 +145,10 @@ print(imagePath+carModel+id);
           borderWidth: 1,
         ),
         emptyPointSettings: EmptyPointSettings(
-          mode: EmptyPointMode.gap, // Creates gaps for missing data
+          mode: EmptyPointMode.gap,
         ),
         dataLabelSettings: const DataLabelSettings(
-          isVisible: false, // Set to true if you want to show values on points
+          isVisible: false,
         ),
       );
     }).toList();

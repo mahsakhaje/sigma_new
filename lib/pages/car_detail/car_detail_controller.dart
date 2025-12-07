@@ -9,6 +9,7 @@ import 'package:sigma/helper/helper.dart';
 import 'package:sigma/helper/route_names.dart';
 import 'package:sigma/helper/url_addresses.dart';
 import 'package:sigma/models/car_detail_response.dart';
+import 'package:sigma/pages/technical_menu/technicalInfro_controller.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CarDetailController extends GetxController {
@@ -146,7 +147,9 @@ class CarDetailController extends GetxController {
       isDownloading.value = false;
     }
   }
+void showSpecypes(){
 
+}
   void onPageChanged(int page) {
     activePage.value = page;
   }

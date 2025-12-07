@@ -5,6 +5,7 @@ import 'package:sigma/global_custom_widgets/custom_drop_box.dart';
 import 'package:sigma/global_custom_widgets/custom_text.dart';
 import 'package:sigma/global_custom_widgets/dark_main_widget.dart';
 import 'package:sigma/global_custom_widgets/map.dart';
+import 'package:sigma/global_custom_widgets/outlined_button.dart';
 import 'package:sigma/helper/colors.dart';
 import 'package:sigma/helper/helper.dart';
 import 'package:sigma/pages/branches/branches_controller.dart';
@@ -46,6 +47,7 @@ class ReserveShowRoom extends StatelessWidget {
                           _buildAddressContainer(controller),
                         ],
                       ),
+                      _buildNavigationButton(controller),
                       _buildConfirmButton(controller),
                       SizedBox(height: 10),
                     ],
@@ -127,8 +129,15 @@ class ReserveShowRoom extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: ConfirmButton(
                 controller.reserveShowRoom,
-                'تایید',
+                'تایید رزرو',
               ),
         ));
+  }
+
+  _buildNavigationButton(ReserveShowRoomController controller) {
+     return Padding(
+       padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 8),
+       child: customOutlinedButton( controller.launchNavigation, 'مسیریابی'),
+     );
   }
 }

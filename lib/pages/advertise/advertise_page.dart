@@ -6,13 +6,14 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:sigma/global_custom_widgets/bottom_sheet.dart';
+import 'package:sigma/global_custom_widgets/custom_check_box.dart';
+import 'package:sigma/global_custom_widgets/custom_drop_box.dart';
 import 'package:sigma/global_custom_widgets/loading.dart';
 import 'package:sigma/global_custom_widgets/confirm_button.dart';
 import 'package:sigma/global_custom_widgets/custom_text.dart';
 import 'package:sigma/global_custom_widgets/dark_main_widget.dart';
 import 'package:sigma/global_custom_widgets/no_content.dart';
 import 'package:sigma/global_custom_widgets/outlined_button.dart';
-import 'package:sigma/helper/colors.dart' as colors;
 import 'package:sigma/helper/colors.dart';
 import 'package:sigma/helper/helper.dart';
 import 'package:sigma/helper/route_names.dart';
@@ -21,7 +22,6 @@ import 'package:sigma/helper/url_addresses.dart';
 import 'package:sigma/models/sigma_rales_response_model.dart';
 import 'package:sigma/pages/advertise/advertise_controller.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class AdvertisePage extends StatelessWidget {
   @override
@@ -64,6 +64,9 @@ class AdvertisePage extends StatelessWidget {
   }
 
   Widget _buildListWidget(AdvertiseController controller) {
+print(controller.notifyBrands.value);
+print(controller.selectedNotifyBrands.value);
+
     return CustomScrollView(
       controller: controller.scrollController,
       slivers: [
@@ -73,33 +76,148 @@ class AdvertisePage extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        SizedBox(width: 8,),
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                    width: 100,
+                    child: GestureDetector(onTap:()=>
 
-                        FlutterSwitch(
-                          value: controller.notifyAdvertise.value,
-                          onToggle: (val) =>
-                              controller.notifyAdvertise.value = val,
-                          height: 22,
-                          width: 50,
-                          activeColor: AppColors.blue,
-                          inactiveColor: AppColors.grey,
-                          toggleColor: Colors.white,
-                        ),
-                        SizedBox(width: 8,),
-                        CustomText('خبرم کن',size: 14)
-                      ],
+                        CustomBottomSheetAnimated.show(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(children: [
+                              Row(
+                                children: [
+                                  SizedBox(width: 8),
+                                 Obx(()=> FlutterSwitch(
+                                    value: controller.enableNotify.value,
+                                    onToggle: (val){
+                                      controller.enableNotify.value=!controller.enableNotify.value;
+                                    },
+                                    height: 22,
+                                    width: 50,
+                                    activeColor: AppColors.blue,
+                                    inactiveColor: AppColors.grey,
+                                    toggleColor: Colors.white,
+                                  )),
+                                  SizedBox(width: 8),
+                                  CustomText('فعالسازی', size: 14,color: Colors.black,fontWeight: FontWeight.bold)
+                                ],
+                              ),
+                              SizedBox(height: 8,),
+                              Obx(()=>controller.notifyAll.value ||!controller.enableNotify.value?
+                              Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          padding:EdgeInsets.symmetric(vertical: 20,horizontal: 10),
+                                          margin: EdgeInsets.symmetric(horizontal: 8,vertical: 4),
+                                          decoration: BoxDecoration(
+                                          border: Border.all(color: AppColors.grey),
+                                          borderRadius: BorderRadius.circular(4)
+                                        ),child: CustomText('برند ',color: AppColors.grey,textAlign: TextAlign.right,size:12,fontWeight: FontWeight.bold),),
+                                      ),
+                                    ],
+                                  ),   Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          padding:EdgeInsets.symmetric(vertical: 20,horizontal: 10),
+                                          margin: EdgeInsets.symmetric(horizontal: 8,vertical: 4),
+                                          decoration: BoxDecoration(
+                                          border: Border.all(color: AppColors.grey),
+                                          borderRadius: BorderRadius.circular(4)
+                                        ),child: CustomText('مدل ',color: AppColors.grey,textAlign: TextAlign.right,size:12,fontWeight: FontWeight.bold),),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ): Column(children:[      Obx(()=>  buildExpandable(
+                                  'برند',
+                                  ListView(
+                                    physics: const ScrollPhysics(),
+                                    padding: EdgeInsets.all(8.0),
+                                    children: controller.notifyBrands
+                                        .map((timeValue) => multiSelectWidget(
+                                        timeValue, MultiSelectListType.notifyBrand, controller))
+                                        .toList(),
+                                  ),
+                                  controller.notifyBrands.length * 58,
+                                 9,
+                                  MultiSelectListType.notifyBrand,
+                                  controller)),
+                                Obx(()=>buildExpandable(
+                                    'مدل خودرو',
+                                    ListView(
+                                      physics: const ScrollPhysics(),
+                                      padding: EdgeInsets.all(8.0),
+                                      children: controller.notifyModels
+                                          .map((timeValue) => multiSelectWidget(
+                                          timeValue, MultiSelectListType.notifyModel, controller))
+                                          .toList(),
+                                    ), controller.notifyModels.length * 58,
+                                    8,
+                                    MultiSelectListType.notifyModel,
+                                    controller))])),
+                          Obx(()=>    !controller.enableNotify.value?Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  CustomText('همه آگهی های جدید',
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.bold),
+                                 Container(
+                                   width: 18,
+                                   height: 18,
+                                   margin: EdgeInsets.all(12),
+                                   decoration: BoxDecoration(
+                                   borderRadius: BorderRadius.circular(2),
+                                   border: Border.all(color:AppColors.grey)
+                                 ),)
+                                ],
+                              ): Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  CustomText('همه آگهی های جدید',
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold),
+                                  Obx(() => CustomCheckBox(
+
+                                    value: controller.notifyAll.value,
+                                    onChanged: (str) {
+                                      controller.notifyAll.value = !controller.notifyAll.value;
+                                    },
+                                    isBlue: true,
+                                    isDark: true,
+                                  )),
+                                ],
+                              )),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ConfirmButton(()=>controller.insertNotify(), 'تایید'),
+                              )
+                            ]),
+                          ),
+                          context: Get.context!,
+                          initialChildSize: 0.55,
+
+    )
+                      ,child: SvgPicture.asset('assets/notify.svg'),
+
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        controller.togglePageState();
-                      },
-                      child: SvgPicture.asset('assets/filter.svg'),
-                    )
-                  ]),
+                  ),
+
+                  GestureDetector(
+                    onTap: () {
+                      controller.togglePageState();
+                    },
+                    child: SvgPicture.asset('assets/filter.svg'),
+                  )
+                ],
+              ),
             ),
           ),
 
@@ -180,44 +298,16 @@ class AdvertisePage extends StatelessWidget {
       ],
     );
 
-    //  GridView.builder(
-    //  controller: controller.scrollController,
-    //  //shrinkWrap: true,
-    // physics: ScrollPhysics(),
-    //  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-    //    crossAxisCount: 2, // Number of columns
-    //    crossAxisSpacing: 8.0, // Spacing between columns
-    //    mainAxisSpacing: 8.0, // Spacing between rows
-    //    childAspectRatio: 0.66, // Width to height ratio of grid items
-    //  ),
-    //  itemCount: controller.hasMore.value
-    //      ? controller.orders.length + 1
-    //      : controller.orders.length,
-    //
-    //  // controller: controller.scrollController,
-    //  itemBuilder: (ctx, index) {
-    //    if (index == 0 && controller.orders.isEmpty) {
-    //      return Center(child: loading());
-    //    }
-    //    if (index == controller.orders.length &&
-    //        controller.hasMore.value &&
-    //        index > 0) {
-    //      return Center(child: loading());
-    //    }
-    //    return advertiseItem(controller.orders[index], () async {
-    //      await controller.changeLike(controller.orders[index].id ?? '');
-    //    }, controller);
-    //  },
+
   }
 
   Widget BannerWidget(AdvertiseController controller) {
     return Obx(() {
-      // Show shimmer loading for non-web platforms
+
       if (controller.isLoading.value && !kIsWeb) {
         return _buildShimmerLoading();
       }
 
-      // Show nothing for web while loading or if no banners
       if ((controller.isLoading.value && kIsWeb) ||
           controller.banners.isEmpty) {
         return SizedBox();
@@ -579,6 +669,13 @@ class AdvertisePage extends StatelessWidget {
                   case MultiSelectListType.Color:
                     controller.toggleColor(value, checked);
                     break;
+                    case MultiSelectListType.notifyBrand:
+                    controller.toggleNotifyBrand(value, checked);
+                    break;
+                    case MultiSelectListType.notifyModel:
+                    controller.toggleNotifyModel(value, checked);
+                    break;
+
                   case MultiSelectListType.City:
                     controller.toggleCity(value, checked);
                     break;

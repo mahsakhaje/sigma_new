@@ -4,24 +4,27 @@ import 'package:get/get.dart';
 import 'package:sigma/global_custom_widgets/custom_text.dart';
 import 'package:sigma/global_custom_widgets/loading.dart';
 import 'package:sigma/helper/helper.dart';
-import 'package:sigma/pages/technicalInfo/technicalInfro_controller.dart';
+import 'package:sigma/pages/technical_menu/technicalInfro_controller.dart';
 
 class CarSpecsDialog extends StatelessWidget {
   final String carTypeId;
   final String carName;
   final String imagePath;
+  final technicalPageState pageState;
 
-  const CarSpecsDialog({
-    Key? key,
-    required this.carTypeId,
-    required this.carName,
-    required this.imagePath,
-  }) : super(key: key);
+  const CarSpecsDialog(
+      {Key? key,
+      required this.carTypeId,
+      required this.carName,
+      required this.imagePath,
+      required this.pageState,
+      required})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final TechnicalInfoController controller =
-        Get.put(TechnicalInfoController());
+        Get.put(TechnicalInfoController(pageState));
 
     return Dialog(
       backgroundColor: Colors.transparent,
@@ -35,39 +38,24 @@ class CarSpecsDialog extends StatelessWidget {
                 topLeft: Radius.circular(8),
                 topRight: Radius.circular(8),
               ),
-              child: Image.network(
-                imagePath ?? "",
-                fit: BoxFit.cover,
-                width: Get.width,
-                height: 180,
-              ),
+              child: imagePath.isEmpty
+                  ? SizedBox(
+                      height: 10,
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Image.network(
+                        imagePath ?? "",
+                        fit: BoxFit.contain,
+                        width: Get.width,
+                      ),
+                    ),
             ),
             const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                GestureDetector(
-                  onTap: () => controller.showMoreBottomSheet(
-                      carTypeId, imagePath, carName),
-                  child: SizedBox(
-                    width: 80,
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: 8,
-                        ),
-                        SvgPicture.asset(
-                          'assets/more.svg',
-                          color: Colors.black,
-                        ),
-                        SizedBox(
-                          width: 8,
-                        ),
-                        CustomText('بیشتر', color: Colors.black, size: 14)
-                      ],
-                    ),
-                  ),
-                ),
+                SizedBox(),
                 CustomText(
                   carName,
                   color: Colors.black,
@@ -90,7 +78,7 @@ class CarSpecsDialog extends StatelessWidget {
                       child: GestureDetector(
                         onTap: () {
                           controller.changeTab(0);
-                          // controller.getCarSpecTypes(carTypeId);
+// controller.getCarSpecTypes(carTypeId);
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 12),
@@ -112,7 +100,7 @@ class CarSpecsDialog extends StatelessWidget {
                       child: GestureDetector(
                         onTap: () {
                           controller.changeTab(1);
-                          //  controller.getCarEquipments(carTypeId);
+//  controller.getCarEquipments(carTypeId);
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 12),
@@ -135,7 +123,7 @@ class CarSpecsDialog extends StatelessWidget {
               ),
             ),
 
-            // Content
+// Content
             Expanded(
               child: Obx(() {
                 if (controller.isLoading.value) {
@@ -145,7 +133,7 @@ class CarSpecsDialog extends StatelessWidget {
                 }
 
                 if (controller.selectedTab.value == 0) {
-                  // Technical Specifications Tab
+// Technical Specifications Tab
                   return ListView.builder(
                     padding: const EdgeInsets.all(16),
                     itemCount: controller.carSpecs.length,
@@ -165,11 +153,9 @@ class CarSpecsDialog extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: Column(
-
                                   children: [
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.end,
-
                                       children: [
                                         Flexible(
                                           child: CustomText(
@@ -187,14 +173,13 @@ class CarSpecsDialog extends StatelessWidget {
                                 ),
                               ),
                               Column(
-
                                 children: [
                                   Row(
                                     children: [
                                       CustomText(' : ', color: Colors.black),
-
                                       CustomText(
-                                          (spec?.specTypeDescription?.trim() ?? "")
+                                          (spec?.specTypeDescription?.trim() ??
+                                                  "")
                                               .usePersianNumbers(),
                                           size: 12,
                                           color: Colors.black,
@@ -205,7 +190,6 @@ class CarSpecsDialog extends StatelessWidget {
                                   ),
                                 ],
                               ),
-
                             ],
                           ),
                         ),
@@ -213,14 +197,14 @@ class CarSpecsDialog extends StatelessWidget {
                     },
                   );
                 } else {
-                  // Equipment & Features Tab
+// Equipment & Features Tab
                   print(controller.carEquipments);
                   return ListView.builder(
                     padding: const EdgeInsets.all(16),
                     itemCount: controller.carEquipments.length,
                     itemBuilder: (context, index) {
-                      String equipment = controller.carEquipments[index]??'';
-                      if(equipment.isEmpty){
+                      String equipment = controller.carEquipments[index] ?? '';
+                      if (equipment.isEmpty) {
                         return SizedBox();
                       }
                       return Container(

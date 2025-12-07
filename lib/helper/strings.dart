@@ -53,6 +53,8 @@ class Strings {
   static const raise_credit = 'افزایش اعتبار';
   static const editProfile = 'ویرایش پروفایل';
   static const advertises = 'آگهی ها';
+  static const carInfo = 'مشخصات خودرو';
+  static const stocks = 'موجودی';
   static const aboutUs = 'درباره ما';
   static const info = 'اطلاعیه';
   static const expires = 'منقضی شده';

@@ -163,11 +163,14 @@ class PricePage extends StatelessWidget {
                         topRight: Radius.circular(20)),
                     child: Stack(
                       children: [
-                        Image.network(
-                          price.imagePath ?? "",
-                          fit: BoxFit.cover,
-                          width: Get.width,
-                          height: 180,
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Image.network(
+                            price.imagePath ?? "",
+                            fit: BoxFit.contain,
+                            width: Get.width,
+
+                          ),
                         ),
                         // badge(
                         //     (((price.updatePriceDate?.length ?? 0) > 4
@@ -176,6 +179,16 @@ class PricePage extends StatelessWidget {
                         //     ).usePersianNumbers(),
                         //     height: 70
                         // )
+                        Positioned(
+                          right: 0,
+                          child: Container(
+                            padding: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: AppColors.orange
+                            ),
+                            child: CustomText(' قیمت کارخانه:  '+(price.factoryPrice??'').usePersianNumbers()+' تومان ',isRtl: true),
+                          ),
+                        )
                       ],
                     )),
             Padding(
@@ -397,7 +410,7 @@ class PricePage extends StatelessWidget {
           ),
           //_buildDamageSummary(),
           SizedBox(height: 12),
-          ConfirmButton(
+         controller.isLoading.value?loading(): ConfirmButton(
             () async {
               bool success = await controller.calculatePrice();
               if (success) {

@@ -12,7 +12,7 @@ class PriceChartController extends GetxController {
   final List<int> years = [1402, 1403, 1404];
   final List<Color> yearColors = [
     AppColors.blue,
-    AppColors.orangeChart,
+    AppColors.orange,
     AppColors.greenChart,
   ];
 

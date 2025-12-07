@@ -81,7 +81,8 @@ class NotifsListPage extends StatelessWidget {
               (controller.accountNotifs[index].description ?? "")
                   .usePersianNumbers(),
               color: AppColors.darkGrey,
-              fontWeight: FontWeight.bold),
+              fontWeight: FontWeight.bold,isRtl: true),
+          SizedBox(height: 8,),
           CustomText(
               (controller.accountNotifs[index].registerDate ?? "")
                   .usePersianNumbers(),

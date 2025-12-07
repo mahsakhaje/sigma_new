@@ -5,6 +5,7 @@ import 'package:sigma/global_custom_widgets/confirm_button.dart';
 import 'package:sigma/global_custom_widgets/custom_drop_box.dart';
 import 'package:sigma/global_custom_widgets/custom_text.dart';
 import 'package:sigma/global_custom_widgets/dark_main_widget.dart';
+import 'package:sigma/global_custom_widgets/loading.dart';
 import 'package:sigma/helper/colors.dart';
 import 'package:sigma/pages/suggestions/suggestions_controller.dart';
 
@@ -19,7 +20,7 @@ class SuggestionPage extends StatelessWidget {
       title: 'انتقادات و پیشنهادات',
       child: Obx(() {
         if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
+          return  Center(child: loading());
         }
 
         if (controller.suggestionTypes.isEmpty) {

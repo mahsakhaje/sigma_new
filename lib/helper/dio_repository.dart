@@ -15,6 +15,7 @@ import 'package:sigma/models/ChassiInquiry_model.dart';
 import 'package:sigma/models/PriceItems%20Response.dart';
 import 'package:sigma/models/UpdateModel.dart';
 import 'package:sigma/models/about_us_model.dart';
+import 'package:sigma/models/account_announcment_response.dart';
 import 'package:sigma/models/add_new_car_response.dart';
 import 'package:sigma/models/all_cars_json_model.dart';
 import 'package:sigma/models/application_info_model.dart';
@@ -53,6 +54,7 @@ import 'package:sigma/models/rules_model.dart';
 import 'package:sigma/models/showrooms_unites_model.dart';
 import 'package:sigma/models/showroos_cities_response.dart';
 import 'package:sigma/models/sigma_rales_response_model.dart';
+import 'package:sigma/models/stocks_model.dart';
 import 'package:sigma/models/suggestiontypes_model.dart';
 import 'package:sigma/models/telephone_model.dart';
 import 'package:sigma/models/tracking_sales_model.dart';
@@ -1320,6 +1322,25 @@ class DioClient {
         ? AllProvincesResponse.fromJson(response?.data)
         : null;
   }
+  Future<StocksResponse?> getStocks(String total,{String? brandId,String? carModelId,String? carTypeId,String? colorId,String? manufactureYearId,String? mileageState}) async {
+    final response = await _makePostRequest(URLs.GetStockUrl, {
+      'pl': '10000',
+      'pn': '1',
+      'brandId':brandId,
+      'carModelId':carModelId,
+      'carTypeId':carTypeId,
+      'colorId':colorId,
+      'manufactureYearId':manufactureYearId,
+      'mileageState':mileageState,
+      'total':total,
+      'token': null,
+      'version': await getVersion(),
+    });
+
+    return response?.statusCode == 200
+        ? StocksResponse.fromJson(response?.data)
+        : null;
+  }
 
   Future<ManaPricesResponse?> getManaPrices() async {
     final response = await _makePostRequest(URLs.ManaPricesUrl, {
@@ -1383,6 +1404,8 @@ class DioClient {
   Future<CarTypeEquipmentInfoResponse?> getCarEquipments(String id) async {
     final response = await _makePostRequest(URLs.GetCarTypeEquipmentInfoUrl, {
       'carTypeId': id,
+      'pl': '10000',
+      'pn': '1',
       'token': getShortToken(),
       'version': await getVersion(),
     });
@@ -1395,6 +1418,8 @@ class DioClient {
   Future<CarTypeSpecTypeResponse?> getCarSpecTypes(String id) async {
     final response = await _makePostRequest(URLs.GetCarTypeSpecTypesUrl, {
       'carType': {'id': id},
+      'pl': '10000',
+      'pn': '1',
       'token': getShortToken(),
       'version': await getVersion(),
     });
@@ -1444,6 +1469,30 @@ class DioClient {
     var token = StorageHelper().getShortToken() ?? '';
     return token;
   }
+  Future<BaseResponse?> updateAnnouncments(String all,String carModelIds) async {
+    final response = await _makePostRequest(URLs.UpdateAccountAnnouncementUrl, {
+      'all': all,
+      'carModelIds': carModelIds,
+      'token': getShortToken(),
+      'version': await getVersion(),
+    });
+
+    return response?.statusCode == 200
+        ? BaseResponse.fromJson(response?.data)
+        : null;
+  }
+  Future<AccountAnnouncmentModel?> getAccountAnnouncementStatus() async {
+    final response = await _makePostRequest(URLs.GetAccountAnnouncementInfoUrl, {
+
+      'token': getShortToken(),
+      'version': await getVersion(),
+    });
+
+    return response?.statusCode == 200
+        ? AccountAnnouncmentModel.fromJson(response?.data)
+        : null;
+  }
+
 }
 
 class InsertImageBody {

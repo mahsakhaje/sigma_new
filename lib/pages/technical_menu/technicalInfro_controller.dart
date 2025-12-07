@@ -8,9 +8,11 @@ import 'package:sigma/helper/route_names.dart';
 import 'package:sigma/models/car_type_equipment_model.dart';
 import 'package:sigma/models/car_type_spec_type.dart';
 import 'package:sigma/models/mana_prices_response.dart';
-import 'package:sigma/pages/technicalInfo/car_info_dialog.dart';
+import 'package:sigma/pages/technical_menu/car_info_dialog.dart';
 
 import '../../global_custom_widgets/bottom_sheet.dart';
+
+enum technicalPageState { compare, pricheChart, info }
 
 class TechnicalInfoController extends GetxController {
   var isLoading = true.obs;
@@ -27,6 +29,11 @@ class TechnicalInfoController extends GetxController {
   String? secondImagePath;
   String? firstCarName;
   String? secondCarName;
+  technicalPageState pageState = technicalPageState.info;
+
+  TechnicalInfoController(technicalPageState technicalPageState) {
+    pageState = technicalPageState;
+  }
 
   @override
   void onInit() {
@@ -73,7 +80,7 @@ class TechnicalInfoController extends GetxController {
   }
 
   void onCarTapped(String id, String imagePath, String carModel) {
-    if (firstId==id || !isChooingMode.value) {
+    if (firstId == id || !isChooingMode.value) {
       return;
     }
     secondId = id;
@@ -91,9 +98,7 @@ class TechnicalInfoController extends GetxController {
   }
 
   void showMoreBottomSheet(String id, String imagePath, String carModel) {
-    firstId = id;
-    firstImagePath = imagePath;
-    firstCarName = carModel;
+
     CustomBottomSheet.show(
         initialChildSize: 0.2,
         context: Get.context!,
@@ -119,7 +124,10 @@ class TechnicalInfoController extends GetxController {
                     ),
                     SizedBox(
                         width: 40,
-                        child: SvgPicture.asset('assets/compare.svg',height: 22,))
+                        child: SvgPicture.asset(
+                          'assets/compare.svg',
+                          height: 22,
+                        ))
                   ],
                 ),
               ),
@@ -163,6 +171,25 @@ class TechnicalInfoController extends GetxController {
         ));
   }
 
+  void buttonClicked(
+  {required  String id,required String imagePath,required String carModel,required String typeId}) {
+    if (pageState == technicalPageState.pricheChart) {
+      Get.toNamed(RouteName.priceChart,
+          arguments: {'id': typeId, 'imagePath': imagePath, 'carModel': carModel});
+      return;
+    }
+    if (pageState == technicalPageState.compare) {
+      firstId = typeId;
+      firstImagePath = imagePath;
+      firstCarName = carModel;
+      isChooingMode.value = true;
+      return;
+    }
+    if (pageState == technicalPageState.info) {
+      showCarSpecsDialog(typeId, carModel, imagePath);
+    }
+  }
+
   void showCarSpecsDialog(
       String carTypeId, String carName, String imagePath) async {
     Get.dialog(
@@ -170,6 +197,7 @@ class TechnicalInfoController extends GetxController {
         carTypeId: carTypeId,
         carName: carName,
         imagePath: imagePath,
+        pageState: pageState,
       ),
       barrierDismissible: true,
     );

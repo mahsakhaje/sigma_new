@@ -95,8 +95,7 @@ class AllTransactionsPage extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                CustomText(order.typeText ?? '', color: AppColors.darkGrey),
-                CustomText('  فروش     ' , color: AppColors.darkGrey),
+
                 CustomText(order.brandDescription ?? '',
                     color: Colors.black87, size: 14, fontWeight: FontWeight.bold),
                 CustomText('-'),
@@ -106,6 +105,12 @@ class AllTransactionsPage extends StatelessWidget {
               ],
             ),
           ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+            CustomText(order.typeText ?? '', color: AppColors.darkGrey),
+            CustomText('  فروش     ' , color: AppColors.darkGrey),
+          ],),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
             child: Row(

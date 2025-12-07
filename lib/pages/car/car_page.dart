@@ -5,6 +5,7 @@ import 'package:sigma/global_custom_widgets/custom_drop_box.dart';
 import 'package:sigma/global_custom_widgets/custom_text.dart';
 import 'package:sigma/global_custom_widgets/custom_textFiels.dart';
 import 'package:sigma/global_custom_widgets/dark_main_widget.dart';
+import 'package:sigma/global_custom_widgets/loading.dart';
 
 import 'package:sigma/models/my_cars_model.dart';
 import 'car_controller.dart';
@@ -24,7 +25,7 @@ class CarWidget extends StatelessWidget {
         title: 'مشخصات خودرو',
         child: Obx(() {
           if (controller.firstLoading.value) {
-            return const Center(child: CircularProgressIndicator());
+            return  Center(child: loading());
           }
 
           return controller.pageState.value == PageState.Confirm
@@ -179,7 +180,7 @@ class CarWidget extends StatelessWidget {
           ),
           const SizedBox(height: 46),
           Obx(() => controller.isLoading.value
-              ? const CircularProgressIndicator()
+              ?  loading()
               : ConfirmButton(
                   controller.inquiry,
                   'ادامه',

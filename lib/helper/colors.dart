@@ -6,7 +6,7 @@ class AppColors {
   static  Color lightGrey = Color(0xFFE7E7E7).withOpacity(0.5);
   static  Color modalGrey = Color(0xFFE0E0E0);
   static  Color containerBg = Color(0xFF343434);
-  static  Color orange = Color(0xFFFF4F00);
+  static  Color orange = Color(0xFFFF4F01);
 
   static const Color darkGrey = Color(0xFF2C2C2C);
   static const Color blue = Color(0xFF2D3CD7);
@@ -17,8 +17,7 @@ class AppColors {
   static const Color rangshode = Color(0xFF1E90FF); // Blue
   static const Color darkBlue = Color(0xFF0D47A1);
 
-  static const Color orangeChart = Color(0xFFFF6723);
-  static const Color greenChart = Color(0xFF14F5B4);
+  static const Color greenChart = Color(0xFF24B8A6);
 
 
 }

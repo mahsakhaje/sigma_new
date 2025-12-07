@@ -40,6 +40,7 @@ class ManaPrices {
   String? imagePath;
   String? isActive;
   String? carModelPersian;
+  String? factoryPrice;
 
   ManaPrices(
       {this.id,
@@ -49,6 +50,7 @@ class ManaPrices {
         this.carTypeId,
         this.mostPrice,
         this.imagePath,
+        this.factoryPrice,
         this.carModelPersian,
         this.isActive});
 
@@ -60,6 +62,7 @@ class ManaPrices {
     carModelPersian = json['carModelPersian'];
     leastPrice = json['leastPrice'];
     mostPrice = json['mostPrice'];
+    factoryPrice = json['companyPrice'];
     imagePath = json['imagePath'];
     isActive = json['isActive'];
   }

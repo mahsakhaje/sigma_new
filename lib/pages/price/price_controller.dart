@@ -7,6 +7,7 @@ import 'package:sigma/models/PriceItems%20Response.dart';
 import 'package:sigma/models/all_cars_json_model.dart';
 import 'package:sigma/models/mana_prices_response.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
+
 enum PageState {
   Form,
   CarState,
@@ -25,10 +26,14 @@ class PricePageController extends GetxController {
   final Rx<Map<String, String>> carModels = Rx<Map<String, String>>({});
   final Rx<Map<String, String>> carTypes = Rx<Map<String, String>>({});
   final Rx<Map<String, String>> colorsCars = Rx<Map<String, String>>({});
-  final Rx<Map<String, String>> carTypeManufactureYears = Rx<Map<String, String>>({});
-  final Rx<Map<String, String>> carStatus = Rx<Map<String, String>>({'1': 'رنگ شده', '2': 'رنگ نشده'});
-  final Rx<Map<String, String>> carSubTitleStatus = Rx<Map<String, String>>({'1': 'تعویض شده', '2': 'تعویض نشده'});
-  final Rx<Map<String, String>> guarantee = Rx<Map<String, String>>({'1': 'دارد', '2': 'ندارد'});
+  final Rx<Map<String, String>> carTypeManufactureYears =
+      Rx<Map<String, String>>({});
+  final Rx<Map<String, String>> carStatus =
+      Rx<Map<String, String>>({'1': 'رنگ شده', '2': 'رنگ نشده'});
+  final Rx<Map<String, String>> carSubTitleStatus =
+      Rx<Map<String, String>>({'1': 'تعویض شده', '2': 'تعویض نشده'});
+  final Rx<Map<String, String>> guarantee =
+      Rx<Map<String, String>>({'1': 'دارد', '2': 'ندارد'});
 
   Rxn<AllCarsJsonModel> responseAllCar = Rxn<AllCarsJsonModel>();
   final RxList<String?> selectedIds = <String?>[].obs;
@@ -55,14 +60,17 @@ class PricePageController extends GetxController {
   final Rxn<String> selectedGaurantee = Rxn<String>();
 
   final Rx<double> maxUsage = 100000.0.obs;
-  final Rx<SfRangeValues> kilometerValues = Rx<SfRangeValues>(SfRangeValues(0, 100000));
+  final Rx<SfRangeValues> kilometerValues =
+      Rx<SfRangeValues>(SfRangeValues(0, 100000));
   final TextEditingController millageController = TextEditingController();
 
   Rxn<List<PriceItems>> priceItems = Rxn<List<PriceItems>>();
   Rxn<PriceItemsResponse> priceItemsResponse = Rxn<PriceItemsResponse>();
   final Rx<Map<String, String>> selectedIdsMap = Rx<Map<String, String>>({});
-  final Rx<Map<String, String>> carStatusDescription = Rx<Map<String, String>>({});
+  final Rx<Map<String, String>> carStatusDescription =
+      Rx<Map<String, String>>({});
   final RxBool isAllCarsLoading = true.obs;
+  final RxBool isLoading = false.obs;
 
   @override
   void onInit() {
@@ -109,7 +117,6 @@ class PricePageController extends GetxController {
   }
 
   void updateBrand(String? str) {
-
     if (str == null) return;
 
     selectedBrand.value = str;
@@ -131,7 +138,6 @@ class PricePageController extends GetxController {
     // Update car models
     Map<String, String> modelsMap = {};
     responseAllCar.value?.brands?.forEach((element) {
-
       if (element.id == str) {
         print(str);
         print(element.description);
@@ -141,7 +147,7 @@ class PricePageController extends GetxController {
       }
     });
     carModels.value = modelsMap;
-
+    carTypes.value = {};
     // Reset dependent selections
     selectedCarModel.value = null;
     selectedCarType.value = null;
@@ -252,7 +258,7 @@ class PricePageController extends GetxController {
         });
       }
     });
-    print( priceItemsResponse.value?.toJson());
+    print(priceItemsResponse.value?.toJson());
     priceItems.value = items;
   }
 
@@ -301,8 +307,10 @@ class PricePageController extends GetxController {
 
   void updateKilometerValues(SfRangeValues values) {
     kilometerValues.value = SfRangeValues(0, values.end);
-    millageController.text = (kilometerValues.value.end).toInt().toString().usePersianNumbers();
+    millageController.text =
+        (kilometerValues.value.end).toInt().toString().usePersianNumbers();
   }
+
 // Add these methods to your PricePageController class
 
 // Method to check if car is damaged (has selections)
@@ -333,7 +341,8 @@ class PricePageController extends GetxController {
   }
 
 // Enhanced item selection method with proper reactive updates
-  void updateItemSelection(String elementId, String valueId, String elementDesc, String valueDesc) {
+  void updateItemSelection(
+      String elementId, String valueId, String elementDesc, String valueDesc) {
     // Create new maps to trigger reactivity
     Map<String, String> updatedMap = Map.from(selectedIdsMap.value);
     Map<String, String> updatedDescMap = Map.from(carStatusDescription.value);
@@ -373,6 +382,7 @@ class PricePageController extends GetxController {
     // For example, check if at least one damage is selected when car is marked as damaged
     return true;
   }
+
   void switchToCarState() {
     if (selectedFromYear.value != null &&
         selectedBrand.value != null &&
@@ -390,30 +400,29 @@ class PricePageController extends GetxController {
     state.value = PageState.Form;
   }
 
-
-
   Future<bool> calculatePrice() async {
     if (selectedFromYear.value != null &&
         selectedBrand.value != null &&
         selectedCarModel.value != null &&
         selectedColors.value != null &&
         millageController.text.isNotEmpty) {
-
       List<String> itemValueIds = [];
       selectedIdsMap.value.forEach((key, value) {
         itemValueIds.add(value);
       });
 
-      int mileage = double.tryParse(millageController.text.toEnglishDigit().trim())?.toInt() ?? 0;
-
+      int mileage =
+          double.tryParse(millageController.text.toEnglishDigit().trim())
+                  ?.toInt() ??
+              0;
+      isLoading.value = true;
       var response = await DioClient.instance.estimatePrice(
-          carTypeId: selectedCarType.value??"",
-          colorId: selectedColors.value??"",
-          yearId: selectedFromYear.value??"",
+          carTypeId: selectedCarType.value ?? "",
+          colorId: selectedColors.value ?? "",
+          yearId: selectedFromYear.value ?? "",
           mileage: mileage.toString(),
-          itemValueIds: itemValueIds
-      );
-
+          itemValueIds: itemValueIds);
+      isLoading.value = false;
       if (response?.status == 0) {
         price.value = response?.price ?? "";
         lowestPrice.value = response?.minPrice ?? "";

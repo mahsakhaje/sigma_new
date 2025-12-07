@@ -141,6 +141,13 @@ Widget buildForgetPassword() {
             maxLen: 20,
             autovalidateMode: AutovalidateMode.disabled,
           ),
+          SizedBox(height: 8,),
+          CustomTextFormField(
+            authController.forgetRepeatPasswordController,
+            hintText: 'تکرار رمز عبور جدید',
+            maxLen: 20,
+            autovalidateMode: AutovalidateMode.disabled,
+          ),
           const SizedBox(height: 12),
           Obx(() => authController.isLoading.value
               ? Center(

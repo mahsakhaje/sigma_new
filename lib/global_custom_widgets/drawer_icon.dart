@@ -11,7 +11,7 @@ import 'package:sigma/models/global_app_data.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 Widget drawerIcon(
-    {required String path, required String route, String arg = '',bool isItsSize=false}) {
+    {required String path, required String route, dynamic arg = '',bool isItsSize=false}) {
   return InkWell(
     onTap: () async {
       if (route == 'exit') {

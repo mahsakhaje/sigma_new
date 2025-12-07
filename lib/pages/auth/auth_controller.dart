@@ -62,14 +62,16 @@ class AuthController extends GetxController {
   late TextEditingController pinController;
   late FocusNode focusNode;
 
-  String code="";
+  String code = "";
   String signature = "{{ app signature }}";
   var autoFilledCode = ''.obs;
+
   @override
   void dispose() {
     SmsAutoFill().unregisterListener();
     super.dispose();
   }
+
   // Override from CodeAutoFill mixin
   @override
   void codeUpdated() {
@@ -82,13 +84,12 @@ class AuthController extends GetxController {
       autoFilledCode.value = receivedCode;
 
       // Update the appropriate controller based on current page
-      if(currentState==PageState.EnterCode){
-        forgetCodeController.text=receivedCode;
+      if (currentState == PageState.EnterCode) {
+        forgetCodeController.text = receivedCode;
       }
       if (currentPage.value == AuthPageState.otp) {
         otpCodeController.text = receivedCode;
         // Auto-submit if code is complete
-
       } else if (registerState.value == RegisterPageState.otp) {
         codeController.text = receivedCode;
       }
@@ -104,6 +105,7 @@ class AuthController extends GetxController {
       print('Error getting app signature: $e');
     }
   }
+
   void goToLogin() => currentPage.value = AuthPageState.login;
 
   void goToRegister() => currentPage.value = AuthPageState.register;
@@ -131,15 +133,13 @@ class AuthController extends GetxController {
     // Set up SMS auto-fill listener
     await SmsAutoFill().listenForCode();
 
-   // await SmsAutoFill().listenForCode();
+    // await SmsAutoFill().listenForCode();
 
-   // smsRetriever = SmsRetrieverImpl(SmartAuth.instance);
+    // smsRetriever = SmsRetrieverImpl(SmartAuth.instance);
     _getSupportNumber();
     _loadProvinces();
     _loadCities();
   }
-
-
 
   Future<void> _getSupportNumber() async {
     try {
@@ -237,6 +237,10 @@ class AuthController extends GetxController {
   Future<void> confirmNewPassword() async {
     bool isValid = passwordFormKey.currentState?.validate() ?? false;
     if (!isValid) {
+      return;
+    }
+    if (forgetPasswordController.text != forgetRepeatPasswordController.text) {
+      showToast(ToastState.ERROR, 'رمز جدید و تکرار آن یکسان نیست.');
       return;
     }
     isLoading.value = true;

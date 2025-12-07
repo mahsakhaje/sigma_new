@@ -151,4 +151,10 @@ class URLs {
   static const String GetCarTypeSpecTypesUrl = '/cartypes/getCarTypeSpecTypes';
   static const String GetChangePriceReportUrl =
       '/manaprices/getChangePriceReport';
+  static const String UpdateAccountAnnouncementUrl =
+      '/accountannouncements/updateAccountAnnouncement';
+  static const String GetAccountAnnouncementInfoUrl =
+      '/accountannouncements/getAccountAnnouncementInfo';
+  static const String GetStockUrl =
+      '/salesorders/getStock';
 }

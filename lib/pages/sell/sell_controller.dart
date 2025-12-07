@@ -8,9 +8,9 @@ import 'package:sigma/helper/helper.dart';
 import 'package:sigma/models/available_account_manager.dart';
 import 'package:sigma/models/my_cars_model.dart';
 import 'package:sigma/models/user_info_model.dart';
+import 'package:sigma/pages/advertise/advertise_controller.dart';
 
 import '../../helper/colors.dart';
-import '../advertise/advertise_controller.dart';
 
 enum SellPageStep {
   getMilage,

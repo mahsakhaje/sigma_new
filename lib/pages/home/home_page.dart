@@ -210,7 +210,7 @@ class _HomePgeState extends State<HomePge> {
                     const SizedBox(height: 8),
                     drawerIcon(
                         path: 'assets/advretise.svg',
-                        route: RouteName.advertise),
+                        route: RouteName.advertiseMenu),
                     drawerIcon(
                         path: 'assets/buy_car.svg', route: RouteName.buy_menue),
                     drawerIcon(
@@ -218,10 +218,34 @@ class _HomePgeState extends State<HomePge> {
                     drawerIcon(
                         path: 'assets/price_car.svg', route: RouteName.prices),
                     drawerIcon(
-                        path: 'assets/technical.svg',
-                        route: RouteName.technicalInfo),
-                    drawerIcon(
-                        path: 'assets/etelaie.svg', route: RouteName.info),
+                        path: 'assets/car_info.svg',
+                        route: RouteName.technicalMenu),
+
+                   Obx(()=> Stack(children: [
+                      drawerIcon(
+                          path: 'assets/etelaie.svg',
+                          route: RouteName.info,
+                          isItsSize: false),
+                      if (controller.hasNewNotidf.value)
+                        Positioned(
+                          child: SvgPicture.asset(
+                            'assets/info.svg',
+                            color: AppColors.orange,
+                          ),
+                          // child: Container(
+                          //   padding: EdgeInsets.all(7),
+                          //   decoration: BoxDecoration(
+                          //       color: AppColors.orange,
+                          //       shape: BoxShape.circle),
+                          //   child: CustomText(
+                          //       controller.unreadCount
+                          //           .toString()
+                          //           .usePersianNumbers(),
+                          //       size: 15),
+                          // )
+                        ),
+                    ])),
+
                     drawerIcon(
                         path: 'assets/branches.svg',
                         route: RouteName.showroomsAddress),

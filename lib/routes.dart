@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import 'package:sigma/helper/route_names.dart';
 import 'package:sigma/pages/Infoes/info_page.dart';
+import 'package:sigma/pages/advertise/advertise_menu.dart';
+import 'package:sigma/pages/advertise/stocks/stocks_page.dart';
 import 'package:sigma/pages/auth/auth_page.dart';
 import 'package:sigma/pages/blog/sigma_news_page.dart';
 import 'package:sigma/pages/branches/branches_page.dart';
@@ -10,7 +12,6 @@ import 'package:sigma/pages/buy_menu/loan/loan_page.dart';
 import 'package:sigma/pages/car/car_page.dart';
 import 'package:sigma/pages/car_detail/car_detail_page.dart';
 import 'package:sigma/pages/car_detail/compare_car_list/compare_car_page.dart';
-import 'package:sigma/pages/chat/chat_page.dart';
 import 'package:sigma/pages/compare_cars/binding.dart';
 import 'package:sigma/pages/compare_cars/compare_cars_page.dart';
 import 'package:sigma/pages/home/home_page.dart';
@@ -32,8 +33,9 @@ import 'package:sigma/pages/rules/rules_page.dart';
 import 'package:sigma/pages/sell/sell_page.dart';
 import 'package:sigma/pages/splash/splash_page.dart';
 import 'package:sigma/pages/suggestions/suggestions_page.dart';
-import 'package:sigma/pages/technicalInfo/technicalInfo_page.dart';
 import 'package:sigma/pages/technical_compare/technical_compare_page.dart';
+import 'package:sigma/pages/technical_menu/technicalInfo_page.dart';
+import 'package:sigma/pages/technical_menu/technical_menu.dart';
 import 'package:sigma/pages/track_orders/track_page.dart';
 import 'package:sigma/pages/transactions/all_transactions_page.dart';
 
@@ -71,7 +73,12 @@ class AppRoutes {
         ),
         GetPage(
           name: RouteName.technicalInfo,
-          page: () => const TechnicalInfoPage(),
+          page: () =>  TechnicalInfoPage(),
+          transitionDuration: const Duration(milliseconds: 10),
+          transition: Transition.native,
+        ),  GetPage(
+          name: RouteName.technicalMenu,
+          page: () =>  TechnicalMenu(),
           transitionDuration: const Duration(milliseconds: 10),
           transition: Transition.native,
         ),
@@ -141,6 +148,18 @@ class AppRoutes {
         GetPage(
           name: RouteName.myCars,
           page: () => MyCarsPage(),
+          transitionDuration: const Duration(milliseconds: 10),
+          transition: Transition.native,
+        ),
+        GetPage(
+          name: RouteName.advertiseMenu,
+          page: () => AdvertiseMenu(),
+          transitionDuration: const Duration(milliseconds: 10),
+          transition: Transition.native,
+        ),
+        GetPage(
+          name: RouteName.stocks,
+          page: () => StocksPage(),
           transitionDuration: const Duration(milliseconds: 10),
           transition: Transition.native,
         ),

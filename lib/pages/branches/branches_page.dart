@@ -129,12 +129,12 @@ class BranchesPage extends StatelessWidget {
                 .split('-')
                 .where((number) => number.trim().isNotEmpty)
                 .map((phoneNumber) => Padding(
-              padding: const EdgeInsets.only(bottom: 4.0),
-              child: SizedBox(
-                width: 140,
-                child: showRoomNumber(phoneNumber.trim()),
-              ),
-            ))
+                      padding: const EdgeInsets.only(bottom: 4.0),
+                      child: SizedBox(
+                        width: 140,
+                        child: showRoomNumber(phoneNumber.trim()),
+                      ),
+                    ))
                 .toList(),
           ),
           const SizedBox(height: 48),
@@ -155,6 +155,7 @@ class BranchesPage extends StatelessWidget {
         }
       },
       child: Container(
+        margin: EdgeInsets.all(4),
         padding: EdgeInsets.symmetric(vertical: 8, horizontal: 10),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
@@ -166,13 +167,11 @@ class BranchesPage extends StatelessWidget {
               size: 18,
               color: isLite ? Colors.black : Colors.white,
             ),
-
             CustomText(
               number.usePersianNumbers(),
               color: isLite ? Colors.black : Colors.white,
               textAlign: TextAlign.center,
               fontWeight: FontWeight.bold,
-
             ),
           ],
         ),
@@ -198,20 +197,23 @@ class BranchesPage extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.arrow_upward_outlined,
-                    color: Colors.black87,
-                    size: 12,
-                  ),
-                  CustomText('انتخاب سایر شعب',
-                      color: Colors.black87, fontWeight: FontWeight.bold),
-                ],
+              Padding(
+                padding: const EdgeInsets.all(14.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.arrow_upward_outlined,
+                      color: Colors.black87,
+                      size: 20,
+                    ),
+                    CustomText('انتخاب سایر شعب',
+                        color: Colors.black87,
+                        fontWeight: FontWeight.bold,
+                        size: 14),
+                  ],
+                ),
               ),
-              SizedBox(height: 12),
             ],
           ),
         ),
@@ -223,7 +225,7 @@ class BranchesPage extends StatelessWidget {
       BuildContext context, BranchesController controller) async {
     var a = await CustomBottomSheet.show(
       context: Get.context!,
-      initialChildSize:controller.branchesInDialog.length==1?0.4: 0.6,
+      initialChildSize: controller.branchesInDialog.length == 1 ? 0.4 : 0.6,
       child: Column(
         children: [
           Obx(() {
@@ -231,7 +233,7 @@ class BranchesPage extends StatelessWidget {
               padding: const EdgeInsets.all(4.0),
               child: ListView.builder(
                 itemCount: controller.branchesInDialog.length,
-              physics: ScrollPhysics(),
+                physics: ScrollPhysics(),
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   return _buildBranchListItem(controller, index);
@@ -239,18 +241,6 @@ class BranchesPage extends StatelessWidget {
               ),
             );
           }),
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: ConfirmButton(
-                  () {
-                controller.launchNavigation();
-                Get.back();
-              },
-              'مسیریابی',
-              color: AppColors.blue,
-              txtColor: Colors.white,
-            ),
-          ),
         ],
       ),
     );
@@ -273,16 +263,14 @@ class BranchesPage extends StatelessWidget {
             final isSelected = controller.selectedBranchIndex.value == index;
 
             return ExpansionTile(
-
               title: RadioListTile<int>(
                 value: index,
-
                 activeColor: AppColors.blue,
                 fillColor: MaterialStateProperty.resolveWith<Color>((states) {
                   if (states.contains(MaterialState.selected)) {
                     return AppColors.blue; // selected color
                   }
-                  return AppColors.blue;// unselected color
+                  return AppColors.blue; // unselected color
                 }),
                 groupValue: controller.selectedBranchIndex.value,
                 onChanged: (int? value) {
@@ -313,36 +301,66 @@ class BranchesPage extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(6.0),
                         child: CustomText(
-                          (branch.address ?? '').usePersianNumbers(),
-                          color: Colors.black,
-                          isRtl: true,
-                          textAlign: TextAlign.right,
-                          fontWeight: FontWeight.bold,
-                          maxLine: 2,
-                          size: 11
-                        ),
+                            (branch.address ?? '').usePersianNumbers(),
+                            color: Colors.black,
+                            isRtl: true,
+                            textAlign: TextAlign.right,
+                            fontWeight: FontWeight.bold,
+                            maxLine: 2,
+                            size: 11),
                       ),
                     ),
                   ],
                 ),
-                Directionality(
-                  textDirection: TextDirection.ltr,
-                  child: Wrap(
-                   // crossAxisAlignment: CrossAxisAlignment.start,
-                    children: (branch.telNumber ?? '')
-                        .split('-')
-                        .where((number) => number.trim().isNotEmpty)
-                        .map((phoneNumber) => Padding(
-                      padding: const EdgeInsets.only(bottom: 4.0),
-                      child: SizedBox(
-                        width: 140,
-                        child: showRoomNumber(phoneNumber.trim(),isLite: true),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // ستون سمت چپ - شماره تماس‌ها
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: (branch.telNumber ?? '')
+                            .split('-')
+                            .where((number) => number.trim().isNotEmpty)
+                            .map((phoneNumber) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 4.0),
+                                  child: showRoomNumber(phoneNumber.trim(),
+                                      isLite: true),
+                                ))
+                            .toList(),
                       ),
-                    ))
-                        .toList(),
-                  ),
-                ),
-                const SizedBox(height: 4),
+                    ),
+
+                    const SizedBox(width: 8),
+
+                    InkWell(
+                      onTap: () async {
+                        controller.launchNavigation();
+                        Get.back();
+                      },
+                      child: Container(
+                        margin: EdgeInsets.all(4),
+                        padding:
+                            EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            color: AppColors.lightGrey),
+                        child: Wrap(
+                          children: [
+                            Icon(
+                              Icons.location_on_outlined,
+                              size: 18,
+                            ),
+                            CustomText('مسیریابی',
+                                textAlign: TextAlign.center,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                )
               ],
             );
           }),
