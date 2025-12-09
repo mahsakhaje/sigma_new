@@ -190,11 +190,12 @@ class SellPageView extends StatelessWidget {
                       color: Colors.transparent,
                     ),
                     child: RadioListTile<int>(
-                      title: CustomText(car.value, isRtl: true),
+                      title: CustomText(car.value, isRtl: false,textAlign: TextAlign.right),
                       value: car.id,
                       groupValue: controller.carId.value,
                       activeColor: Colors.white,
-                      fillColor: MaterialStateProperty.resolveWith<Color>((states) {
+                      fillColor:
+                          MaterialStateProperty.resolveWith<Color>((states) {
                         if (states.contains(MaterialState.selected)) {
                           return Colors.white; // selected color
                         }
@@ -418,6 +419,7 @@ class UploadPhotoForm extends StatelessWidget {
                       width: 8,
                     ),
                     CustomCheckBox(
+                        isBlue: true,
                         value: !controller.otherWillTakeCar.value,
                         onChanged: (value) {
                           controller.otherWillTakeCar.value = !(value ?? true);
@@ -427,6 +429,7 @@ class UploadPhotoForm extends StatelessWidget {
                       width: 24,
                     ),
                     CustomCheckBox(
+                        isBlue: true,
                         value: controller.otherWillTakeCar.value,
                         onChanged: (value) async {
                           var changed =
@@ -578,6 +581,7 @@ class UploadPhotoForm extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Obx(() => CustomCheckBox(
+                    isBlue: true,
                     value: controller.isSwap.value,
                     onChanged: (val) =>
                         controller.isSwap.value = val ?? false)),
@@ -625,8 +629,13 @@ class UploadPhotoForm extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              CustomText('برای تکمیل اطلاعات لطفا از حروف فارسی استفاده کنید.',isRtl: true,fontWeight: FontWeight.bold,color: Colors.black),
-              SizedBox(height: 12,),
+              CustomText('برای تکمیل اطلاعات لطفا از حروف فارسی استفاده کنید.',
+                  isRtl: true,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black),
+              SizedBox(
+                height: 12,
+              ),
               CustomTextFormField(
                 controller.nameController,
                 maxLen: 20,

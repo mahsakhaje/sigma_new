@@ -54,11 +54,13 @@ class TechnicalComparePage extends StatelessWidget {
                   color: Colors.white,
                   child: Column(
                     children: [
-                      Image.network(
-                        firstCarImagePath ?? "",
-                        fit: BoxFit.cover,
-                        width: Get.width,
-                        height: 120,
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Image.network(
+                          firstCarImagePath ?? "",
+                          fit: BoxFit.contain,
+                          width: Get.width,
+                        ),
                       ),
                       Container(height: 40,
                         color: AppColors.darkGrey,
@@ -161,11 +163,13 @@ class TechnicalComparePage extends StatelessWidget {
                       color: Colors.white,
                       child: Column(
                         children: [
-                          Image.network(
-                            secondCarImagePath ?? "",
-                            fit: BoxFit.cover,
-                            width: Get.width,
-                            height: 120,
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Image.network(
+                              secondCarImagePath ?? "",
+                              fit: BoxFit.contain,
+                              width: Get.width,
+                            ),
                           ),
                           Container(height: 40,
                             color: AppColors.cardGrey,

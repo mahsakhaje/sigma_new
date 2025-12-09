@@ -184,7 +184,7 @@ class SellPageController extends GetxController {
       }
       for (final car in myCarsResponse!.cars!) {
         final description =
-            "${car.brandDescription ?? ''} ${car.carModelDescription ?? ''} - ${car.colorDescription ?? ''}";
+            " ${car.colorDescription ?? ''}-${car.brandDescription ?? ''} ${car.carModelDescription ?? ''} ";
         cars.add(TimeValue(int.tryParse(car.id ?? '0')!, description));
       }
       if (cars.isEmpty && searchController.text.isEmpty) {

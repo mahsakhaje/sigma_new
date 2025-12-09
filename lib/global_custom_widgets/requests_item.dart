@@ -77,7 +77,7 @@ class RequestCard extends StatelessWidget {
                   width: 2,
                 ),
                 CustomText(carModel,
-                    isRtl: true,
+                    isRtl: false,
                     color: Colors.black87,
                     fontWeight: FontWeight.bold),
                 Container(
@@ -86,7 +86,7 @@ class RequestCard extends StatelessWidget {
                   width: 2,
                 ),
                 CustomText(carEngine,
-                    isRtl: true,
+                    isRtl: false,
                     color: Colors.black87,
                     fontWeight: FontWeight.bold),
                 Container(

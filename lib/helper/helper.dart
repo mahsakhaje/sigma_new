@@ -107,6 +107,9 @@ Future<bool> isVpnActive() async {
 
 
 Future<bool> hasConnection() async {
+  if(kIsWeb){
+    return true;
+  }
   bool connected = await NetworkChecker.hasInternetConnection();
 
   if (!connected) {

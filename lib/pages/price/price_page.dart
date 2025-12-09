@@ -164,12 +164,12 @@ class PricePage extends StatelessWidget {
                     child: Stack(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.only(
+                              left: 56.0, right: 56, top: 52),
                           child: Image.network(
                             price.imagePath ?? "",
                             fit: BoxFit.contain,
                             width: Get.width,
-
                           ),
                         ),
                         // badge(
@@ -181,12 +181,16 @@ class PricePage extends StatelessWidget {
                         // )
                         Positioned(
                           right: 0,
+                          top: 10,
                           child: Container(
                             padding: EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: AppColors.orange
-                            ),
-                            child: CustomText(' قیمت کارخانه:  '+(price.factoryPrice??'').usePersianNumbers()+' تومان ',isRtl: true),
+                            decoration: BoxDecoration(color: AppColors.orange),
+                            child: CustomText(
+                                ' قیمت کارخانه:  ' +
+                                    (price.factoryPrice ?? '')
+                                        .usePersianNumbers() +
+                                    ' تومان ',
+                                isRtl: true),
                           ),
                         )
                       ],
@@ -283,7 +287,7 @@ class PricePage extends StatelessWidget {
               Expanded(
                 child: Obx(() => CustomDropdown(
                       hint: 'رنگ خودرو',
-                isRtl: true,
+                      isRtl: true,
                       isTurn: controller.turn.value == 4,
                       value: controller.selectedColors.value,
                       items: controller.colorsCars.value,
@@ -377,6 +381,7 @@ class PricePage extends StatelessWidget {
                 children: [
                   CustomText('ناسالم'),
                   CustomCheckBox(
+                    isBlue: true,
                     value: controller.selectedIdsMap.value.isNotEmpty,
                     onChanged: (bool? value) {
                       if (value == true) {
@@ -395,6 +400,7 @@ class PricePage extends StatelessWidget {
                 children: [
                   CustomText('سالم'),
                   CustomCheckBox(
+                    isBlue: true,
                     value: controller.selectedIdsMap.value.isEmpty,
                     onChanged: (bool? value) {
                       if (value == true) {
@@ -410,15 +416,17 @@ class PricePage extends StatelessWidget {
           ),
           //_buildDamageSummary(),
           SizedBox(height: 12),
-         controller.isLoading.value?loading(): ConfirmButton(
-            () async {
-              bool success = await controller.calculatePrice();
-              if (success) {
-                _showPriceResultDialog();
-              }
-            },
-            "محاسبه قیمت",
-          ),
+          controller.isLoading.value
+              ? loading()
+              : ConfirmButton(
+                  () async {
+                    bool success = await controller.calculatePrice();
+                    if (success) {
+                      _showPriceResultDialog();
+                    }
+                  },
+                  "محاسبه قیمت",
+                ),
         ],
       ),
     );

@@ -128,7 +128,11 @@ class StocksController extends GetxController {
     selectedModelId?.value = null;
     carTypes.clear();
     selectedTypeId?.value = null;
-
+    carTypes.value={};
+    colors.value={};
+    carManufactureYears.value={};
+    selectedColorId.value=null;
+    selectedYear.value=null;
     allCarsJsonModel.value?.brands?.forEach((brand) {
       if (brand.id == selectedBrandId?.value) {
         brand.carModels?.forEach((model) {
@@ -217,6 +221,11 @@ class StocksController extends GetxController {
     selectedYear.value = null;
     selectedMileage.value = null;
     selectedColorId.value = null;
+    carModels.value={};
+    carTypes.value={};
+    colors.value={};
+    carManufactureYears.value={};
+
     getStocks();
   }
 

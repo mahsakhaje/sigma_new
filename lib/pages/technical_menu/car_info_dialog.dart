@@ -159,36 +159,28 @@ class CarSpecsDialog extends StatelessWidget {
                                       children: [
                                         Flexible(
                                           child: CustomText(
-                                              (spec?.description?.trim() ?? "")
-                                                  .usePersianNumbers(),
+                                              (spec?.specTypeDescription
+                                                              ?.trim() ??
+                                                          "")
+                                                      .usePersianNumbers() +
+                                                  ':' +
+                                                  (spec?.description?.trim() ??
+                                                          "")
+                                                      .usePersianNumbers(),
                                               size: 12,
                                               maxLine: 2,
                                               color: Colors.black,
                                               textAlign: TextAlign.justify,
                                               isRtl: true),
                                         ),
+                                        SizedBox(
+                                          width: 8,
+                                        ),
+                                        SvgPicture.asset('assets/okt.svg'),
                                       ],
                                     ),
                                   ],
                                 ),
-                              ),
-                              Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      CustomText(' : ', color: Colors.black),
-                                      CustomText(
-                                          (spec?.specTypeDescription?.trim() ??
-                                                  "")
-                                              .usePersianNumbers(),
-                                          size: 12,
-                                          color: Colors.black,
-                                          isRtl: true),
-                                      const SizedBox(width: 12),
-                                      SvgPicture.asset('assets/okt.svg'),
-                                    ],
-                                  ),
-                                ],
                               ),
                             ],
                           ),
@@ -223,7 +215,7 @@ class CarSpecsDialog extends StatelessWidget {
                                   color: Colors.black,
                                   isRtl: true),
                             ),
-                            const SizedBox(width: 12),
+                            const SizedBox(width: 8),
                             SvgPicture.asset('assets/okt.svg'),
                           ],
                         ),
