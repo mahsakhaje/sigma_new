@@ -45,7 +45,6 @@ enum MultiSelectListType {
 
 class AdvertiseController extends GetxController {
   AdvertiseController(dynamic state) {
-    print(state == 'NEW');
     if (state == 'NEW') {
       orderState = 'NEW';
     }
@@ -54,8 +53,6 @@ class AdvertiseController extends GetxController {
     } else {
       orderState = '';
     }
-    print('3');
-    print(orderState);
   }
 
   final RxList<SalesOrders> orders = <SalesOrders>[].obs;
@@ -145,8 +142,6 @@ class AdvertiseController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    print('1');
-    print(orderState);
     final arguments = Get.arguments;
 
     if (arguments != null && arguments is Map<String, dynamic>) {
@@ -158,16 +153,11 @@ class AdvertiseController extends GetxController {
       }
     }
     scrollController.addListener(() {
-      print((scrollController.position.pixels ==
-                  scrollController.position.maxScrollExtent)
-              .toString() +
-          '**************************************');
       if (scrollController.position.pixels ==
               scrollController.position.maxScrollExtent &&
           hasMore.value &&
           !isFetchingMore.value) {
         getOrders();
-        print('called end of list');
       }
     });
     loadInitialData();
@@ -207,7 +197,6 @@ class AdvertiseController extends GetxController {
   }
 
   void launchBannerUrl(String? uri) {
-    print(uri);
     if (uri?.isNullOrBlank ?? true) {
       return;
     } else {
@@ -267,8 +256,7 @@ class AdvertiseController extends GetxController {
       isFetchingMore.value = true;
       isLoading.value = true;
       pn.value++;
-      print('2');
-      print(orderState);
+
       var response = await DioClient.instance.getSalesOrdersWithFilter(
         brandId: brandId,
         carModelId: carModelId,
@@ -427,8 +415,7 @@ class AdvertiseController extends GetxController {
   }
 
   void toggleNotifyBrand(TimeValue value, bool checked) {
-    print(value.value);
-    print(checked);
+
 
     if (checked) {
       selectedNotifyBrands.add(value);
@@ -461,9 +448,6 @@ class AdvertiseController extends GetxController {
   }
 
   void toggleNotifyModel(TimeValue value, bool checked) {
-    print(value.value);
-    print(checked);
-
     if (checked) {
       selectedNotifyModels.add(value);
     } else {
@@ -586,12 +570,22 @@ class AdvertiseController extends GetxController {
       }
     } catch (e) {
       banners.value = [];
-      print('Error fetching banners: $e');
     } finally {}
   }
 
   Future<void> insertNotify() async {
+    print(enableNotify.value);
+    print(notifyAll.value);
+
     if (enableNotify.value) {
+      print(selectedNotifyModels.value);
+      if (!notifyAll.value && selectedNotifyModels.value.isEmpty) {
+        showToast(
+          ToastState.ERROR,
+          'لطفاً حداقل یک مدل انتخاب کنید یا گزینه همه آگهی‌ها را فعال کنید.',
+        );
+        return;
+      }
       if (notifyAll.value) {
         var response = await DioClient.instance.updateAnnouncments('1', '');
         if (response?.message == 'OK') {
@@ -606,7 +600,6 @@ class AdvertiseController extends GetxController {
             ? carModelIds = element.id.toString()
             : carModelIds = carModelIds + ',' + element.id.toString();
       });
-      print(carModelIds);
       var response =
           await DioClient.instance.updateAnnouncments('0', carModelIds);
       if (response?.message == 'OK') {
@@ -615,16 +608,14 @@ class AdvertiseController extends GetxController {
       }
     } else {
       var response = await DioClient.instance.updateAnnouncments('', '');
-      showToast(ToastState.SUCCESS, 'اطلاع رسانی با موفقیت غیرفعال شد.');
+      showToast(ToastState.SUCCESS, 'اطلاع رسانی غیرفعال شد.');
       Get.back();
     }
   }
 
   Future<void> getAccountAnnouncementStatus() async {
     var response = await DioClient.instance.getAccountAnnouncementStatus();
-    print(response?.announcementStatus);
-    print(response?.carModelIds);
-    print(response?.all);
+
 
     if (response?.message == 'OK' && response?.announcementStatus == '1') {
       enableNotify.value = true;
@@ -633,10 +624,8 @@ class AdvertiseController extends GetxController {
         return;
       }
       var selectedModels = response?.carModelIds?.split(',');
-      print(selectedModels);
       selectedModels?.forEach((id) {
-        print(id);
-        print(allCarsJsonModel);
+
         allCarsJsonModel?.value?.brands?.forEach((brand) {
           brand?.carModels?.forEach((model) {
             if (model.id == id) {
@@ -646,8 +635,6 @@ class AdvertiseController extends GetxController {
           });
         });
       });
-      print('**');
-      print(selectedNotifyBrands.value);
       for (var brand in selectedNotifyBrands) {
         var selectedBrand = allCarsJsonModel.value?.brands?.firstWhere(
           (b) => b.id == brand.id.toString(),
@@ -663,8 +650,7 @@ class AdvertiseController extends GetxController {
           }
         }
       }
-      print('***');
-      print(notifyModels.value);
+
       selectedModels?.forEach((id) {
         notifyModels.forEach((model) {
           print(id);
@@ -674,8 +660,7 @@ class AdvertiseController extends GetxController {
           }
         });
       });
-      print('****');
-      print(selectedNotifyModels.value);
+
     }
   }
 
@@ -787,7 +772,6 @@ class AdvertiseController extends GetxController {
         orders[index] = order;
       }
     } catch (e) {
-      print('Error changing like status: $e');
     }
   }
 }

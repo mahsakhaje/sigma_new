@@ -26,7 +26,18 @@ class MyCarsPage extends StatelessWidget {
         }
 
         if (controller.cars.isEmpty) {
-          return NoContent();
+          return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            NoContent(),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 26.0, vertical: 10),
+              child: ConfirmButton(() async{
+                await Get.toNamed(RouteName.car);
+                controller.pn.value=0;
+                controller.getData();
+              }, 'افزودن خودرو'),
+            )
+          ]);
         }
 
         return Column(
@@ -38,7 +49,8 @@ class MyCarsPage extends StatelessWidget {
                     ? controller.cars.length + 1
                     : controller.cars.length,
                 itemBuilder: (context, index) {
-                  if (index == controller.cars.length && controller.hasMore.value) {
+                  if (index == controller.cars.length &&
+                      controller.hasMore.value) {
                     return Center(
                       child: loading(),
                     );
@@ -56,14 +68,20 @@ class MyCarsPage extends StatelessWidget {
                     // Add this field to PurchaseOrders if needed
                     carYear: (order.persianYear ?? ''),
                     // Add this field to PurchaseOrders if needed
-                    onProposalsPressed: () => controller.onProposalsPressed(order),
+                    onProposalsPressed: () =>
+                        controller.onProposalsPressed(order),
                   );
                 },
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 26.0,vertical: 10),
-              child: ConfirmButton(()=>Get.toNamed(RouteName.car),'افزودن خودرو'),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 26.0, vertical: 10),
+              child: ConfirmButton(() async{
+                await Get.toNamed(RouteName.car);
+                controller.pn.value=0;
+                controller.getData();
+              }, 'افزودن خودرو'),
             )
           ],
         );

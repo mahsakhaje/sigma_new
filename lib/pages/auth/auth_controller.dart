@@ -77,7 +77,6 @@ class AuthController extends GetxController {
   void codeUpdated() {
     // This method is called when SMS code is received
     final receivedCode = code;
-    print('Received SMS code: $receivedCode');
 
     if (receivedCode != null && receivedCode.isNotEmpty) {
       // Update the observable
@@ -100,9 +99,7 @@ class AuthController extends GetxController {
     try {
       final sig = await SmsAutoFill().getAppSignature;
       signature = sig;
-      print('App Signature: $signature');
     } catch (e) {
-      print('Error getting app signature: $e');
     }
   }
 
@@ -328,7 +325,6 @@ class AuthController extends GetxController {
 
   Future<void> _loadProvinces() async {
     final response = await DioClient.instance.getProvinces();
-    print(response?.toJson());
     if (response != null && response.message == 'OK') {
       geoNames.clear();
       response.geoNames?.forEach((element) {

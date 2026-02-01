@@ -139,8 +139,6 @@ class PricePageController extends GetxController {
     Map<String, String> modelsMap = {};
     responseAllCar.value?.brands?.forEach((element) {
       if (element.id == str) {
-        print(str);
-        print(element.description);
         element.carModels?.forEach((element) {
           modelsMap[element.id!] = element.description!;
         });
@@ -258,7 +256,6 @@ class PricePageController extends GetxController {
         });
       }
     });
-    print(priceItemsResponse.value?.toJson());
     priceItems.value = items;
   }
 
@@ -311,39 +308,30 @@ class PricePageController extends GetxController {
         (kilometerValues.value.end).toInt().toString().usePersianNumbers();
   }
 
-// Add these methods to your PricePageController class
 
-// Method to check if car is damaged (has selections)
   bool get isCarDamaged => selectedIdsMap.value.isNotEmpty;
 
-// Method to check if car is healthy (no selections)
   bool get isCarHealthy => selectedIdsMap.value.isEmpty;
 
-// Enhanced reset method with toast
   void resetCarStatus() {
     selectedIdsMap.value = {};
     carStatusDescription.value = {};
     showToast(ToastState.SUCCESS, 'وضعیت خودرو سالم در نظر گرفته می‌شود');
   }
 
-// Enhanced clear method without toast
   void clearAllSelections() {
     selectedIdsMap.value = {};
     carStatusDescription.value = {};
   }
 
-// Method to set car as damaged (called when damage checkbox is selected)
   void setCarAsDamaged() {
-    // If no items are selected yet, we might want to show a message or guide user
     if (selectedIdsMap.value.isEmpty) {
       showToast(ToastState.INFO, 'لطفاً قسمت‌های آسیب‌دیده خودرو را مشخص کنید');
     }
   }
 
-// Enhanced item selection method with proper reactive updates
   void updateItemSelection(
       String elementId, String valueId, String elementDesc, String valueDesc) {
-    // Create new maps to trigger reactivity
     Map<String, String> updatedMap = Map.from(selectedIdsMap.value);
     Map<String, String> updatedDescMap = Map.from(carStatusDescription.value);
 
@@ -354,7 +342,6 @@ class PricePageController extends GetxController {
     carStatusDescription.value = updatedDescMap;
   }
 
-// Method to remove specific item selection
   void removeItemSelection(String elementId, String elementDesc) {
     Map<String, String> updatedMap = Map.from(selectedIdsMap.value);
     Map<String, String> updatedDescMap = Map.from(carStatusDescription.value);
@@ -366,7 +353,6 @@ class PricePageController extends GetxController {
     carStatusDescription.value = updatedDescMap;
   }
 
-// Method to get damage summary for display
   String getDamageSummary() {
     if (selectedIdsMap.value.isEmpty) {
       return 'سالم';
@@ -376,10 +362,8 @@ class PricePageController extends GetxController {
     }
   }
 
-// Method to validate if damage selection is complete
   bool isDamageSelectionValid() {
-    // Add your validation logic here
-    // For example, check if at least one damage is selected when car is marked as damaged
+
     return true;
   }
 

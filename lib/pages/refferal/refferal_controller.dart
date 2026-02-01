@@ -21,8 +21,6 @@ class ReferralController extends GetxController {
         referralLink.value = (userInfo.account?.refLink ?? '');
       }
     } catch (e) {
-      // Handle error
-      print('Error fetching user info: $e');
     } finally {
       isLoading.value = false;
     }

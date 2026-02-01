@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:get/get.dart';
 import 'package:flutter/services.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:sigma/global_custom_widgets/confirm_button.dart';
 import 'package:sigma/global_custom_widgets/custom_text.dart';
 import 'package:sigma/global_custom_widgets/outlined_button.dart';
@@ -11,8 +12,6 @@ import 'package:sigma/helper/storage_helper.dart';
 import 'package:sigma/helper/variant_manager.dart';
 import 'package:sigma/models/global_app_data.dart';
 import 'package:video_player/video_player.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter/material.dart';
 
 import '../../helper/helper.dart';
@@ -55,12 +54,15 @@ class SplashController extends GetxController {
   }
 
   Future<void> getInfo() async {
-    bool isLogedIn = await StorageHelper().getIsLogedIn() ?? false;
+    print(GetStorage().getKeys());
+    print(GetStorage().read('phoneNumberKey'));
 
+    bool isLogedIn = await StorageHelper().getIsLogedIn() ?? false;
+    print(isLogedIn.toString() + 'isloged in');
     // Check for updates first
     // if (!kIsWeb) {
-      await _checkForUpdates();
- //   }
+    await _checkForUpdates();
+    //   }
     var response = await DioClient.instance.getBanners();
     if (response != null && response.message == 'OK') {
       GlobalAppData().setPelaksefid(response?.pelakSefidLink ?? "");
@@ -85,9 +87,6 @@ class SplashController extends GetxController {
     loading.value = true;
     hasInternet.value = await hasConnection();
     loading.value = false;
-    print('**************');
-    print(hasInternet.value);
-    print('**************');
 
     if (hasInternet.value) {
       getInfo();
@@ -95,7 +94,6 @@ class SplashController extends GetxController {
   }
 
   Future<void> _checkForUpdates() async {
-    print('check version called');
     try {
       // Get current version
       String currentVersion = '';
@@ -103,8 +101,6 @@ class SplashController extends GetxController {
       currentVersion = await getVersion();
       // Call your API to check for updates (replace with your actual API call)
       var verResponse = await DioClient.instance.checkVersion();
-      print((verResponse?.newVersion ?? ""));
-      print(currentVersion);
       if (verResponse != null && verResponse.status == 0) {
         if (verResponse.forceUpdate == '1') {
           _showForceUpdateDialog(verResponse.updateLink ?? '');
@@ -112,9 +108,7 @@ class SplashController extends GetxController {
           _showOptionalUpdateDialog(verResponse.updateLink ?? '');
         }
       }
-    } catch (e) {
-      print('Error checking for updates: $e');
-    }
+    } catch (e) {}
   }
 
   void _showForceUpdateDialog(String updateUrl) {

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart' show HtmlWidget;
 import 'package:get/get.dart';
+import 'package:sigma/global_custom_widgets/custom_text.dart';
 import 'package:sigma/global_custom_widgets/dark_main_widget.dart';
 import 'package:sigma/helper/strings.dart';
 import 'package:sigma/pages/profile/about_us/about_us_controller.dart';
@@ -30,9 +32,11 @@ class AboutUs extends StatelessWidget {
                 textStyle: TextStyle(color: Colors.white,fontFamily: 'Peyda'),
               ),
             ),
+
           ],
         )),
 
     );
   }
+
 }

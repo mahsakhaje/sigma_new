@@ -60,7 +60,7 @@ class StocksPage extends StatelessWidget {
     CustomBottomSheet.show(
         context: Get.context!,
         child: StocksFilterWidget(controller: controller),
-        initialChildSize: controller.tab == TabStatus.TOTAL ? 0.3 : 0.7);
+        initialChildSize: controller.tab == TabStatus.TOTAL ? 0.3 : 0.6);
   }
 
   _buildTabs(StocksController controller) {
@@ -69,7 +69,7 @@ class StocksPage extends StatelessWidget {
             Expanded(
                 child: GestureDetector(
               onTap: () {
-                if (controller.tab == TabStatus.TOTAL) {
+                if (controller.tab.value == TabStatus.TOTAL) {
                   return;
                 }
                 controller.toggleTab();
@@ -92,7 +92,7 @@ class StocksPage extends StatelessWidget {
             Expanded(
                 child: GestureDetector(
               onTap: () {
-                if (controller.tab == TabStatus.USUAL) {
+                if (controller.tab.value == TabStatus.USUAL) {
                   return;
                 }
                 controller.toggleTab();
@@ -112,15 +112,15 @@ class StocksPage extends StatelessWidget {
 }
 
 _buildList(StocksController controller) {
-  if (controller.tab == TabStatus.TOTAL) {
+  if (controller.tab.value == TabStatus.TOTAL) {
     if (controller.totalStocks.isEmpty) {
       return NoContent();
     }
     return ListView.builder(
         itemCount: controller.totalStocks.value.length,
         itemBuilder: (ctx, index) {
-          return stocksItem(
-              controller.totalStocks.value[index], controller.tab.value,controller);
+          return stocksItem(controller.totalStocks.value[index],
+              controller.tab.value, controller);
         });
   }
   if (controller.stocks.isEmpty) {
@@ -129,11 +129,14 @@ _buildList(StocksController controller) {
   return ListView.builder(
       itemCount: controller.stocks.value.length,
       itemBuilder: (ctx, index) {
-        return stocksItem(controller.stocks.value[index], controller.tab.value,controller);
+        return stocksItem(
+            controller.stocks.value[index], controller.tab.value, controller);
       });
 }
 
-Widget stocksItem(Stocks stock, TabStatus status,StocksController controller) {
+Widget stocksItem(Stocks stock, TabStatus status, StocksController controller) {
+  final phoneNumbers = extractPhoneNumbers(controller.messageNumber.value);
+
   return Card(
     color: Colors.white,
     child: Column(
@@ -148,7 +151,7 @@ Widget stocksItem(Stocks stock, TabStatus status,StocksController controller) {
                   showDialog(
                       context: Get.context!,
                       builder: (_) => AlertDialog(
-                        insetPadding: EdgeInsets.all(8),
+                            insetPadding: EdgeInsets.all(8),
                             content: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -159,15 +162,15 @@ Widget stocksItem(Stocks stock, TabStatus status,StocksController controller) {
                                         'جهت اطلاعات بیشتر با واحد فروش و عملیات تماس بگیرید.',
                                         color: Colors.black,
                                         isRtl: true,
-                                        fontWeight: FontWeight.bold,size: 12),
-
-
+                                        fontWeight: FontWeight.bold,
+                                        size: 12),
                                   ],
                                 ),
-                                SizedBox(height: 16,),
-                                showRoomNumber(controller.firstNumber),
-                                showRoomNumber(controller.secondNumber),
-                                showRoomNumber(controller.thirdNumber),
+                                SizedBox(
+                                  height: 16,
+                                ),
+                                ...phoneNumbers
+                                    .map((phone) => showRoomNumber(phone))
                               ],
                             ),
                           ));
@@ -270,6 +273,7 @@ Widget stocksItem(Stocks stock, TabStatus status,StocksController controller) {
     ),
   );
 }
+
 Widget showRoomNumber(String number) {
   return InkWell(
     onTap: () async {
@@ -285,18 +289,17 @@ Widget showRoomNumber(String number) {
       margin: EdgeInsets.all(4),
       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 10),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          color: AppColors.lightGrey),
+          borderRadius: BorderRadius.circular(16), color: AppColors.lightGrey),
       child: Wrap(
         children: [
           Icon(
             Icons.call_outlined,
             size: 18,
-            color: Colors.black ,
+            color: Colors.black,
           ),
           CustomText(
             number.usePersianNumbers(),
-            color:  Colors.black ,
+            color: Colors.black,
             textAlign: TextAlign.center,
             fontWeight: FontWeight.bold,
           ),

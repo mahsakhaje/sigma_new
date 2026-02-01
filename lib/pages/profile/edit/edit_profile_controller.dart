@@ -93,7 +93,6 @@ class EditProfileController extends GetxController {
     emailController.text = userInfo.account?.email ?? '';
     provinceController.text = selectedProvince.value ?? "";
     cityController.text = selectedCity.value ?? '';
-    print(geoNames);
     geoNames.forEach((key, value) {
       if (value == selectedProvince.value) {
         selectedProvince.value = key;
@@ -120,7 +119,6 @@ class EditProfileController extends GetxController {
           geoNames[element.id!] = element.description!;
         }
       });
-      print(geoNames);
     }
   }
 
@@ -139,9 +137,7 @@ class EditProfileController extends GetxController {
   }
 
   Future<void> onProvinceChanged(String? province) async {
-    print('called');
     if (!isEnabled.value) return;
-    print(province);
     selectedProvince.value = province ?? '';
     provinceId.value = selectedProvince.value;
     await _loadCities();
@@ -149,7 +145,6 @@ class EditProfileController extends GetxController {
   }
 
   void onCityChanged(String? city) {
-    print('called2');
     if (!isEnabled.value) return;
 
     selectedCity.value = city ?? '';

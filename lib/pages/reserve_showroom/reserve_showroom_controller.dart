@@ -75,17 +75,23 @@ class ReserveShowRoomController extends GetxController {
   void onInit() {
     super.onInit();
     mapController = MapController(
-      location: const LatLng(Angle.degree(0), Angle.degree(0)), zoom: 2,);
+      location: const LatLng(Angle.degree(0), Angle.degree(0)),
+      zoom: 2,
+    );
     _initializeData();
   }
 
   Future<void> _initializeData() async {
     try {
       _detailResponse.value = await DioClient.instance.getCarDetail(id: id);
-      _getTimes.value = await DioClient.instance.getAvailebleTimeForShowRoom(
-          id: detailResponse?.salesOrder?.showRoomId ?? '1');
+
+      final showRoomId = detailResponse?.salesOrder?.showRoomId ?? '1';
+
+      _getTimes.value =
+          await DioClient.instance.getAvailebleTimeForShowRoom(id: showRoomId);
 
       _populateTimes();
+
       _setupMapLocation();
     } catch (e) {
       Get.snackbar('خطا', 'خطا در بارگذاری اطلاعات');
@@ -95,52 +101,62 @@ class ReserveShowRoomController extends GetxController {
   void _populateTimes() {
     times.clear();
     getTimes?.timespans?.forEach((element1) {
-      element1.times?.forEach((element) {
+      if (element1.id != null && element1.description != null) {
         times[element1.id!] = element1.description!;
-      });
+      }
     });
   }
+
   Future<void> launchNavigation() async {
     var lat = _selectedLat.value;
     var lng = _selectedLong.value;
+
+    if (lat == 0.0 && lng == 0.0) {
+      showToast(ToastState.ERROR, 'موقعیت مکانی موجود نیست');
+      return;
+    }
+
     try {
       Uri uri;
 
       if (Platform.isIOS) {
-        // Prefer Apple Maps
         uri = Uri.parse("http://maps.apple.com/?q=$lat,$lng");
       } else {
-        // Android (geo scheme works)
         uri = Uri.parse("geo:$lat,$lng");
       }
+
       await launchUrl(uri, mode: LaunchMode.externalApplication);
-
-
     } catch (e) {
       showToast(ToastState.ERROR, 'امکان باز کردن نقشه وجود ندارد');
-      print('Error launching navigation: $e');
     }
   }
-  void _setupMapLocation() {
-    _selectedLat.value =
-        double.tryParse(detailResponse?.salesOrder?.showRoomLat ?? '0') ?? 0;
-    _selectedLong.value =
-        double.tryParse(detailResponse?.salesOrder?.showRoomLon ?? '0') ?? 0;
 
-    mapController.zoom = 14;
-    mapController.center = LatLng(Angle.degree(selectedLat), Angle.degree(selectedLong));
-    markers.clear();
-    markers.add(LatLng(Angle.degree(selectedLat), Angle.degree(selectedLong)));
+  void _setupMapLocation() {
+    final lat = detailResponse?.salesOrder?.showRoomLat ?? '0';
+    final lng = detailResponse?.salesOrder?.showRoomLon ?? '0';
+
+    _selectedLat.value = double.tryParse(lat) ?? 0;
+    _selectedLong.value = double.tryParse(lng) ?? 0;
+
+    if (_selectedLat.value != 0.0 && _selectedLong.value != 0.0) {
+      mapController.zoom = 14;
+      mapController.center =
+          LatLng(Angle.degree(selectedLat), Angle.degree(selectedLong));
+      markers.clear();
+      markers
+          .add(LatLng(Angle.degree(selectedLat), Angle.degree(selectedLong)));
+    } else {}
   }
 
   void onTimeSelected(String? time) {
     _selectedTime.value = time ?? "";
     _selectedHour.value = null;
+    _selectedKarshenas.value = null;
     hours.clear();
     karshenas.clear();
     _turn.value = 2;
+
     getTimes?.timespans?.forEach((element) {
-      print(element.description);
       if (element.id == selectedTime) {
         _timeSpanId.value = element.id!;
       }
@@ -148,8 +164,10 @@ class ReserveShowRoomController extends GetxController {
 
     getTimes?.timespans?.forEach((element) {
       if (element.id == timeSpanId) {
-        element.times?.forEach((element) {
-          hours[element.id ?? ""] = element.description ?? '';
+        element.times?.forEach((timeElement) {
+          if (timeElement.id != null && timeElement.description != null) {
+            hours[timeElement.id!] = timeElement.description!;
+          }
         });
       }
     });
@@ -158,6 +176,7 @@ class ReserveShowRoomController extends GetxController {
   void onHourSelected(String? hour) {
     _turn.value = 3;
     _selectedHour.value = hour ?? "";
+    _selectedKarshenas.value = null;
     karshenas.clear();
 
     _populateKarshenas();
@@ -167,17 +186,19 @@ class ReserveShowRoomController extends GetxController {
   void _populateKarshenas() {
     getTimes?.timespans?.forEach((element) {
       if (element.id == timeSpanId) {
-        element.times?.forEach((element) {
-          if (element.id == selectedHour) {
-            element.accountManagers?.forEach((manager) {
-              if (manager.name == 'به انتخاب سيستم') {
-                karshenas[manager.id ?? ''] = manager.name ?? '';
-                _selectedKarshenas.value = manager.id;
-              } else {
-                String fullName =
-                    "${manager.name ?? ''} ${manager.lastname ?? ''}";
-                if (!karshenas.containsValue(fullName)) {
-                  karshenas[manager.id ?? ""] = fullName;
+        element.times?.forEach((timeElement) {
+          if (timeElement.id == selectedHour) {
+            timeElement.accountManagers?.forEach((manager) {
+              if (manager.id != null && manager.name != null) {
+                if (manager.name == 'به انتخاب سيستم') {
+                  karshenas[manager.id!] = manager.name!;
+                  _selectedKarshenas.value = manager.id;
+                } else {
+                  String fullName =
+                      "${manager.name ?? ''} ${manager.lastname ?? ''}".trim();
+                  if (!karshenas.containsValue(fullName)) {
+                    karshenas[manager.id!] = fullName;
+                  }
                 }
               }
             });
@@ -190,11 +211,11 @@ class ReserveShowRoomController extends GetxController {
   void _setDefaultKarshenas() {
     getTimes?.timespans?.forEach((element) {
       if (element.id == timeSpanId) {
-        element.times?.forEach((element) {
-          if (element.description == selectedHour) {
-            element.accountManagers?.forEach((manager) {
-              if (manager.id == selectedKarshenas) {
-                _timeId.value = manager.id ?? "";
+        element.times?.forEach((timeElement) {
+          if (timeElement.id == selectedHour) {
+            timeElement.accountManagers?.forEach((manager) {
+              if (manager.id == selectedKarshenas && manager.id != null) {
+                _timeId.value = manager.id!;
               }
             });
           }
@@ -209,11 +230,11 @@ class ReserveShowRoomController extends GetxController {
 
     getTimes?.timespans?.forEach((element) {
       if (element.id == timeSpanId) {
-        element.times?.forEach((element) {
-          if (element.description == selectedHour) {
-            element.accountManagers?.forEach((manager) {
-              if (manager.id == selectedKarshenas) {
-                _timeId.value = manager.id ?? "";
+        element.times?.forEach((timeElement) {
+          if (timeElement.id == selectedHour) {
+            timeElement.accountManagers?.forEach((manager) {
+              if (manager.id == selectedKarshenas && manager.id != null) {
+                _timeId.value = manager.id!;
               }
             });
           }
@@ -226,10 +247,11 @@ class ReserveShowRoomController extends GetxController {
     try {
       _isLoading.value = true;
 
-      var response = await DioClient.instance.reserveShowRoom(
-          salesOrderId: id,
-          timespanCapacityId: _selectedKarshenas?.replaceAll('.', '') ?? '');
-      print(response?.toJson());
+      final capacityId = _selectedKarshenas.value?.replaceAll('.', '') ?? '';
+
+      var response = await DioClient.instance
+          .reserveShowRoom(salesOrderId: id, timespanCapacityId: capacityId);
+
       if (response != null && response.message == 'OK') {
         _showSuccessDialog(response);
         return;
@@ -239,14 +261,14 @@ class ReserveShowRoomController extends GetxController {
         return;
       }
     } catch (e) {
-      //showToast(ToastState.ERROR, 'خطا در رزرو شوروم');
+      showToast(ToastState.ERROR, 'خطا در رزرو شوروم');
     } finally {
       _isLoading.value = false;
     }
   }
 
-  void _showSuccessDialog(dynamic response) async{
-  await  Get.dialog(
+  void _showSuccessDialog(dynamic response) async {
+    await Get.dialog(
       AlertDialog(
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -275,11 +297,8 @@ class ReserveShowRoomController extends GetxController {
                                 child: Icon(Icons.copy, color: Colors.black87),
                               ),
                         SizedBox(width: 8),
-                        CustomText(
-                            response?.reservation?.orderNumber ??
-                                '',
-                            color: Colors.black87,
-                            fontWeight: FontWeight.bold),
+                        CustomText(response?.reservation?.orderNumber ?? '',
+                            color: Colors.black87, fontWeight: FontWeight.bold),
                       ],
                     ),
                     CustomText('کد رهگیری:',

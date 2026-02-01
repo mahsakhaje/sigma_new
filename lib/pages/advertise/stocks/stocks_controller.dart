@@ -24,12 +24,11 @@ class StocksController extends GetxController {
   final RxList<Stocks> stocks = <Stocks>[].obs;
   final RxList<Stocks> totalStocks = <Stocks>[].obs;
   final RxList<Stocks> filteredStocks = <Stocks>[].obs;
-  final String firstNumber = '09025382448';
-  final String secondNumber = '02177196332';
-  final String thirdNumber = '02177092569';
 
+  var supportTelephone = Rxn<String>();
+  var messageNumber = Rxn<String>();
   RxBool isLoading = true.obs;
-  Rx<TabStatus> tab = TabStatus.USUAL.obs;
+  Rx<TabStatus> tab = TabStatus.TOTAL.obs;
 
   // دریافت داده‌های برند، مدل و تیپ از AllCarsJson
   final Rx<AllCarsJsonModel?> allCarsJsonModel = Rx<AllCarsJsonModel?>(null);
@@ -60,41 +59,48 @@ class StocksController extends GetxController {
   }
 
   toggleTab() {
-    resetFilters();
+
     if (tab.value == TabStatus.TOTAL) {
       tab.value = TabStatus.USUAL;
     } else {
       tab.value = TabStatus.TOTAL;
     }
-    if (totalStocks.isEmpty || stocks.isEmpty) {
-      getStocks();
-    }
-    ;
+    resetFilters();
+
+
   }
 
   Future<void> getData() async {
     try {
       final results = await Future.wait([
         getStocks(),
+        getContactInfo()
       ]);
       isLoading.value = false;
-      print('Both API calls completed');
     } catch (e) {
-      print('Error: $e');
       isLoading.value = false;
     }
   }
-
+  Future<void> getContactInfo()async{
+    final response = await DioClient.instance.getContactUs();
+    if (response != null && response.message == 'OK') {
+      supportTelephone.value = response.supportTelephone;
+      // حذف تگ‌های HTML
+      messageNumber.value = response.telephone
+          ?.replaceAll('<br>', '\n')
+          .replaceAll(RegExp(r'<[^>]*>'), '');
+    }
+  }
   Future<void> getStocks() async {
+
     var response = await DioClient.instance.getStocks(
         tab.value == TabStatus.TOTAL ? '1' : '',
         brandId: selectedBrandId?.value,
         carModelId: selectedModelId?.value,
         carTypeId: selectedTypeId?.value,
         mileageState: selectedMileage.value,
-        colorId: selectedColorId.value,
+       //colorId: selectedColorId.value,
         manufactureYearId: selectedYear.value);
-    print(response);
     if (response?.message == 'OK') {
       if (tab.value == TabStatus.TOTAL) {
         totalStocks.value = response?.stocks ?? [];
@@ -200,12 +206,10 @@ class StocksController extends GetxController {
   // انتخاب سال
   void selectYear(String? value) {
     selectedYear.value = value;
-    print(selectedYear);
   }
 
   void selectColor(String? value) {
     selectedColorId.value = value;
-    print(selectedColorId);
   }
 
   // انتخاب کارکرد

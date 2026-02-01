@@ -151,6 +151,8 @@ class BuyController extends GetxController {
     selectedKiloMeterFrom.value = null;
     selectedToYear.value = null;
     selectedCity.value = null;
+    selectedColors.value=null;
+    selectedTrimColors.value=null;
     amountController.text = '';
     //clearFields();
     turn.value = 1;

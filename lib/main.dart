@@ -3,10 +3,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sigma/helper/colors.dart';
 import 'package:sigma/routes.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   HttpOverrides.global = MyHttpOverrides();
 

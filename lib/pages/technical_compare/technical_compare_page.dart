@@ -19,7 +19,6 @@ class TechnicalComparePage extends StatelessWidget {
     final String firstCarImagePath = args['firstCarImagePath'];
     final String secondcarName = args['secondcarName'];
     final String secondcarImagePath = args['secondcarImagePath'];
-    print(args);
     var controller = Get.put(
         TechnicalCompareController(firstId: firstId, secondId: secondId));
 

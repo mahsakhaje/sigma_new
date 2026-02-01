@@ -190,7 +190,6 @@ class CarSpecsDialog extends StatelessWidget {
                   );
                 } else {
 // Equipment & Features Tab
-                  print(controller.carEquipments);
                   return ListView.builder(
                     padding: const EdgeInsets.all(16),
                     itemCount: controller.carEquipments.length,

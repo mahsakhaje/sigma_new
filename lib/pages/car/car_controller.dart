@@ -65,7 +65,6 @@ class CarController extends GetxController {
     if (order != null) {
       CarInfoResponse? data =
           await DioClient.instance.getCarInfo(id: order?.id ?? '');
-      print(data?.toJson());
       shasiController.text = order?.chassisNumber ?? '';
 
       selectedBrand.value = data?.car?.brandId ?? '';
@@ -98,7 +97,6 @@ class CarController extends GetxController {
   }
 
   void _fillModelTypeColorData() {
-    print(allCarsJsonModel?.toJson());
     allCarsJsonModel?.brands?.forEach((brand) {
       if (brand.id == selectedBrand.value) {
         for (var model in brand.carModels ?? []) {
@@ -138,20 +136,17 @@ class CarController extends GetxController {
   }
 
   void onBrandChanged(String? str) {
-    print('callllllllled');
     selectedBrand.value = str ?? '';
     turn.value = 3;
     carModels.clear();
     carTypes.clear();
     allCarsJsonModel?.brands?.forEach((brand) {
-      print(brand);
       if (brand.id == str) {
         for (var model in brand.carModels ?? []) {
           carModels[model.id!] = model.description!;
         }
       }
     });
-    print(carModels);
     brands.forEach((key, value) {
       if (value == selectedBrand.value) brandId = key;
     });
@@ -163,7 +158,6 @@ class CarController extends GetxController {
   }
 
   void onModelChanged(String? str) {
-    print('callllllllled');
 
     selectedCarModel.value = str ?? '';
     carModels.forEach((key, value) {
@@ -237,7 +231,6 @@ class CarController extends GetxController {
   }
 
   void onColorChanged(String? str) {
-    print(str);
     selectedColors.value = str ?? '';
     colorsCars.forEach((key, value) {
       if (value == str) colorId = key;
@@ -266,6 +259,10 @@ class CarController extends GetxController {
 
   void confirm() async {
     hideKeyboard(Get.context!);
+    if( shasiController.text.length!=17){
+      showToast(ToastState.ERROR, 'شماره شاسی وارد شده صحیح نیست!');
+      return;
+    }
     if (formKey.currentState?.validate() ?? true) {
       if ([
             selectedBrand,
@@ -305,7 +302,7 @@ class CarController extends GetxController {
   }
 
   void inquiry() async {
-    if (formKey.currentState?.validate() ?? true) {
+    if (shasiController.text.length==17) {
       isLoading.value = true;
       final response = await DioClient.instance.getInquiryChassisNumber(
         chassisNumber: shasiController.text,
@@ -313,50 +310,56 @@ class CarController extends GetxController {
       isLoading.value = false;
 
       if (response?.status == 0) {
+        print(brands.entries);
+
         brandId = response?.brandId ?? '';
+        print(brandId);
+        print(brands[brandId] ?? '');
         modelId = response?.carModelId ?? '';
         typeId = response?.carTypeId ?? '';
         colorId = response?.colorId ?? '';
         trimColorId = response?.trimColorId ?? '';
         fromYearId = response?.manufactureYearId ?? '';
 
-        selectedBrand.value = brands[brandId] ?? '';
-        selectedCarModel.value = carModels[modelId] ?? '';
-        selectedCarType.value = carTypes[typeId] ?? '';
+        selectedBrand.value = brandId ?? '';
+        selectedCarModel.value = modelId ?? '';
+        selectedCarType.value =typeId ?? '';
 
         _fillModelTypeColorData();
 
-        selectedFromYear.value = carTypeManufactureYears[fromYearId] ?? '';
-        selectedColors.value = colorsCars[colorId] ?? '';
-        selectedTrimColors.value = trimColors[trimColorId] ?? '';
+        selectedFromYear.value = fromYearId ?? '';
+        selectedColors.value = colorId ?? '';
+        selectedTrimColors.value = trimColorId ?? '';
 
         pageState.value = PageState.Confirm;
-      } else {
-        await Get.dialog(AlertDialog(
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              CustomText(
-                'کاربر گرامی متاسفانه اطلاعات خودروی شما در بانک اطلاعات کرمان موتور یافت نشد.',
-                color: Colors.black87,
-                isRtl: true,
-                size: 15,
-                textAlign: TextAlign.center,
-                fontWeight: FontWeight.bold,
-              ),
-              SizedBox(height: 12),
-              CustomText('لطفا اطلاعات خودروی خود را وارد نمائید.',
-                  color: Colors.black87, size: 14, isRtl: true),
-              SizedBox(height: 34),
-              ConfirmButton(() {
-                Get.back();
-                pageState.value = PageState.Confirm;
-              }, 'تایید', borderRadius: 8, fontSize: 12)
-            ],
-          ),
-        ));
+      } else { await Get.dialog(AlertDialog(
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            CustomText(
+              'کاربر گرامی متاسفانه اطلاعات خودروی شما در بانک اطلاعات کرمان موتور یافت نشد.',
+              color: Colors.black87,
+              isRtl: true,
+              size: 15,
+              textAlign: TextAlign.center,
+              fontWeight: FontWeight.bold,
+            ),
+            SizedBox(height: 12),
+            CustomText('لطفا اطلاعات خودروی خود را وارد نمائید.',
+                color: Colors.black87, size: 14, isRtl: true),
+            SizedBox(height: 34),
+            ConfirmButton(() {
+              Get.back();
+              pageState.value = PageState.Confirm;
+            }, 'تایید', borderRadius: 8, fontSize: 12)
+          ],
+        ),
+      ));
+
       }
+    }else{
+      showToast(ToastState.ERROR, 'شماره شاسی وارد شده صحیح نمی باشد.');
     }
   }
 }

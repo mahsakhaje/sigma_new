@@ -22,67 +22,75 @@ class RulesPage extends StatelessWidget {
     final controller = Get.put(PdfController());
 
     return DarkBackgroundWidget(
-      title: 'قوانین و شرایط',
-      child:  Obx(() {
-          if (controller.isLoading) {
-            return  Center(
-              child: loading(),
-            );
-          }
-
-          return SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            child: Directionality(
-              textDirection: TextDirection.rtl,
-              child: HtmlWidget(
-                ( controller.response?.manaRule?.description ?? "").usePersianNumbers(),
-
-                textStyle: const TextStyle(
-                  color: Colors.white,
-                  fontFamily: 'Peyda',
-
-                ),
-                // customWidgetBuilder: (element) {
-                //   if (element.localName == 'li') {
-                //     return Row(
-                //       crossAxisAlignment: CrossAxisAlignment.center,
-                //       children: [
-                //         Column(
-                //           children: [
-                //             Container(
-                //               height: 14,
-                //               width: 14,
-                //               decoration: BoxDecoration(
-                //                 shape: BoxShape.circle,
-                //                 color: AppColors.blue,
-                //               ),
-                //             ),
-                //           ],
-                //         ),
-                //         const SizedBox(width: 8),
-                //         Flexible(
-                //           child: CustomText(
-                //             '${element.text.replaceFirst('\n', '')}'.usePersianNumbers(),
-                //             isRtl: true,
-                //             size: 16,
-                //             maxLine: 50,
-                //           ),
-                //         ),
-                //       ],
-                //     );
-                //   }
-                //   return null;
-                // },
-                customStylesBuilder: (element) {
-                  return {
-                    'text-align': UniversalPlatform.isWeb ? 'right' : 'justify',
-                  };
-                },
+      title: 'قوانین و مقررات',
+      child: Obx(() {
+        if (controller.isLoading) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: loading(),
               ),
-            ),
+            ],
           );
-        }),
+        }
 
+        return SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          child: Directionality(
+            textDirection: TextDirection.rtl,
+            child: HtmlWidget(
+              (controller.response?.manaRule?.description ?? "")
+                  .usePersianNumbers(),
+              onLoadingBuilder: (ctx, e, i) {
+                return Center(child: loading());
+              },
+
+              textStyle: const TextStyle(
+                color: Colors.white,
+                fontFamily: 'Peyda',
+              ),
+              // customWidgetBuilder: (element) {
+              //   if (element.localName == 'li') {
+              //     return Row(
+              //       crossAxisAlignment: CrossAxisAlignment.center,
+              //       children: [
+              //         Column(
+              //           children: [
+              //             Container(
+              //               height: 14,
+              //               width: 14,
+              //               decoration: BoxDecoration(
+              //                 shape: BoxShape.circle,
+              //                 color: AppColors.blue,
+              //               ),
+              //             ),
+              //           ],
+              //         ),
+              //         const SizedBox(width: 8),
+              //         Flexible(
+              //           child: CustomText(
+              //             '${element.text.replaceFirst('\n', '')}'.usePersianNumbers(),
+              //             isRtl: true,
+              //             size: 16,
+              //             maxLine: 50,
+              //           ),
+              //         ),
+              //       ],
+              //     );
+              //   }
+              //   return null;
+              // },
+              customStylesBuilder: (element) {
+                return {
+                  'text-align': UniversalPlatform.isWeb ? 'right' : 'justify',
+                };
+              },
+            ),
+          ),
+        );
+      }),
     );
   }
 }

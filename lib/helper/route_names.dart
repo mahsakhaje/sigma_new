@@ -61,4 +61,6 @@ class RouteName {
   static const String priceChart = '/priceChart';
   static const String technicalCompare = '/technicalCompare';
   static const String stocks = '/stocks';
+  static const String guide = '/guide';
+  static const String contactus = '/contactus';
 }

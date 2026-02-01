@@ -28,6 +28,8 @@ class ParentMenuWidget extends StatelessWidget {
         return 'assets/advertise.png';
       case Strings.carInfo:
         return 'assets/technical_bg.png';
+      case Strings.guide:
+        return 'assets/guide_bg.png';
     }
     return 'assets/advertise.png';
   }

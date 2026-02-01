@@ -43,6 +43,7 @@ class SalesOrder {
   String? receptionDate;
   String? receptionTime;
   String? receptionHour;
+  String? referenceCode;
   String? referredName;
   String? referredCellNumber;
   String? referredAddress;
@@ -152,6 +153,7 @@ class SalesOrder {
       this.receptionNumber,
       this.receptionDate,
       this.receptionTime,
+      this.referenceCode,
       this.receptionHour,
       this.referredName,
       this.catalogUrl,
@@ -253,6 +255,7 @@ class SalesOrder {
     stateText = json['stateText'];
     orderNumber = json['orderNumber'];
     comment = json['comment'];
+    referenceCode = json['referenceCode'];
     advertiseComment = json['advertiseComment'];
     orderAmount = json['orderAmount'];
     expertAmount = json['expertAmount'];

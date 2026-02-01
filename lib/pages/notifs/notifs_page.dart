@@ -34,7 +34,7 @@ class NotifsListPage extends StatelessWidget {
             SizedBox(
               height: 16,
             ),
-            Row(
+            controller.unreadCount.value!=0 ?   Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 badge(
@@ -44,7 +44,7 @@ class NotifsListPage extends StatelessWidget {
                   width: 12,
                 )
               ],
-            ),
+            ):SizedBox(),
             SizedBox(
               height: 16,
             ),
@@ -83,11 +83,15 @@ class NotifsListPage extends StatelessWidget {
               color: AppColors.darkGrey,
               fontWeight: FontWeight.bold,isRtl: true),
           SizedBox(height: 8,),
-          CustomText(
-              (controller.accountNotifs[index].registerDate ?? "")
-                  .usePersianNumbers(),
-              color: AppColors.darkGrey,
-              fontWeight: FontWeight.normal),
+          Row(
+            children: [
+              CustomText(
+                  (controller.accountNotifs[index].registerDate ?? "")
+                      .usePersianNumbers(),
+                  color: AppColors.darkGrey,
+                  fontWeight: FontWeight.normal),
+            ],
+          ),
         ],
       ),
     );

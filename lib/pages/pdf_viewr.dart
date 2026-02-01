@@ -39,7 +39,6 @@ class _PdfState extends State<Pdf> {
 
     // Check if url exists and is a String
     final url = args['url'];
-    print(url);
     if (url == null || url is! String || url.isEmpty) {
       return DarkBackgroundWidget(
         title: '',
@@ -57,7 +56,6 @@ class _PdfState extends State<Pdf> {
             url,
             key: _pdfViewerKey,
             onDocumentLoadFailed: (PdfDocumentLoadFailedDetails details) {
-              print('PDF load failed: ${details.error}');
             },
           ),
           Positioned(
@@ -74,14 +72,11 @@ class _PdfState extends State<Pdf> {
                     final bytes = response.bodyBytes;
                     if(defaultTargetPlatform == TargetPlatform.android){
                       var path = await saveFileToDownloads('loan', bytes);
-                      print(path);
 
                     }else{
                       var path = await saveFile('loan', bytes);
-                      print(path);
                     }
                   } catch (e) {
-                    print('Download failed: $e');
                     // Show error message to user
                     Get.snackbar('خطا', 'دانلود ناموفق بود');
                   }

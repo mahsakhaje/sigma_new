@@ -43,7 +43,6 @@ class CarWidget extends StatelessWidget {
         hintText: 'شماره شاسی',
         // isChassiNumber: true,
         // validator: controller.validate,
-        // exaxtLen: 17,
         autovalidateMode: controller.shasiController.text.length == 17
             ? AutovalidateMode.always
             : AutovalidateMode.disabled,
@@ -54,8 +53,6 @@ class CarWidget extends StatelessWidget {
   }
 
   Widget _buildDropdownRow1(CarController controller) {
-    print(controller.selectedBrand.value);
-    print(controller.brands.value);
 
     return Row(
       children: [

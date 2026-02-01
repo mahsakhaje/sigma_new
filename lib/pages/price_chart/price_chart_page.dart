@@ -25,7 +25,6 @@ class PriceChartPage extends StatelessWidget {
     imagePath = args['imagePath'];
 
     final controller = Get.put(PriceChartController(id: id));
-print(imagePath+carModel+id);
     return DarkBackgroundWidget(
         child: Obx(() => _buildBody(controller)), title: Strings.priceChange);
   }

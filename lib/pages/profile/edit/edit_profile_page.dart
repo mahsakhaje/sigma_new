@@ -117,8 +117,7 @@ class EditProfileInfo extends StatelessWidget {
   }
 
   Widget _buildCityField() {
-    print(controller.selectedCity.value);
-    print(controller.geoCityNames);
+
     return controller.isEnabled.value
         ? CustomDropdown(
             hint: Strings.city,
@@ -210,7 +209,7 @@ class EditProfileInfo extends StatelessWidget {
       enabled: controller.isEnabled.value,
       maxLen: 500,
       hintText: Strings.address,
-      autovalidateMode: AutovalidateMode.disabled,
+      autovalidateMode: AutovalidateMode.always,
     );
   }
 
@@ -223,14 +222,13 @@ class EditProfileInfo extends StatelessWidget {
       // isPostalCode: true,
       // isOnlyNumber: true,
       hintText: Strings.postalCode,
-      autovalidateMode: AutovalidateMode.disabled,
+      autovalidateMode: AutovalidateMode.always,
     );
   }
 
   Widget _buildEmailField() {
     return Obx(() {
       final text = controller.emailController.text;
-      print(text.isNotEmpty);
       return CustomTextFormField(
         controller.emailController,
         hintText: Strings.email,

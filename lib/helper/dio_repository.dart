@@ -32,9 +32,11 @@ import 'package:sigma/models/car_type_spec_type.dart';
 import 'package:sigma/models/change_price_model.dart';
 import 'package:sigma/models/color_response_model.dart';
 import 'package:sigma/models/confirm_payment_model.dart';
+import 'package:sigma/models/contact_us_model.dart';
 import 'package:sigma/models/discount_response.dart';
 import 'package:sigma/models/estimate_response.dart';
 import 'package:sigma/models/expert_order_model.dart';
+import 'package:sigma/models/experties.dart';
 import 'package:sigma/models/get_availeble_times.dart';
 import 'package:sigma/models/get_loan_duration.dart';
 import 'package:sigma/models/insert_purchase_model.dart';
@@ -110,13 +112,13 @@ class DioClient {
             headers: {'Authorization': 'Bearer $token'},
             responseType: isBytes ? ResponseType.bytes : ResponseType.json),
       );
-      print('****');
       print(response);
       // if(response.data['message']=='INVALID_TOKEN'){
       //   showToast(ToastState.ERROR, response.data['persianMessage']);
       // }
       return response;
     } catch (e) {
+      print(e);
       debugPrint("Error making POST request: $e");
       return null;
     }
@@ -300,7 +302,6 @@ class DioClient {
   }
 
   Future<LoginResponse?> getTokenRequest() async {
-    print('here5');
 
     Response response = await _dio.post(URLs.TokenUrl,
         data: jsonEncode(UniversalPlatform.isAndroid
@@ -412,12 +413,9 @@ class DioClient {
       'token': await getShortToken(),
       'version': await getVersion(),
     };
-    print(
-      {'carState': state ?? ''},
-    );
+
     final response =
         await _makePostRequest(URLs.GetSalesOrdersWithFilterUrl, data);
-    print(response);
     return response?.statusCode == 200
         ? SigmaSalesOrderResponse.fromJson(response?.data)
         : null;
@@ -690,6 +688,22 @@ class DioClient {
         : null;
   }
 
+  Future<ExpertiseResponse?> showExpertSummary(
+    String id,
+  ) async {
+    final response = await _makePostRequest(
+      URLs.GetExpertSummaryUrl,
+      {
+        'salesOrder': {'id': id},
+        'version': await getVersion(),
+        'token': getShortToken(),
+      },
+    );
+    return response?.statusCode == 200
+        ? ExpertiseResponse.fromJson(response?.data)
+        : null;
+  }
+
   Future<ReserveShowRoomResponse?> reserveShowRoom({
     required String salesOrderId,
     required String timespanCapacityId,
@@ -747,8 +761,37 @@ class DioClient {
           mimeType: MimeType.pdf,
         );
       } else {
+        return await saveFileToDownloads(
+            'expert_report_$id' + Random.secure().nextInt(100).toString(),
+            response!.data);
+      }
+    }
+    return null;
+  }
 
-        return await saveFileToDownloads('expert_report_$id'+Random.secure().nextInt(100).toString(), response!.data);
+  Future<String?> getExpertReportInCarDetail(String id) async {
+    final response = await _makePostRequest(
+        URLs.GetExpertDownloadUrl,
+        {
+          'salesOrder': {'id': id},
+          'version': await getVersion(),
+          'token': getShortToken(),
+        },
+        isBytes: true);
+    print(response);
+
+    if (response?.statusCode == 200 && response?.data != null) {
+      if (kIsWeb) {
+        return await FileSaver.instance.saveFile(
+          name: 'expert_report_$id',
+          bytes: response!.data,
+          ext: 'pdf',
+          mimeType: MimeType.pdf,
+        );
+      } else {
+        return await saveFileToDownloads(
+            'expert_report_$id' + Random.secure().nextInt(100).toString(),
+            response!.data);
       }
     }
     return null;
@@ -1322,17 +1365,35 @@ class DioClient {
         ? AllProvincesResponse.fromJson(response?.data)
         : null;
   }
-  Future<StocksResponse?> getStocks(String total,{String? brandId,String? carModelId,String? carTypeId,String? colorId,String? manufactureYearId,String? mileageState}) async {
+
+  Future<ContactUsResponse?> getContactUs() async {
+    final response = await _makePostRequest(URLs.GetContactUsContentUrl, {
+      'token': null,
+      'version': await getVersion(),
+    });
+
+    return response?.statusCode == 200
+        ? ContactUsResponse.fromJson(response?.data)
+        : null;
+  }
+
+  Future<StocksResponse?> getStocks(String total,
+      {String? brandId,
+      String? carModelId,
+      String? carTypeId,
+      //String? colorId,
+      String? manufactureYearId,
+      String? mileageState}) async {
     final response = await _makePostRequest(URLs.GetStockUrl, {
       'pl': '10000',
       'pn': '1',
-      'brandId':brandId,
-      'carModelId':carModelId,
-      'carTypeId':carTypeId,
-      'colorId':colorId,
-      'manufactureYearId':manufactureYearId,
-      'mileageState':mileageState,
-      'total':total,
+      'brandId': brandId,
+      'carModelId': carModelId,
+      'carTypeId': carTypeId,
+      //'colorId': colorId,
+      'manufactureYearId': manufactureYearId,
+      'mileageState': mileageState,
+      'total': total,
       'token': null,
       'version': await getVersion(),
     });
@@ -1469,7 +1530,9 @@ class DioClient {
     var token = StorageHelper().getShortToken() ?? '';
     return token;
   }
-  Future<BaseResponse?> updateAnnouncments(String all,String carModelIds) async {
+
+  Future<BaseResponse?> updateAnnouncments(
+      String all, String carModelIds) async {
     final response = await _makePostRequest(URLs.UpdateAccountAnnouncementUrl, {
       'all': all,
       'carModelIds': carModelIds,
@@ -1481,9 +1544,10 @@ class DioClient {
         ? BaseResponse.fromJson(response?.data)
         : null;
   }
-  Future<AccountAnnouncmentModel?> getAccountAnnouncementStatus() async {
-    final response = await _makePostRequest(URLs.GetAccountAnnouncementInfoUrl, {
 
+  Future<AccountAnnouncmentModel?> getAccountAnnouncementStatus() async {
+    final response =
+        await _makePostRequest(URLs.GetAccountAnnouncementInfoUrl, {
       'token': getShortToken(),
       'version': await getVersion(),
     });
@@ -1492,7 +1556,6 @@ class DioClient {
         ? AccountAnnouncmentModel.fromJson(response?.data)
         : null;
   }
-
 }
 
 class InsertImageBody {

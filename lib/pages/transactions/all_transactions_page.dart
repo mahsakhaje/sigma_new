@@ -75,7 +75,7 @@ class AllTransactionsPage extends StatelessWidget {
                             padding: const EdgeInsets.all(14.0),
                             child: SvgPicture.asset(
                               'assets/no_pic.svg',
-                              height: 110,
+                              height: 81,
                             ),
                           ),
                         ))

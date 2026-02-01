@@ -221,30 +221,30 @@ class _HomePgeState extends State<HomePge> {
                         path: 'assets/car_info.svg',
                         route: RouteName.technicalMenu),
 
-                   Obx(()=> Stack(children: [
-                      drawerIcon(
-                          path: 'assets/etelaie.svg',
-                          route: RouteName.info,
-                          isItsSize: false),
-                      if (controller.hasNewNotidf.value)
-                        Positioned(
-                          child: SvgPicture.asset(
-                            'assets/info.svg',
-                            color: AppColors.orange,
-                          ),
-                          // child: Container(
-                          //   padding: EdgeInsets.all(7),
-                          //   decoration: BoxDecoration(
-                          //       color: AppColors.orange,
-                          //       shape: BoxShape.circle),
-                          //   child: CustomText(
-                          //       controller.unreadCount
-                          //           .toString()
-                          //           .usePersianNumbers(),
-                          //       size: 15),
-                          // )
-                        ),
-                    ])),
+                    Obx(() => Stack(children: [
+                          drawerIcon(
+                              path: 'assets/etelaie.svg',
+                              route: RouteName.info,
+                              isItsSize: false),
+                          if (controller.hasNewNotidf.value)
+                            Positioned(
+                              child: SvgPicture.asset(
+                                'assets/info.svg',
+                                color: AppColors.orange,
+                              ),
+                              // child: Container(
+                              //   padding: EdgeInsets.all(7),
+                              //   decoration: BoxDecoration(
+                              //       color: AppColors.orange,
+                              //       shape: BoxShape.circle),
+                              //   child: CustomText(
+                              //       controller.unreadCount
+                              //           .toString()
+                              //           .usePersianNumbers(),
+                              //       size: 15),
+                              // )
+                            ),
+                        ])),
 
                     drawerIcon(
                         path: 'assets/branches.svg',
@@ -309,17 +309,8 @@ class _HomePgeState extends State<HomePge> {
                               path: 'assets/refferal.svg',
                               route: RouteName.referral),
                           drawerIcon(
-                              path: 'assets/about_us.svg',
-                              route: RouteName.about),
-                          // drawerIcon(
-                          //     path: 'assets/questions.svg',
-                          //     route: RouteName.),
-                          drawerIcon(
-                              path: 'assets/frequent.svg',
-                              route: RouteName.questions),
-                          drawerIcon(
-                              path: 'assets/ghavanin.svg',
-                              route: RouteName.rules),
+                              path: 'assets/guide.svg', route: RouteName.guide),
+
                           // drawerIcon(
                           //     path: 'assets/ghavanin.svg',
                           //     route: RouteName.chat),

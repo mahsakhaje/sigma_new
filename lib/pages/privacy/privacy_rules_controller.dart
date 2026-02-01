@@ -24,7 +24,6 @@ class PrivacyRulesController extends GetxController {
       _response.value = result;
     } catch (e) {
       // Handle error - you can add error handling here
-      print('Error loading privacy rules: $e');
     } finally {
       _isLoading.value = false;
     }

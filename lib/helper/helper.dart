@@ -105,18 +105,51 @@ Future<bool> isVpnActive() async {
 }
 
 
+List<String> extractPhoneNumbers(String? text) {
+  if (text == null || text.isEmpty) return [];
 
+  // بررسی شماره کوتاه خاص
+  final trimmed = text.trim();
+  if (trimmed == "42724") {
+    return [trimmed];
+  }
+
+  // جدا کردن شماره‌ها با delimiter (قبل از حذف -)
+  final numbers = text.split(RegExp(r'[-\s,،؛;]+'));
+
+  List<String> validPhones = [];
+
+  for (var number in numbers) {
+    number = number.trim();
+    if (number.isEmpty) continue;
+
+    // شماره موبایل (09xxxxxxxxx یا 9xxxxxxxxx)
+    if (RegExp(r'^(0)?9\d{9}$').hasMatch(number)) {
+      validPhones.add(number);
+    }
+    // شماره ثابت (0xxxxxxxxxx - کد شهر + شماره)
+    else if (RegExp(r'^0\d{10}$').hasMatch(number)) {
+      validPhones.add(number);
+    }
+    // شماره کوتاه (مثل 42724)
+    else if (RegExp(r'^\d{4,6}$').hasMatch(number)) {
+      validPhones.add(number);
+    }
+  }
+
+  return validPhones;
+}
 Future<bool> hasConnection() async {
   if(kIsWeb){
     return true;
   }
-  bool connected = await NetworkChecker.hasInternetConnection();
-
-  if (!connected) {
-    return false;
-  } else {
+  // bool connected = await NetworkChecker.hasInternetConnection();
+  //
+  // if (!connected) {
+  //   return false;
+  // } else {
     return true;
-  }
+ // }
 }
 // Widget DarkBackgroundWidget({required Widget child}) {
 //   return Container(
@@ -594,7 +627,7 @@ class NetworkChecker {
 
     // Check actual internet access by pinging a reliable server
     try {
-      final result = await InternetAddress.lookup('google.com');
+      final result = await InternetAddress.lookup('time.ir');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         return true;
       }

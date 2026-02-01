@@ -133,7 +133,7 @@ class _CarDetailContent extends StatelessWidget {
                 _buildBottomSheetItem(
                   'assets/expert.svg',
                   'برگه کارشناسی',
-                  controller.downloadExpertPdf,
+                  controller.showExpertSummary,
                   isLoading: controller.isExpertLoading.value,
                 )),
             Divider(
@@ -235,6 +235,9 @@ class _CarDetailContent extends StatelessWidget {
               ),
               // if (controller.saleOrder.value?.justSwap == '1')
               //   _buildBadge('فقط\nتعویض', isOrange: true),
+               if (controller.saleOrder.value?.referenceCode!=null)
+          Positioned(
+          top: 10,right: 10, child:badge('کدخودرو:'+(controller.saleOrder.value?.referenceCode?.usePersianNumbers()??''))),
               Positioned(
                   top: 10,
                   left: 10,

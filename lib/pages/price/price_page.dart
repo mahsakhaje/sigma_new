@@ -133,23 +133,22 @@ class PricePage extends StatelessWidget {
 
   Widget _buildPriceItem(ManaPrices price) {
     return Container(
-      height: 230,
+      height: 200,
       width: Get.width,
       child: Card(
         color: Colors.white,
         margin: EdgeInsets.symmetric(vertical: 4, horizontal: 2),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             price.imagePath == null
                 ? ClipRRect(
                     borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20)),
+                        topLeft: Radius.circular(8),
+                        topRight: Radius.circular(8)),
                     child: Container(
                       color: AppColors.lightGrey,
-                      height: 180,
                       width: Get.width,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
@@ -159,13 +158,13 @@ class PricePage extends StatelessWidget {
                     ))
                 : ClipRRect(
                     borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20)),
+                        topLeft: Radius.circular(8),
+                        topRight: Radius.circular(8)),
                     child: Stack(
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(
-                              left: 56.0, right: 56, top: 52),
+                              left: 56.0, right: 56, top: 42),
                           child: Image.network(
                             price.imagePath ?? "",
                             fit: BoxFit.contain,
@@ -179,12 +178,14 @@ class PricePage extends StatelessWidget {
                         //     ).usePersianNumbers(),
                         //     height: 70
                         // )
-                        Positioned(
+                        if (price.factoryPrice != null &&
+                            price.factoryPrice!.isNotEmpty &&
+                            price.factoryPrice != '0')                        Positioned(
                           right: 0,
-                          top: 10,
+                          top: 6,
                           child: Container(
                             padding: EdgeInsets.all(8),
-                            decoration: BoxDecoration(color: AppColors.orange),
+                            decoration: BoxDecoration(color: AppColors.orange,borderRadius: BorderRadius.only(topLeft:Radius.circular( 4),bottomLeft: Radius.circular( 4))),
                             child: CustomText(
                                 ' قیمت کارخانه:  ' +
                                     (price.factoryPrice ?? '')
@@ -714,53 +715,7 @@ class PricePage extends StatelessWidget {
     });
   }
 
-// Build expandable item for bottom sheet
-//   Widget _buildExpandableItem(String title, List<Widget> body) {
-//     return Obx(() {
-//       String? desc = controller.carStatusDescription.value[title];
-//
-//       return Container(
-//         margin: EdgeInsets.symmetric(vertical: 4),
-//         decoration: BoxDecoration(
-//           color: Colors.grey.shade50,
-//           border: Border.all(color: Colors.grey.shade300),
-//           borderRadius: BorderRadius.circular(8),
-//         ),
-//         child: ExpansionTile(
-//           collapsedIconColor: Colors.black,
-//           iconColor: Colors.black,
-//           textColor: Colors.black,
-//           childrenPadding: EdgeInsets.zero,
-//           tilePadding: EdgeInsets.symmetric(vertical: 0, horizontal: 16),
-//           title: Row(
-//             mainAxisSize: MainAxisSize.min,
-//             children: [
-//               Expanded(
-//                 child: Text(
-//                   title,
-//                   style: TextStyle(
-//                     color: Colors.black,
-//                     fontSize: 14,
-//                     fontWeight: FontWeight.bold,
-//                   ),
-//                 ),
-//               ),
-//               if (desc != null)
-//                 Text(
-//                   ' - $desc',
-//                   style: TextStyle(
-//                     color: Colors.grey.shade600,
-//                     fontSize: 12,
-//                     fontWeight: FontWeight.normal,
-//                   ),
-//                 ),
-//             ],
-//           ),
-//           children: body,
-//         ),
-//       );
-//     });
-//   }
+
 
   Widget _buildCarStateForm() {
     return Padding(

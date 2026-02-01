@@ -300,6 +300,7 @@ Widget buildRegister() {
             Obx(
               () => CustomCheckBox(
                   value: authController.hasConfirmedRules.value,
+                  isBlue: true,
                   onChanged: authController.setHasConfirmedRules),
             ),
           ],

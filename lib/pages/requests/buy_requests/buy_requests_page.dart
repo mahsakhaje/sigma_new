@@ -43,7 +43,6 @@ class MyBuyOrdersPage extends StatelessWidget {
             }
 
             final order = controller.purchaseOrders[index];
-            print(order.colorDescription);
             return RequestCard(
               trackingCode: order.id ?? '',
               status: order.stateText ?? "-",

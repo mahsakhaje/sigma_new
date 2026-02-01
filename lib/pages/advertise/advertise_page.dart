@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:persian_number_utility/persian_number_utility.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:sigma/global_custom_widgets/bottom_sheet.dart';
 import 'package:sigma/global_custom_widgets/custom_check_box.dart';
@@ -64,9 +65,6 @@ class AdvertisePage extends StatelessWidget {
   }
 
   Widget _buildListWidget(AdvertiseController controller) {
-print(controller.notifyBrands.value);
-print(controller.selectedNotifyBrands.value);
-
     return CustomScrollView(
       controller: controller.scrollController,
       slivers: [
@@ -80,136 +78,177 @@ print(controller.selectedNotifyBrands.value);
                 children: [
                   SizedBox(
                     width: 100,
-                    child: GestureDetector(onTap:()=>
-
-                        CustomBottomSheetAnimated.show(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(children: [
-                              Row(
-                                children: [
-                                  SizedBox(width: 8),
-                                 Obx(()=> FlutterSwitch(
-                                    value: controller.enableNotify.value,
-                                    onToggle: (val){
-                                      controller.enableNotify.value=!controller.enableNotify.value;
-                                    },
-                                    height: 22,
-                                    width: 50,
-                                    activeColor: AppColors.blue,
-                                    inactiveColor: AppColors.grey,
-                                    toggleColor: Colors.white,
-                                  )),
-                                  SizedBox(width: 8),
-                                  CustomText('فعالسازی', size: 14,color: Colors.black,fontWeight: FontWeight.bold)
-                                ],
-                              ),
-                              SizedBox(height: 8,),
-                              Obx(()=>controller.notifyAll.value ||!controller.enableNotify.value?
-                              Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
+                    child: GestureDetector(
+                      onTap: () => CustomBottomSheetAnimated.show(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(children: [
+                            Row(
+                              children: [
+                                SizedBox(width: 8),
+                                Obx(() => FlutterSwitch(
+                                      value: controller.enableNotify.value,
+                                      onToggle: (val) {
+                                        controller.enableNotify.value =
+                                            !controller.enableNotify.value;
+                                      },
+                                      height: 22,
+                                      width: 50,
+                                      activeColor: AppColors.blue,
+                                      inactiveColor: AppColors.grey,
+                                      toggleColor: Colors.white,
+                                    )),
+                                SizedBox(width: 8),
+                                CustomText('فعالسازی',
+                                    size: 14,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold)
+                              ],
+                            ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            Obx(() => controller.notifyAll.value ||
+                                    !controller.enableNotify.value
+                                ? Column(
                                     children: [
-                                      Expanded(
-                                        child: Container(
-                                          padding:EdgeInsets.symmetric(vertical: 20,horizontal: 10),
-                                          margin: EdgeInsets.symmetric(horizontal: 8,vertical: 4),
-                                          decoration: BoxDecoration(
-                                          border: Border.all(color: AppColors.grey),
-                                          borderRadius: BorderRadius.circular(4)
-                                        ),child: CustomText('برند ',color: AppColors.grey,textAlign: TextAlign.right,size:12,fontWeight: FontWeight.bold),),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Expanded(
+                                            child: Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 20, horizontal: 10),
+                                              margin: EdgeInsets.symmetric(
+                                                  horizontal: 8, vertical: 4),
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color: AppColors.grey),
+                                                  borderRadius:
+                                                      BorderRadius.circular(4)),
+                                              child: CustomText('برند ',
+                                                  color: AppColors.grey,
+                                                  textAlign: TextAlign.right,
+                                                  size: 12,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Expanded(
+                                            child: Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 20, horizontal: 10),
+                                              margin: EdgeInsets.symmetric(
+                                                  horizontal: 8, vertical: 4),
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color: AppColors.grey),
+                                                  borderRadius:
+                                                      BorderRadius.circular(4)),
+                                              child: CustomText('مدل ',
+                                                  color: AppColors.grey,
+                                                  textAlign: TextAlign.right,
+                                                  size: 12,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ],
-                                  ),   Row(
+                                  )
+                                : Column(children: [
+                                    Obx(() => buildExpandable(
+                                        'برند',
+                                        ListView(
+                                          physics: const ScrollPhysics(),
+                                          padding: EdgeInsets.all(8.0),
+                                          children: controller.notifyBrands
+                                              .map((timeValue) =>
+                                                  multiSelectWidget(
+                                                      timeValue,
+                                                      MultiSelectListType
+                                                          .notifyBrand,
+                                                      controller))
+                                              .toList(),
+                                        ),
+                                        controller.notifyBrands.length * 58,
+                                        9,
+                                        MultiSelectListType.notifyBrand,
+                                        controller)),
+                                    Obx(() => buildExpandable(
+                                        'مدل خودرو',
+                                        ListView(
+                                          physics: const ScrollPhysics(),
+                                          padding: EdgeInsets.all(8.0),
+                                          children: controller.notifyModels
+                                              .map((timeValue) =>
+                                                  multiSelectWidget(
+                                                      timeValue,
+                                                      MultiSelectListType
+                                                          .notifyModel,
+                                                      controller))
+                                              .toList(),
+                                        ),
+                                        controller.notifyModels.length * 58,
+                                        8,
+                                        MultiSelectListType.notifyModel,
+                                        controller))
+                                  ])),
+                            Obx(() => !controller.enableNotify.value
+                                ? Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
-                                      Expanded(
-                                        child: Container(
-                                          padding:EdgeInsets.symmetric(vertical: 20,horizontal: 10),
-                                          margin: EdgeInsets.symmetric(horizontal: 8,vertical: 4),
-                                          decoration: BoxDecoration(
-                                          border: Border.all(color: AppColors.grey),
-                                          borderRadius: BorderRadius.circular(4)
-                                        ),child: CustomText('مدل ',color: AppColors.grey,textAlign: TextAlign.right,size:12,fontWeight: FontWeight.bold),),
-                                      ),
+                                      CustomText('همه آگهی های جدید',
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight.bold),
+                                      Container(
+                                        width: 18,
+                                        height: 18,
+                                        margin: EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(2),
+                                            border: Border.all(
+                                                color: AppColors.grey)),
+                                      )
                                     ],
-                                  ),
-                                ],
-                              ): Column(children:[      Obx(()=>  buildExpandable(
-                                  'برند',
-                                  ListView(
-                                    physics: const ScrollPhysics(),
-                                    padding: EdgeInsets.all(8.0),
-                                    children: controller.notifyBrands
-                                        .map((timeValue) => multiSelectWidget(
-                                        timeValue, MultiSelectListType.notifyBrand, controller))
-                                        .toList(),
-                                  ),
-                                  controller.notifyBrands.length * 58,
-                                 9,
-                                  MultiSelectListType.notifyBrand,
-                                  controller)),
-                                Obx(()=>buildExpandable(
-                                    'مدل خودرو',
-                                    ListView(
-                                      physics: const ScrollPhysics(),
-                                      padding: EdgeInsets.all(8.0),
-                                      children: controller.notifyModels
-                                          .map((timeValue) => multiSelectWidget(
-                                          timeValue, MultiSelectListType.notifyModel, controller))
-                                          .toList(),
-                                    ), controller.notifyModels.length * 58,
-                                    8,
-                                    MultiSelectListType.notifyModel,
-                                    controller))])),
-                          Obx(()=>    !controller.enableNotify.value?Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  CustomText('همه آگهی های جدید',
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.bold),
-                                 Container(
-                                   width: 18,
-                                   height: 18,
-                                   margin: EdgeInsets.all(12),
-                                   decoration: BoxDecoration(
-                                   borderRadius: BorderRadius.circular(2),
-                                   border: Border.all(color:AppColors.grey)
-                                 ),)
-                                ],
-                              ): Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  CustomText('همه آگهی های جدید',
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold),
-                                  Obx(() => CustomCheckBox(
-
-                                    value: controller.notifyAll.value,
-                                    onChanged: (str) {
-                                      controller.notifyAll.value = !controller.notifyAll.value;
-                                    },
-                                    isBlue: true,
-                                    isDark: true,
+                                  )
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      CustomText('همه آگهی های جدید',
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold),
+                                      Obx(() => CustomCheckBox(
+                                            value: controller.notifyAll.value,
+                                            onChanged: (str) {
+                                              controller.notifyAll.value =
+                                                  !controller.notifyAll.value;
+                                            },
+                                            isBlue: true,
+                                            isDark: true,
+                                          )),
+                                    ],
                                   )),
-                                ],
-                              )),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: ConfirmButton(()=>controller.insertNotify(), 'تایید'),
-                              )
-                            ]),
-                          ),
-                          context: Get.context!,
-                          initialChildSize: 0.55,
-
-    )
-                      ,child: SvgPicture.asset('assets/notify.svg'),
-
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ConfirmButton(
+                                  () => controller.insertNotify(), 'تایید'),
+                            )
+                          ]),
+                        ),
+                        context: Get.context!,
+                        initialChildSize: 0.55,
+                      ),
+                      child: SvgPicture.asset('assets/notify.svg'),
                     ),
                   ),
-
                   GestureDetector(
                     onTap: () {
                       controller.togglePageState();
@@ -266,7 +305,6 @@ print(controller.selectedNotifyBrands.value);
             : SliverPadding(
                 padding: const EdgeInsets.all(8.0),
                 sliver: SliverGrid(
-
                   delegate: SliverChildBuilderDelegate(
                     (ctx, index) {
                       if (index == 0 && controller.orders.isEmpty) {
@@ -297,13 +335,10 @@ print(controller.selectedNotifyBrands.value);
               ),
       ],
     );
-
-
   }
 
   Widget BannerWidget(AdvertiseController controller) {
     return Obx(() {
-
       if (controller.isLoading.value && !kIsWeb) {
         return _buildShimmerLoading();
       }
@@ -326,7 +361,8 @@ print(controller.selectedNotifyBrands.value);
               itemCount: controller.banners.length,
               itemBuilder: (BuildContext context, int index) {
                 return InkWell(
-                  onTap: ()=> controller.launchBannerUrl(controller.banners[index].url),
+                  onTap: () =>
+                      controller.launchBannerUrl(controller.banners[index].url),
                   child: Container(
                     margin: EdgeInsets.all(2),
                     child: ClipRRect(
@@ -342,7 +378,8 @@ print(controller.selectedNotifyBrands.value);
                             height: 60,
                             child: Center(
                               child: CircularProgressIndicator(
-                                value: loadingProgress.expectedTotalBytes != null
+                                value: loadingProgress.expectedTotalBytes !=
+                                        null
                                     ? loadingProgress.cumulativeBytesLoaded /
                                         loadingProgress.expectedTotalBytes!
                                     : null,
@@ -477,7 +514,7 @@ print(controller.selectedNotifyBrands.value);
                       timeValue, MultiSelectListType.Color, controller))
                   .toList(),
             ),
-            240,
+            controller.colorsCars.length * 54,
             4,
             MultiSelectListType.Color,
             controller),
@@ -669,10 +706,10 @@ print(controller.selectedNotifyBrands.value);
                   case MultiSelectListType.Color:
                     controller.toggleColor(value, checked);
                     break;
-                    case MultiSelectListType.notifyBrand:
+                  case MultiSelectListType.notifyBrand:
                     controller.toggleNotifyBrand(value, checked);
                     break;
-                    case MultiSelectListType.notifyModel:
+                  case MultiSelectListType.notifyModel:
                     controller.toggleNotifyModel(value, checked);
                     break;
 
@@ -822,6 +859,7 @@ class advertiseItem extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -852,29 +890,27 @@ class advertiseItem extends StatelessWidget {
                         ),
                         SizedBox(width: 4),
                         CustomText(
-                          order.colorDescription ?? '',
+                          (order.colorDescription ?? '').length > 17
+                              ? '...' +
+                                  (order.colorDescription ?? '')
+                                      .substring(0, 17)
+                              : (order.colorDescription ?? ''),
                           color: Colors.black87,
                           size: 11,
                         ),
                       ],
                     ),
-                    SizedBox(height: 6),
+                    SizedBox(height: 10),
+
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        CustomText('تومان', color: Colors.black87),
-                        SizedBox(width: 2),
-                        Flexible(
-                          child: CustomText(
-                            NumberUtils.separateThousand(int.tryParse(
-                                        order.advertiseAmount ?? '0') ??
-                                    0)
-                                .usePersianNumbers(),
-                            color: Colors.black87,
-                          ),
-                        ),
-                        SizedBox(width: 4),
-                        CustomText('قیمت', color: Colors.black87),
+                        CustomText((order.mileage ?? '0').usePersianNumbers().seRagham(),
+                            isRtl: true, color: Colors.black87,size: 11),
+
+                        CustomText('  ', color: Colors.black87),
+                        CustomText('کارکرد:',
+                            isRtl: true, color: Colors.black87,size: 11),
                       ],
                     ),
                     SizedBox(height: 6),
@@ -882,26 +918,45 @@ class advertiseItem extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         CustomText(order.provinceDescription ?? '',
-                            color: Colors.black87),
+                            color: Colors.black87,size: 11),
                         CustomText('  ', color: Colors.black87),
                         SizedBox(width: 4),
-                        CustomText('شهر', color: Colors.black87),
+                        CustomText('شهر:', color: Colors.black87,isRtl: true,size: 11),
                       ],
                     ),
-                    Expanded(child: SizedBox(height: 6)),
-                    Divider(
-                      color: Colors.grey.shade400,
-                    ),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         InkWell(
                           onTap: onTap,
                           child: Padding(
-                            padding: const EdgeInsets.all(8.0),
+                            padding: const EdgeInsets.all(4.0),
                             child: (order.favCount != null &&
-                                    (int.tryParse(order.favCount!) ?? 0) == 1)
+                                (int.tryParse(order.favCount!) ?? 0) == 1)
                                 ? SvgPicture.asset('assets/red_heart.svg')
                                 : SvgPicture.asset('assets/heart.svg'),
+                          ),
+                        ),
+
+                        Expanded(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              CustomText('تومان', color: Colors.black87),
+                              SizedBox(width: 1),
+                              Flexible(
+                                child: CustomText(
+                                  NumberUtils.separateThousand(int.tryParse(
+                                              order.advertiseAmount ?? '0') ??
+                                          0)
+                                      .usePersianNumbers(),
+                                  color: Colors.black87,
+                                  size: 11
+                                ),
+                              ),
+                              SizedBox(width: 2),
+                              CustomText('قیمت', color: Colors.black87,size: 11),
+                            ],
                           ),
                         ),
                       ],

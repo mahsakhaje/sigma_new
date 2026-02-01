@@ -2,13 +2,18 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:open_file_plus/open_file_plus.dart';
+import 'package:sigma/global_custom_widgets/confirm_button.dart';
+import 'package:sigma/global_custom_widgets/custom_text.dart';
 import 'package:sigma/helper/dio_repository.dart';
 import 'package:sigma/helper/helper.dart';
 import 'package:sigma/helper/route_names.dart';
 import 'package:sigma/helper/url_addresses.dart';
 import 'package:sigma/models/car_detail_response.dart';
+import 'package:sigma/models/experties.dart';
 import 'package:sigma/pages/technical_menu/technicalInfro_controller.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -83,14 +88,107 @@ class CarDetailController extends GetxController {
     }
   }
 
+  Future<void> showExpertSummary() async {
+    var response = await DioClient.instance.showExpertSummary(carId.toString());
+    if (response?.message == 'OK') {
+      showExpertiseDialog(response);
+    }
+  }
+
+  void showExpertiseDialog(ExpertiseResponse? data) {
+    Get.dialog(
+      Dialog(
+        insetPadding: EdgeInsets.all(12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Container(
+          padding: EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // عنوان
+              CustomText(
+                'بررسی کلی وضعیت خودرو',
+                color: Colors.black,
+                size: 18,
+                fontWeight: FontWeight.bold,
+              ),
+              SizedBox(height: 20),
+
+              // آیتم‌ها
+              _buildExpertiseItem(
+                  data?.itemTypes1 ?? '', data?.type1IsOk ?? ''),
+              SizedBox(height: 12),
+              _buildExpertiseItem(
+                  data?.itemTypes2 ?? '', data?.type2IsOk ?? ''),
+              SizedBox(height: 12),
+              _buildExpertiseItem(
+                  data?.itemTypes3 ?? '', data?.type3IsOk ?? ""),
+              SizedBox(height: 12),
+              _buildExpertiseItem(
+                  data?.itemTypes4 ?? '', data?.type4IsOk ?? ''),
+              SizedBox(height: 12),
+              _buildExpertiseItem(
+                  data?.itemTypes5 ?? '', data?.type5IsOk ?? ""),
+              SizedBox(height: 12),
+              _buildExpertiseItem(
+                  data?.itemTypes6 ?? '', data?.type6IsOk ?? ''),
+
+              SizedBox(height: 20),
+
+              ConfirmButton(() => downloadExpertPdf(), 'دانلود برگه کارشناسی')
+            ],
+          ),
+        ),
+      ),
+      barrierDismissible: true,
+    );
+  }
+
+  Widget _buildExpertiseItem(String text, String isOk) {
+    bool isValid = isOk == "1";
+
+    return Container(
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: isValid
+            ? Color.fromRGBO(226, 255, 247, 1)
+            : Color.fromRGBO(255, 231, 231, 1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: isValid
+              ? Color.fromRGBO(0, 150, 109, 1)
+              : Color.fromRGBO(237, 46, 46, 1),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: CustomText(
+              text,
+              isRtl: true,
+              color: Colors.black,
+              size: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          SizedBox(width: 12),
+          SvgPicture.asset(isValid ? 'assets/okgreen.svg' : 'assets/nokey.svg'),
+        ],
+      ),
+    );
+  }
+
   Future<void> downloadExpertPdf() async {
     try {
       showToast(ToastState.INFO, 'لطفا منتظر بمانید');
 
       isExpertLoading.value = true;
-      final response = await DioClient.instance.getExpertReport(carId.toString());
+      final response =
+          await DioClient.instance.getExpertReportInCarDetail(carId.toString());
 
-      print('Response: $response');
 
       if (response != null) {
         // Check if response contains error message
@@ -112,7 +210,6 @@ class CarDetailController extends GetxController {
         showToast(ToastState.ERROR, 'خطا در دریافت فایل');
       }
     } catch (e) {
-      print('Download error: $e');
       showToast(ToastState.ERROR, 'خطا در دانلود فایل');
     } finally {
       isExpertLoading.value = false;
@@ -125,11 +222,11 @@ class CarDetailController extends GetxController {
 
       isDownloading.value = true;
       final catalogUrl = saleOrder.value?.catalogUrl;
-      print('Catalog URL: $catalogUrl');
 
       if (catalogUrl != null) {
         // Download the file instead of launching URL
-        final filePath = await DioClient.instance.downloadFileFromUrl(catalogUrl, 'catalog');
+        final filePath =
+            await DioClient.instance.downloadFileFromUrl(catalogUrl, 'catalog');
 
         if (filePath != null) {
           showToast(ToastState.SUCCESS, 'با موفقیت ذخیره شد');
@@ -141,21 +238,20 @@ class CarDetailController extends GetxController {
         showToast(ToastState.ERROR, 'لینک فایل یافت نشد');
       }
     } catch (e) {
-      print('Download error: $e');
       showToast(ToastState.ERROR, 'خطا در دانلود فایل');
     } finally {
       isDownloading.value = false;
     }
   }
-void showSpecypes(){
 
-}
+  void showSpecypes() {}
+
   void onPageChanged(int page) {
     activePage.value = page;
   }
 
   void navigateToComparison() {
-    Get.toNamed(RouteName.compare_car, arguments:  carId);
+    Get.toNamed(RouteName.compare_car, arguments: carId);
   }
 
   void navigateToReservation() {

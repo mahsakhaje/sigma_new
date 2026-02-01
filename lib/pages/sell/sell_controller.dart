@@ -97,7 +97,6 @@ class SellPageController extends GetxController {
       isFromContinue = true;
 
       carId.value = int.tryParse(id!) ?? 0;
-      print(carId);
       step.value = SellPageStep.getMilage;
     }
   }
@@ -226,7 +225,6 @@ class SellPageController extends GetxController {
   }
 
   Future<void> onCitySelected(String? str) async {
-    print(str);
     if (str == null) return;
 
     selectedCity.value = str;
@@ -259,7 +257,6 @@ class SellPageController extends GetxController {
   }
 
   Future<void> onAddressSelected(String? str) async {
-    print(str);
     if (str == null) return;
 
     selectedAddress.value = str;

@@ -66,7 +66,6 @@ class PriceChartController extends GetxController {
 
       isLoading.value = false;
     } catch (e) {
-      print('Error loading price data: $e');
       error.value = 'خطا در دریافت اطلاعات';
       isLoading.value = false;
     }

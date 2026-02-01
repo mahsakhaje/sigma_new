@@ -7,7 +7,7 @@ class Strings {
   static const dontHaveAccount = 'حساب کاربری ندارید؟';
   static const doRegister = 'ثبت نام کنید.';
   static const account = 'حساب کاربری ';
-  static const acceptRules = ' شرایط و قوانین ';
+  static const acceptRules = ' قوانین و مقررات ';
   static const readRulesMessage = ' سیگما را مطالعه نمودم و می پذیرم';
   static const continueText = 'ادامه';
   static const confirmText = 'تایید';
@@ -49,6 +49,7 @@ class Strings {
   static const questions = 'سوالات متداول';
   static const sameQuestion = 'آیا سوال مشابه ایی دارید؟';
   static const buyCar = 'خرید خودرو';
+  static const guide = 'راهنمای کاربر';
   static const favorites = 'علاقه مندی ها';
   static const raise_credit = 'افزایش اعتبار';
   static const editProfile = 'ویرایش پروفایل';
@@ -69,6 +70,7 @@ class Strings {
   static const technicalInfo = 'مشخصات فنی';
   static const priceChange = 'تغییرات قیمت';
   static const carCompare = 'مقایسه خودرو';
+  static const contactus = 'تماس با ما';
   static const sendReferralToFriends = 'ارسال دعوتنامه به دوستان';
   static const sendReferral =
       'با ارسال کد دعوتنامه اختصاصی خود برای\n دوستانتان از مزایای ویژه سیگما بهره مند شوید.';

@@ -14,6 +14,8 @@ import 'package:sigma/pages/car_detail/car_detail_page.dart';
 import 'package:sigma/pages/car_detail/compare_car_list/compare_car_page.dart';
 import 'package:sigma/pages/compare_cars/binding.dart';
 import 'package:sigma/pages/compare_cars/compare_cars_page.dart';
+import 'package:sigma/pages/contact_us/contact_us_page.dart';
+import 'package:sigma/pages/guide_menu/guide_menu_page.dart';
 import 'package:sigma/pages/home/home_page.dart';
 import 'package:sigma/pages/my_cars/my_cars_page.dart';
 import 'package:sigma/pages/notifs/notifs_page.dart';
@@ -73,12 +75,13 @@ class AppRoutes {
         ),
         GetPage(
           name: RouteName.technicalInfo,
-          page: () =>  TechnicalInfoPage(),
+          page: () => TechnicalInfoPage(),
           transitionDuration: const Duration(milliseconds: 10),
           transition: Transition.native,
-        ),  GetPage(
+        ),
+        GetPage(
           name: RouteName.technicalMenu,
-          page: () =>  TechnicalMenu(),
+          page: () => TechnicalMenu(),
           transitionDuration: const Duration(milliseconds: 10),
           transition: Transition.native,
         ),
@@ -213,6 +216,12 @@ class AppRoutes {
           transition: Transition.native,
         ),
         GetPage(
+          name: RouteName.contactus,
+          page: () => ContactUsPage(),
+          transitionDuration: const Duration(milliseconds: 10),
+          transition: Transition.native,
+        ),
+        GetPage(
           name: RouteName.about,
           page: () => AboutUs(),
           transitionDuration: const Duration(milliseconds: 10),
@@ -302,6 +311,11 @@ class AppRoutes {
           name: RouteName.compare,
           page: () => const CompareCarsPage(),
           binding: CompareCarsBinding(),
-        )
+        ),
+        GetPage(
+          name: RouteName.guide,
+          page: () => GuideMenuPage(),
+          binding: CompareCarsBinding(),
+        ),
       ];
 }
