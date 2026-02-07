@@ -69,7 +69,7 @@ Widget back(AuthController authController) {
     children: [
       InkWell(
         child: SvgPicture.asset('assets/back.svg'),
-        onTap: () => authController.goToWelcome(),
+        onTap: () => authController.getBack(),
       )
     ],
   );

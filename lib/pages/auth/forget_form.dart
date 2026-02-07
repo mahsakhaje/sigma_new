@@ -20,8 +20,7 @@ Widget buildForgetPassword() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        back(authController),
-        const SizedBox(height: 60),
+
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -68,6 +67,7 @@ Widget buildForgetPassword() {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -184,6 +184,8 @@ Widget buildForgetPassword() {
     return ListView(
       shrinkWrap: true,
       children: [
+        back(authController),
+        const SizedBox(height: 60),
         Obx(() => _getContent()),
         const SizedBox(height: 8),
       ],

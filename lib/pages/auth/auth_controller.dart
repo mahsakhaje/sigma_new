@@ -99,8 +99,7 @@ class AuthController extends GetxController {
     try {
       final sig = await SmsAutoFill().getAppSignature;
       signature = sig;
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   void goToLogin() => currentPage.value = AuthPageState.login;
@@ -109,7 +108,30 @@ class AuthController extends GetxController {
 
   void goToForget() => currentPage.value = AuthPageState.forgetPassword;
 
-  void goToWelcome() => currentPage.value = AuthPageState.welcome;
+  void getBack() {
+    if (currentPage.value == AuthPageState.register &&
+        registerState.value == RegisterPageState.otp) {
+      registerState.value = RegisterPageState.forms;
+      return;
+    }
+    if (currentPage.value == AuthPageState.forgetPassword &&
+        currentState == PageState.EnterCode) {
+      currentState.value = PageState.EnterPhoneNumber;
+      return;
+    }
+    if (currentPage.value == AuthPageState.forgetPassword &&
+        currentState == PageState.NewPassword) {
+      currentState.value = PageState.EnterCode;
+      return;
+    }
+    if (currentPage.value == AuthPageState.login &&
+        currentPage.value == AuthPageState.otp) {
+      currentPage.value = AuthPageState.login;
+      return;
+    }
+
+    currentPage.value = AuthPageState.welcome;
+  }
 
   void setUserGender(Gender gender) => userGender.value = gender;
 
