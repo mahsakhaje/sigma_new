@@ -800,8 +800,7 @@ class KhodEzhariStep extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       child: Directionality(
         textDirection: TextDirection.rtl,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: ListView(
           children: [
             CustomText('لطفا قسمت‌های آسیب‌دیده خودرو را مشخص نمایید.',
                 size: 16, isRtl: true, fontWeight: FontWeight.w500),

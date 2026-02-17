@@ -99,6 +99,7 @@ class AuthController extends GetxController {
     try {
       final sig = await SmsAutoFill().getAppSignature;
       signature = sig;
+      print('app signiture is $signature');
     } catch (e) {}
   }
 

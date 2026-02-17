@@ -45,14 +45,17 @@ enum MultiSelectListType {
 
 class AdvertiseController extends GetxController {
   AdvertiseController(dynamic state) {
+    print(state);
     if (state == 'NEW') {
       orderState = 'NEW';
+      print(orderState);
     }
-    if (state == 'USED') {
+    else if (state == 'USED') {
       orderState = 'USED';
     } else {
       orderState = '';
     }
+    print(orderState);
   }
 
   final RxList<SalesOrders> orders = <SalesOrders>[].obs;
@@ -256,7 +259,7 @@ class AdvertiseController extends GetxController {
       isFetchingMore.value = true;
       isLoading.value = true;
       pn.value++;
-
+print('******************$orderState');
       var response = await DioClient.instance.getSalesOrdersWithFilter(
         brandId: brandId,
         carModelId: carModelId,
@@ -725,6 +728,8 @@ class AdvertiseController extends GetxController {
   }
 
   Future<void> applyFilters() async {
+    orderState='';
+
     Navigator.pop(Get.context!);
     // showFilterModal.value = false;
     // pageState.value = AdvertisePageState.list;
