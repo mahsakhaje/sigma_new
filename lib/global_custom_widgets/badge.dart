@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sigma/global_custom_widgets/custom_text.dart';
 import 'package:sigma/helper/colors.dart';
 
-Widget badge(String status) {
+Widget badge(String status,{Color? color}) {
   return status.length > 1
       ? Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -11,7 +11,7 @@ Widget badge(String status) {
             borderRadius: BorderRadius.circular(12),
           ),
           child: CustomText(status,
-              color: AppColors.orange,
+              color:color !=null? color: AppColors.orange,
               fontWeight: FontWeight.bold,
               isRtl: true),
         )

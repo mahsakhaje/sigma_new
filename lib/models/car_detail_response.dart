@@ -34,6 +34,7 @@ class SalesOrder {
   String? catalogUrl;
   String? comment;
   String? advertiseComment;
+  String? adaptiveAmount;
   String? orderAmount;
   String? expertAmount;
   String? expertConfirmAmount;
@@ -143,6 +144,7 @@ class SalesOrder {
       this.orderNumber,
       this.comment,
       this.advertiseComment,
+      this.adaptiveAmount,
       this.orderAmount,
       this.expertAmount,
       this.expertConfirmAmount,
@@ -269,6 +271,7 @@ class SalesOrder {
     receptionHour = json['receptionHour'];
     showRoomTelNumber = json['showRoomTelNumber'];
     referredName = json['referredName'];
+    adaptiveAmount = json['adaptiveAmount'];
     referredCellNumber = json['referredCellNumber'];
     referredAddress = json['referredAddress'];
     referredNationalId = json['referredNationalId'];
@@ -393,6 +396,7 @@ class SalesOrder {
     data['referredPostalcode'] = this.referredPostalcode;
     data['carOwner'] = this.carOwner;
     data['soldAmount'] = this.soldAmount;
+    data['adaptiveAmount'] = this.adaptiveAmount;
     data['transactionDate'] = this.transactionDate;
     data['transactionPrice'] = this.transactionPrice;
     data['accountName'] = this.accountName;

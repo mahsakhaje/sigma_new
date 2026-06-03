@@ -125,6 +125,11 @@ class AuthController extends GetxController {
       currentState.value = PageState.EnterCode;
       return;
     }
+    if (
+        currentPage.value == AuthPageState.loginOtp) {
+      currentPage.value = AuthPageState.login;
+      return;
+    }
     if (currentPage.value == AuthPageState.login &&
         currentPage.value == AuthPageState.otp) {
       currentPage.value = AuthPageState.login;
@@ -337,7 +342,7 @@ class AuthController extends GetxController {
         .sendOTP(cellNumber: loginMobileNumberController.text.toEnglishDigit());
     if (response?.message == 'OK') {
       isLoading.value = false;
-      currentPage.value = AuthPageState.otp;
+      currentPage.value = AuthPageState.loginOtp;
       startTimer();
     } else {
       showToast(ToastState.ERROR,
@@ -586,7 +591,7 @@ class AuthController extends GetxController {
   }
 }
 
-enum AuthPageState { welcome, login, register, forgetPassword, otp }
+enum AuthPageState { welcome, login, register, forgetPassword, otp, loginOtp }
 
 enum RegisterPageState { forms, otp }
 

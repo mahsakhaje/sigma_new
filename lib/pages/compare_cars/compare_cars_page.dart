@@ -18,7 +18,7 @@ class CompareCarsPage extends GetView<CompareCarsController> {
     return DarkBackgroundWidget(
       title: 'مقایسه آگهی',
       child: Obx(() => controller.isLoading.value
-          ?  Center(child: loading())
+          ? Center(child: loading())
           : _buildComparisonContent()),
     );
   }
@@ -29,7 +29,7 @@ class CompareCarsPage extends GetView<CompareCarsController> {
       child: Column(
         children: [
           // const SizedBox(height: 16),
-           _buildComparisonTitle(),
+          _buildComparisonTitle(),
           const SizedBox(height: 16),
           Expanded(
             child: Padding(
@@ -53,7 +53,8 @@ class CompareCarsPage extends GetView<CompareCarsController> {
           border: Border.all(color: Colors.white),
         ),
         child: Center(
-          child:  CustomText(controller.comparisonTitle,isRtl: true,fontWeight: FontWeight.bold),
+          child: CustomText(controller.comparisonTitle,
+              isRtl: true, fontWeight: FontWeight.bold),
         ),
       ),
     );
@@ -168,7 +169,7 @@ class _InfoCard extends StatelessWidget {
       onTap: onDelete,
       child: Center(
         child: Container(
-         // padding: const EdgeInsets.all(8),
+          // padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(color: Colors.white),
@@ -220,10 +221,13 @@ class _InfoCard extends StatelessWidget {
       children: [
         _buildSpecRow(
           'قیمت',
-          NumberUtils.separateThousand(
-            int.tryParse(order?.advertiseAmount ?? '0'.usePersianNumbers()) ??
-                0,
-          ).usePersianNumbers(),
+          (order?.adaptiveAmount ?? '') == '1'
+              ? 'توافقی'
+              : NumberUtils.separateThousand(
+                  int.tryParse(
+                          order?.advertiseAmount ?? '0'.usePersianNumbers()) ??
+                      0,
+                ).usePersianNumbers(),
         ),
         const SizedBox(height: 6),
         const DottedLine(),

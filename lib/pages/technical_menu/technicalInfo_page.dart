@@ -55,6 +55,7 @@ class TechnicalInfoPage extends StatelessWidget {
   }
 
   _carItemWidget(ManaPrices manaPric, TechnicalInfoController controller) {
+    print(manaPric.imagePath);
     return Obx(() => GestureDetector(
           onTap: () => controller.onCarTapped(
               manaPric.carTypeId.toString() ?? '',
@@ -105,9 +106,13 @@ class TechnicalInfoPage extends StatelessWidget {
                     size: 16,
                     fontWeight: FontWeight.bold,
                     isRtl: true),
-                SizedBox(
-                  height: 10,
-                ),
+                if (manaPric.carTypeDescription != null)
+                  CustomText((manaPric.carTypeDescription ?? ''),
+                      color: Colors.black,
+                      size: 16,
+                      fontWeight: FontWeight.bold,
+                      isRtl: true),
+
                 !controller.isChooingMode.value
                     ? Padding(
                         padding: const EdgeInsets.all(8.0),

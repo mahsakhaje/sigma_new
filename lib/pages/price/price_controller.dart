@@ -134,7 +134,7 @@ class PricePageController extends GetxController {
     priceItems.value = [];
     colorsCars.value = {};
     selectedColors.value = null;
-
+    selectedGaurantee.value = null;
     // Update car models
     Map<String, String> modelsMap = {};
     responseAllCar.value?.brands?.forEach((element) {
@@ -170,6 +170,7 @@ class PricePageController extends GetxController {
     turn.value = 3;
     colorsCars.value = {};
     selectedColors.value = null;
+    selectedGaurantee.value = null;
 
     // Update car types
     Map<String, String> typesMap = {};
@@ -211,6 +212,7 @@ class PricePageController extends GetxController {
     selectedColors.value = null;
     carTypeManufactureYears.value.clear();
     priceItems.value = [];
+    selectedGaurantee.value = null;
 
     // Update colors and manufacture years
     Map<String, String> colorsMap = {};
@@ -263,6 +265,7 @@ class PricePageController extends GetxController {
     if (str == null) return;
 
     selectedColors.value = str;
+
     turn.value = 5;
 
     colorsCars.value.forEach((key, value) {
@@ -307,7 +310,6 @@ class PricePageController extends GetxController {
     millageController.text =
         (kilometerValues.value.end).toInt().toString().usePersianNumbers();
   }
-
 
   bool get isCarDamaged => selectedIdsMap.value.isNotEmpty;
 
@@ -363,7 +365,6 @@ class PricePageController extends GetxController {
   }
 
   bool isDamageSelectionValid() {
-
     return true;
   }
 

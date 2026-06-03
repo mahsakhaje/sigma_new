@@ -332,7 +332,7 @@ class _CarDetailContent extends StatelessWidget {
       ('رنگ خودرو', order.colorDescription ?? "0"),
       (
         'قیمت',
-        NumberUtils.separateThousand(int.tryParse(
+      order.adaptiveAmount =='1'?'توافقی':  NumberUtils.separateThousand(int.tryParse(
                     order.advertiseAmount ?? '0'.usePersianNumbers()) ??
                 0) +
             '   تومان '

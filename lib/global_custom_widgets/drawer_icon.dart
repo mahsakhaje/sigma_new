@@ -74,6 +74,7 @@ Widget drawerIcon(
             initialChildSize: 0.20);
         return;
       }
+
       Get.toNamed(route, arguments: arg);
     },
     child: SvgPicture.asset(path,fit:isItsSize?BoxFit.contain: BoxFit.fill,),

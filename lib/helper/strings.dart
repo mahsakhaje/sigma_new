@@ -71,6 +71,7 @@ class Strings {
   static const priceChange = 'تغییرات قیمت';
   static const carCompare = 'مقایسه خودرو';
   static const contactus = 'تماس با ما';
+  static const myPayments = 'تراکنش های من';
   static const sendReferralToFriends = 'ارسال دعوتنامه به دوستان';
   static const sendReferral =
       'با ارسال کد دعوتنامه اختصاصی خود برای\n دوستانتان از مزایای ویژه سیگما بهره مند شوید.';

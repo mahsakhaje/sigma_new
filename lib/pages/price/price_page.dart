@@ -353,6 +353,8 @@ class PricePage extends StatelessWidget {
             () => SfRangeSliderTheme(
               data: SfRangeSliderThemeData(
                 tooltipBackgroundColor: AppColors.orange,
+             
+
               ),
               child: SfRangeSlider(
                 min: 0,

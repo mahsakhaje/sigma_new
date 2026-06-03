@@ -209,30 +209,37 @@ class compareAdvertiseItem extends StatelessWidget {
                         ),
                         SizedBox(width: 4),
                         CustomText(
-                          order.colorDescription ?? '',
+                          (order.colorDescription ?? '').length > 17
+                              ? '...' +
+                              (order.colorDescription ?? '')
+                                  .substring(0, 17)
+                              : (order.colorDescription ?? ''),
                           color: Colors.black87,
                           size: 11,
                         ),
                       ],
                     ),
                     SizedBox(height: 6),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        CustomText('تومان', color: Colors.black87),
-                        SizedBox(width: 2),
-                        Flexible(
-                          child: CustomText(
-                            NumberUtils.separateThousand(int.tryParse(
-                                        order.advertiseAmount ?? '0') ??
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          CustomText(( order.adaptiveAmount??'') =='1'?'':'تومان', color: Colors.black87),
+                          SizedBox(width: 1),
+                          Flexible(
+                            child: CustomText(
+                                ( order.adaptiveAmount??'') =='1'?'توافقی': NumberUtils.separateThousand(int.tryParse(
+                                    order.advertiseAmount ?? '0') ??
                                     0)
-                                .usePersianNumbers(),
-                            color: Colors.black87,
+                                    .usePersianNumbers(),
+                                color: Colors.black87,
+                                size: 11
+                            ),
                           ),
-                        ),
-                        SizedBox(width: 4),
-                        CustomText('قیمت', color: Colors.black87),
-                      ],
+                          SizedBox(width: 2),
+                          CustomText(' :قیمت', color: Colors.black87,size: 11),
+                        ],
+                      ),
                     ),
                   ],
                 ),

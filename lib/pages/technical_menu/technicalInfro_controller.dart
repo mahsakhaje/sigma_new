@@ -46,7 +46,7 @@ class TechnicalInfoController extends GetxController {
   }
 
   Future<void> _getCarList() async {
-    var response = await DioClient.instance.getManaPrices();
+    var response = await DioClient.instance.getManaTechnicalPrices();
     isLoading.value = false;
 
     if (response?.message == "OK") {

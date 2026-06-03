@@ -49,6 +49,7 @@ import 'package:sigma/models/my_sell_cars_response.dart';
 import 'package:sigma/models/notif_count_response.dart';
 import 'package:sigma/models/notif_list_response.dart';
 import 'package:sigma/models/online_pay_model.dart';
+import 'package:sigma/models/payments_model.dart';
 import 'package:sigma/models/published_transaction_response.dart';
 import 'package:sigma/models/questions_model.dart';
 import 'package:sigma/models/reserve_show_room_model.dart';
@@ -291,6 +292,18 @@ class DioClient {
         : null;
   }
 
+  Future<PaymentsResponse?> getPayments() async {
+    final response = await _makePostRequest(URLs.GetMyPaymentssUrl, {
+      'pn': '1',
+      'pl': '100',
+      'token': getShortToken(),
+      'version': await getVersion(),
+    });
+    return response?.statusCode == 200
+        ? PaymentsResponse.fromJson(response?.data)
+        : null;
+  }
+
   Future<SigmaSalesOrderResponse?> getFavourites() async {
     final response = await _makePostRequest(URLs.FavouritesUrl, {
       'token': getShortToken(),
@@ -302,7 +315,6 @@ class DioClient {
   }
 
   Future<LoginResponse?> getTokenRequest() async {
-
     Response response = await _dio.post(URLs.TokenUrl,
         data: jsonEncode(UniversalPlatform.isAndroid
             ? {
@@ -1405,6 +1417,18 @@ class DioClient {
 
   Future<ManaPricesResponse?> getManaPrices() async {
     final response = await _makePostRequest(URLs.ManaPricesUrl, {
+      'pl': '50',
+      'token': getShortToken(),
+      'version': await getVersion(),
+    });
+
+    return response?.statusCode == 200
+        ? ManaPricesResponse.fromJson(response?.data)
+        : null;
+  }
+
+  Future<ManaPricesResponse?> getManaTechnicalPrices() async {
+    final response = await _makePostRequest(URLs.AllManaPricesUrl, {
       'pl': '50',
       'token': getShortToken(),
       'version': await getVersion(),

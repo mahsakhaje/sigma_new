@@ -53,7 +53,7 @@ class _carItemState extends State<carItem> {
                 height: height,
                 child: Padding(
                   padding:
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -161,15 +161,24 @@ class _carItemState extends State<carItem> {
                                                 ),
                                               ),
                                   ),
-                            CustomText(
-                                'قیمت' +
-                                    ' : ' +
-                                    NumberUtils.separateThousand(int.tryParse(
-                                                order.advertiseAmount ?? '0') ??
-                                            0)
-                                        .usePersianNumbers() +
-                                    ' تومان ',
-                               ),
+                            Row(
+                              children: [
+                                CustomText(
+
+                                        (   order.adaptiveAmount??'') =='1'?'توافقی': (
+                                        NumberUtils.separateThousand(int.tryParse(
+                                                    order.advertiseAmount ??
+                                                          '0') ??
+                                                  0)
+                                              .usePersianNumbers() +
+                                        ' تومان '),isRtl: true
+                                   ),
+                                CustomText(
+
+                                    ':قیمت'
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ),

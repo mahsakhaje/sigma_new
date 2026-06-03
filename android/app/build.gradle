@@ -49,8 +49,6 @@ android {
     }
 
     defaultConfig {
-        compileSdkVersion 34
-
         applicationId "ir.sigmatec.sigma"
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion flutter.targetSdkVersion
@@ -61,10 +59,10 @@ android {
     // تنظیمات signing
     signingConfigs {
         release {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
-            storePassword keystoreProperties['storePassword']
+            keyAlias keystoreProperties.getProperty('keyAlias') ?: 'key'
+            keyPassword keystoreProperties.getProperty('keyPassword') ?: '123456'
+            storeFile file(keystoreProperties.getProperty('storeFile') ?: '../key.jks')
+            storePassword keystoreProperties.getProperty('storePassword') ?: '123456'
         }
     }
 
@@ -112,7 +110,7 @@ android {
     buildTypes {
         release {
             // استفاده از کلید signing برای release
-            signingConfig keystoreProperties['storeFile'] ? signingConfigs.release : signingConfigs.debug
+            signingConfig signingConfigs.release
 
             // بهینه‌سازی
             minifyEnabled false

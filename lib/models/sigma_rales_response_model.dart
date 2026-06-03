@@ -40,6 +40,7 @@ class SalesOrders {
   String? comment;
   String? registerTime;
   String? advertiseComment;
+  String? adaptiveAmount;
   String? orderAmount;
   String? declaredAmount;
   String? soldAmount;
@@ -119,6 +120,7 @@ class SalesOrders {
       this.receptionTime,
       this.transactionDate,
       this.transactionPrice,
+      this.adaptiveAmount,
       this.accountName,
       this.rated,
       this.accountLastName,
@@ -182,6 +184,7 @@ class SalesOrders {
     receptionDate = json['receptionDate'];
     stateText = json['stateText'];
     orderNumber = json['orderNumber'];
+    adaptiveAmount = json['adaptiveAmount'];
     comment = json['comment'];
     advertiseComment = json['advertiseComment'];
     orderAmount = json['orderAmount'];

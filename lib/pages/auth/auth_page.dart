@@ -34,7 +34,8 @@ class AuthPage extends StatelessWidget {
                   AuthPageState.register => buildRegister(),
                   AuthPageState.welcome => buildWelcome(),
                   AuthPageState.forgetPassword => buildForgetPassword(),
-                  AuthPageState.otp => buildLogin()
+                  AuthPageState.otp => buildLogin(),
+                  AuthPageState.loginOtp => buildLogin()
                 }),
           ),
         ],

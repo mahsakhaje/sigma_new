@@ -103,7 +103,7 @@ Widget buildLogin() {
   return authController.currentPage.value == AuthPageState.login
       ? buildMobileGetData(_formKey, _otpFormKey, _passWordController,
           textFieldMobile, textFieldPassWord, authController)
-      : authController.currentPage.value == AuthPageState.otp
+      : authController.currentPage.value == AuthPageState.loginOtp
           ? _buildEnterCode()
           : SizedBox();
 }

@@ -63,4 +63,5 @@ class RouteName {
   static const String stocks = '/stocks';
   static const String guide = '/guide';
   static const String contactus = '/contactus';
+  static const String myPayments = '/myPayments';
 }

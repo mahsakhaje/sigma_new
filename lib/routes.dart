@@ -25,6 +25,7 @@ import 'package:sigma/pages/privacy/privacy_rules_page.dart';
 import 'package:sigma/pages/profile/about_us/about_us_page.dart';
 import 'package:sigma/pages/profile/favorites/favorite_page.dart';
 import 'package:sigma/pages/profile/frequent_questions/questions_page.dart';
+import 'package:sigma/pages/profile/payments/payments_page.dart';
 import 'package:sigma/pages/profile/profile_page.dart';
 import 'package:sigma/pages/refferal/refferal_page.dart';
 import 'package:sigma/pages/requests/buy_requests/buy_requests_page.dart';
@@ -315,6 +316,11 @@ class AppRoutes {
         GetPage(
           name: RouteName.guide,
           page: () => GuideMenuPage(),
+          binding: CompareCarsBinding(),
+        ),
+        GetPage(
+          name: RouteName.myPayments,
+          page: () => PaymentsPage(),
           binding: CompareCarsBinding(),
         ),
       ];
