@@ -26,11 +26,11 @@ class TechnicalMenu extends StatelessWidget {
           route: RouteName.technicalInfo,
           arg: technicalPageState.compare,
           isItsSize: true),
-      // drawerIcon(
-      //     path: 'assets/price_chart.svg',
-      //     route: RouteName.technicalInfo,
-      //     arg: technicalPageState.pricheChart,
-      //     isItsSize: true)
+      drawerIcon(
+          path: 'assets/price_chart.svg',
+          route: RouteName.technicalInfo,
+          arg: technicalPageState.pricheChart,
+          isItsSize: true)
     ]);
     return ParentMenuWidget(child: Center(), title: Strings.carInfo);
   }
