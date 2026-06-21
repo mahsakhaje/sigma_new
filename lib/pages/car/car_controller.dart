@@ -128,7 +128,7 @@ class CarController extends GetxController {
   void onShasiChanged(String val) async {
     if (val.length == 17) {
       hideKeyboard(Get.context!);
-      bool response = await DioClient.instance.checkChassiNumber(val) ?? false;
+      bool response = await DioClient.instance.checkChassisNumber(val) ?? false;
       hasError = !response;
       validate(val);
       turn.value = 2;
@@ -279,7 +279,7 @@ class CarController extends GetxController {
                 chassisNumber: shasiController.text,
                 colorId: selectedColors.value ?? "",
                 manufactureYearId: selectedFromYear.value ?? "")
-            : await DioClient.instance.updateNewCar(
+            : await DioClient.instance.updateCar(
                 id: order?.id ?? '',
                 trimColorId: selectedTrimColors.value ?? "",
                 carTypeId: selectedCarType.value ?? "",

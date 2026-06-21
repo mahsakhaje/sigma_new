@@ -46,7 +46,7 @@ class MyCarsController extends GetxController {
   Future<void> getData() async {
     pn.value++;
     var response =
-        await DioClient.instance.getMycars(pl: pl.value, pn: pn.value);
+        await DioClient.instance.getMyCars(pl: pl.value, pn: pn.value);
     isLoading.value = false;
     if (response != null) {
       if (pn.value == 1) {

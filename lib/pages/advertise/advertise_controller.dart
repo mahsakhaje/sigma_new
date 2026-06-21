@@ -590,7 +590,7 @@ print('******************$orderState');
         return;
       }
       if (notifyAll.value) {
-        var response = await DioClient.instance.updateAnnouncments('1', '');
+        var response = await DioClient.instance.updateAnnouncements('1', '');
         if (response?.message == 'OK') {
           showToast(ToastState.SUCCESS, 'اطلاع رسانی با موفقیت فعال شد.');
           Get.back();
@@ -604,13 +604,13 @@ print('******************$orderState');
             : carModelIds = carModelIds + ',' + element.id.toString();
       });
       var response =
-          await DioClient.instance.updateAnnouncments('0', carModelIds);
+          await DioClient.instance.updateAnnouncements('0', carModelIds);
       if (response?.message == 'OK') {
         showToast(ToastState.SUCCESS, 'اطلاع رسانی با موفقیت فعال شد.');
         Get.back();
       }
     } else {
-      var response = await DioClient.instance.updateAnnouncments('', '');
+      var response = await DioClient.instance.updateAnnouncements('', '');
       showToast(ToastState.SUCCESS, 'اطلاع رسانی غیرفعال شد.');
       Get.back();
     }

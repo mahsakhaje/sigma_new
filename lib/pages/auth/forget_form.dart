@@ -128,7 +128,7 @@ Widget buildForgetPassword() {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               CustomText(
-                'لطفا رمز جدید خود را ثبت کنید',
+                '.لطفا رمز جدید خود را ثبت کنید',
                 size: 16,
                 fontWeight: FontWeight.w500,
               ),
@@ -139,14 +139,14 @@ Widget buildForgetPassword() {
             authController.forgetPasswordController,
             hintText: 'رمز عبور جدید',
             maxLen: 20,
-            autovalidateMode: AutovalidateMode.disabled,
+
+
           ),
           SizedBox(height: 8,),
           CustomTextFormField(
             authController.forgetRepeatPasswordController,
             hintText: 'تکرار رمز عبور جدید',
             maxLen: 20,
-            autovalidateMode: AutovalidateMode.disabled,
           ),
           const SizedBox(height: 12),
           Obx(() => authController.isLoading.value
@@ -160,6 +160,7 @@ Widget buildForgetPassword() {
               : ConfirmButton(
                   () {
                     hideKeyboard(Get.context!);
+                    if(authController.passwordFormKey.currentState!.validate())
                     authController.confirmNewPassword();
                   },
                   'تغییر رمز',

@@ -67,8 +67,15 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   }
 
   String? _validator(String? value) {
+    print('*********************');
     if (widget.autovalidateMode == AutovalidateMode.disabled) {
       return null;
+    }
+    print('here2');
+
+    if(widget.hintText?.contains('رمز')??false){
+      print('here1');
+     return validatePassword(value);
     }
     value = value?.toEnglishDigit();
     if (widget.isCoNationalId) {

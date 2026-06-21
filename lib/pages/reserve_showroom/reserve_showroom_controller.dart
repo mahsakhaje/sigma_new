@@ -88,7 +88,7 @@ class ReserveShowRoomController extends GetxController {
       final showRoomId = detailResponse?.salesOrder?.showRoomId ?? '1';
 
       _getTimes.value =
-          await DioClient.instance.getAvailebleTimeForShowRoom(id: showRoomId);
+          await DioClient.instance.getAvailableTimesForShowRoom(unitId: showRoomId);
 
       _populateTimes();
 

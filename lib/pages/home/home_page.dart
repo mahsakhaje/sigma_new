@@ -215,8 +215,8 @@ class _HomePgeState extends State<HomePge> {
                         path: 'assets/buy_car.svg', route: RouteName.buy_menue),
                     drawerIcon(
                         path: 'assets/sell_car.svg', route: RouteName.sell),
-                    // drawerIcon(
-                    //     path: 'assets/price_car.svg', route: RouteName.prices),
+                    drawerIcon(
+                        path: 'assets/price_car.svg', route: RouteName.prices),
                     drawerIcon(
                         path: 'assets/car_info.svg',
                         route: RouteName.technicalMenu),

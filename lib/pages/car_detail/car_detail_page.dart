@@ -209,13 +209,29 @@ class _CarDetailContent extends StatelessWidget {
         child: Obx(() {
           final images = controller.images;
           if (images.isEmpty) {
-            return Container(
-              color: AppColors.grey,
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 46, horizontal: 12),
-                child: SvgPicture.asset('assets/no_pic.svg'),
-              ),
+            return Stack(
+              children: [
+
+                Container(
+                  color: AppColors.grey,
+                width: MediaQuery.of(context).size.width,
+                  child: Center(
+                    child: Padding(
+                      padding:
+                          const EdgeInsets.symmetric(vertical: 46, horizontal: 12),
+                      child: SvgPicture.asset('assets/no_pic.svg', fit: BoxFit.cover,
+                       ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                    top: 10,
+                    right: 10,
+                    child: badge('کدخودرو:' +
+                        (controller.saleOrder.value?.referenceCode
+                            ?.usePersianNumbers() ??
+                            ''))),
+              ],
             );
           }
 

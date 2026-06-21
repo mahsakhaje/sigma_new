@@ -76,180 +76,179 @@ class AdvertisePage extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SizedBox(),
-                  // SizedBox(
-                  //   width: 100,
-                  //   child: GestureDetector(
-                  //     onTap: () => CustomBottomSheetAnimated.show(
-                  //       child: Padding(
-                  //         padding: const EdgeInsets.all(8.0),
-                  //         child: Column(children: [
-                  //           Row(
-                  //             children: [
-                  //               SizedBox(width: 8),
-                  //               Obx(() => FlutterSwitch(
-                  //                     value: controller.enableNotify.value,
-                  //                     onToggle: (val) {
-                  //                       controller.enableNotify.value =
-                  //                           !controller.enableNotify.value;
-                  //                     },
-                  //                     height: 22,
-                  //                     width: 50,
-                  //                     activeColor: AppColors.blue,
-                  //                     inactiveColor: AppColors.grey,
-                  //                     toggleColor: Colors.white,
-                  //                   )),
-                  //               SizedBox(width: 8),
-                  //               CustomText('فعالسازی',
-                  //                   size: 14,
-                  //                   color: Colors.black,
-                  //                   fontWeight: FontWeight.bold)
-                  //             ],
-                  //           ),
-                  //           SizedBox(
-                  //             height: 8,
-                  //           ),
-                  //           Obx(() => controller.notifyAll.value ||
-                  //                   !controller.enableNotify.value
-                  //               ? Column(
-                  //                   children: [
-                  //                     Row(
-                  //                       mainAxisAlignment:
-                  //                           MainAxisAlignment.end,
-                  //                       children: [
-                  //                         Expanded(
-                  //                           child: Container(
-                  //                             padding: EdgeInsets.symmetric(
-                  //                                 vertical: 20, horizontal: 10),
-                  //                             margin: EdgeInsets.symmetric(
-                  //                                 horizontal: 8, vertical: 4),
-                  //                             decoration: BoxDecoration(
-                  //                                 border: Border.all(
-                  //                                     color: AppColors.grey),
-                  //                                 borderRadius:
-                  //                                     BorderRadius.circular(4)),
-                  //                             child: CustomText('برند ',
-                  //                                 color: AppColors.grey,
-                  //                                 textAlign: TextAlign.right,
-                  //                                 size: 12,
-                  //                                 fontWeight: FontWeight.bold),
-                  //                           ),
-                  //                         ),
-                  //                       ],
-                  //                     ),
-                  //                     Row(
-                  //                       mainAxisAlignment:
-                  //                           MainAxisAlignment.end,
-                  //                       children: [
-                  //                         Expanded(
-                  //                           child: Container(
-                  //                             padding: EdgeInsets.symmetric(
-                  //                                 vertical: 20, horizontal: 10),
-                  //                             margin: EdgeInsets.symmetric(
-                  //                                 horizontal: 8, vertical: 4),
-                  //                             decoration: BoxDecoration(
-                  //                                 border: Border.all(
-                  //                                     color: AppColors.grey),
-                  //                                 borderRadius:
-                  //                                     BorderRadius.circular(4)),
-                  //                             child: CustomText('مدل ',
-                  //                                 color: AppColors.grey,
-                  //                                 textAlign: TextAlign.right,
-                  //                                 size: 12,
-                  //                                 fontWeight: FontWeight.bold),
-                  //                           ),
-                  //                         ),
-                  //                       ],
-                  //                     ),
-                  //                   ],
-                  //                 )
-                  //               : Column(children: [
-                  //                   Obx(() => buildExpandable(
-                  //                       'برند',
-                  //                       ListView(
-                  //                         physics: const ScrollPhysics(),
-                  //                         padding: EdgeInsets.all(8.0),
-                  //                         children: controller.notifyBrands
-                  //                             .map((timeValue) =>
-                  //                                 multiSelectWidget(
-                  //                                     timeValue,
-                  //                                     MultiSelectListType
-                  //                                         .notifyBrand,
-                  //                                     controller))
-                  //                             .toList(),
-                  //                       ),
-                  //                       controller.notifyBrands.length * 58,
-                  //                       9,
-                  //                       MultiSelectListType.notifyBrand,
-                  //                       controller)),
-                  //                   Obx(() => buildExpandable(
-                  //                       'مدل خودرو',
-                  //                       ListView(
-                  //                         physics: const ScrollPhysics(),
-                  //                         padding: EdgeInsets.all(8.0),
-                  //                         children: controller.notifyModels
-                  //                             .map((timeValue) =>
-                  //                                 multiSelectWidget(
-                  //                                     timeValue,
-                  //                                     MultiSelectListType
-                  //                                         .notifyModel,
-                  //                                     controller))
-                  //                             .toList(),
-                  //                       ),
-                  //                       controller.notifyModels.length * 58,
-                  //                       8,
-                  //                       MultiSelectListType.notifyModel,
-                  //                       controller))
-                  //                 ])),
-                  //           Obx(() => !controller.enableNotify.value
-                  //               ? Row(
-                  //                   mainAxisAlignment: MainAxisAlignment.end,
-                  //                   children: [
-                  //                     CustomText('همه آگهی های جدید',
-                  //                         color: Colors.grey,
-                  //                         fontWeight: FontWeight.bold),
-                  //                     Container(
-                  //                       width: 18,
-                  //                       height: 18,
-                  //                       margin: EdgeInsets.all(12),
-                  //                       decoration: BoxDecoration(
-                  //                           borderRadius:
-                  //                               BorderRadius.circular(2),
-                  //                           border: Border.all(
-                  //                               color: AppColors.grey)),
-                  //                     )
-                  //                   ],
-                  //                 )
-                  //               : Row(
-                  //                   mainAxisAlignment: MainAxisAlignment.end,
-                  //                   children: [
-                  //                     CustomText('همه آگهی های جدید',
-                  //                         color: Colors.black,
-                  //                         fontWeight: FontWeight.bold),
-                  //                     Obx(() => CustomCheckBox(
-                  //                           value: controller.notifyAll.value,
-                  //                           onChanged: (str) {
-                  //                             controller.notifyAll.value =
-                  //                                 !controller.notifyAll.value;
-                  //                           },
-                  //                           isBlue: true,
-                  //                           isDark: true,
-                  //                         )),
-                  //                   ],
-                  //                 )),
-                  //           Padding(
-                  //             padding: const EdgeInsets.all(8.0),
-                  //             child: ConfirmButton(
-                  //                 () => controller.insertNotify(), 'تایید'),
-                  //           )
-                  //         ]),
-                  //       ),
-                  //       context: Get.context!,
-                  //       initialChildSize: 0.55,
-                  //     ),
-                  //     child: SvgPicture.asset('assets/notify.svg'),
-                  //   ),
-                  // ),
+                  SizedBox(
+                    width: 100,
+                    child: GestureDetector(
+                      onTap: () => CustomBottomSheetAnimated.show(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(children: [
+                            Row(
+                              children: [
+                                SizedBox(width: 8),
+                                Obx(() => FlutterSwitch(
+                                      value: controller.enableNotify.value,
+                                      onToggle: (val) {
+                                        controller.enableNotify.value =
+                                            !controller.enableNotify.value;
+                                      },
+                                      height: 22,
+                                      width: 50,
+                                      activeColor: AppColors.blue,
+                                      inactiveColor: AppColors.grey,
+                                      toggleColor: Colors.white,
+                                    )),
+                                SizedBox(width: 8),
+                                CustomText('فعالسازی',
+                                    size: 14,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold)
+                              ],
+                            ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            Obx(() => controller.notifyAll.value ||
+                                    !controller.enableNotify.value
+                                ? Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Expanded(
+                                            child: Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 20, horizontal: 10),
+                                              margin: EdgeInsets.symmetric(
+                                                  horizontal: 8, vertical: 4),
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color: AppColors.grey),
+                                                  borderRadius:
+                                                      BorderRadius.circular(4)),
+                                              child: CustomText('برند ',
+                                                  color: AppColors.grey,
+                                                  textAlign: TextAlign.right,
+                                                  size: 12,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Expanded(
+                                            child: Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 20, horizontal: 10),
+                                              margin: EdgeInsets.symmetric(
+                                                  horizontal: 8, vertical: 4),
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color: AppColors.grey),
+                                                  borderRadius:
+                                                      BorderRadius.circular(4)),
+                                              child: CustomText('مدل ',
+                                                  color: AppColors.grey,
+                                                  textAlign: TextAlign.right,
+                                                  size: 12,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  )
+                                : Column(children: [
+                                    Obx(() => buildExpandable(
+                                        'برند',
+                                        ListView(
+                                          physics: const ScrollPhysics(),
+                                          padding: EdgeInsets.all(8.0),
+                                          children: controller.notifyBrands
+                                              .map((timeValue) =>
+                                                  multiSelectWidget(
+                                                      timeValue,
+                                                      MultiSelectListType
+                                                          .notifyBrand,
+                                                      controller))
+                                              .toList(),
+                                        ),
+                                        controller.notifyBrands.length * 58,
+                                        9,
+                                        MultiSelectListType.notifyBrand,
+                                        controller)),
+                                    Obx(() => buildExpandable(
+                                        'مدل خودرو',
+                                        ListView(
+                                          physics: const ScrollPhysics(),
+                                          padding: EdgeInsets.all(8.0),
+                                          children: controller.notifyModels
+                                              .map((timeValue) =>
+                                                  multiSelectWidget(
+                                                      timeValue,
+                                                      MultiSelectListType
+                                                          .notifyModel,
+                                                      controller))
+                                              .toList(),
+                                        ),
+                                        controller.notifyModels.length * 58,
+                                        8,
+                                        MultiSelectListType.notifyModel,
+                                        controller))
+                                  ])),
+                            Obx(() => !controller.enableNotify.value
+                                ? Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      CustomText('همه آگهی های جدید',
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight.bold),
+                                      Container(
+                                        width: 18,
+                                        height: 18,
+                                        margin: EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(2),
+                                            border: Border.all(
+                                                color: AppColors.grey)),
+                                      )
+                                    ],
+                                  )
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      CustomText('همه آگهی های جدید',
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold),
+                                      Obx(() => CustomCheckBox(
+                                            value: controller.notifyAll.value,
+                                            onChanged: (str) {
+                                              controller.notifyAll.value =
+                                                  !controller.notifyAll.value;
+                                            },
+                                            isBlue: true,
+                                            isDark: true,
+                                          )),
+                                    ],
+                                  )),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ConfirmButton(
+                                  () => controller.insertNotify(), 'تایید'),
+                            )
+                          ]),
+                        ),
+                        context: Get.context!,
+                        initialChildSize: 0.55,
+                      ),
+                      child: SvgPicture.asset('assets/notify.svg'),
+                    ),
+                  ),
                   GestureDetector(
                     onTap: () {
                       controller.togglePageState();

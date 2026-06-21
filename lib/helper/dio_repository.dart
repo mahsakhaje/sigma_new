@@ -1,11 +1,16 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
+import 'package:get/route_manager.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
+import 'package:sigma/helper/route_names.dart';
+import 'package:universal_platform/universal_platform.dart';
+
 import 'package:sigma/helper/helper.dart';
 import 'package:sigma/helper/storage_helper.dart';
 import 'package:sigma/helper/url_addresses.dart';
@@ -62,16 +67,14 @@ import 'package:sigma/models/suggestiontypes_model.dart';
 import 'package:sigma/models/telephone_model.dart';
 import 'package:sigma/models/tracking_sales_model.dart';
 import 'package:sigma/models/user_info_model.dart';
-import 'package:universal_platform/universal_platform.dart';
-import 'package:file_saver/file_saver.dart';
 import '../models/get_expert_amount_response.dart';
 import '../models/insert_order_response.dart';
 import '../models/update_insert_order_response.dart';
 
 class DioClient {
   static final DioClient instance = DioClient._privateConstructor();
+
   final Dio _dio;
-  String? _token;
 
   DioClient._privateConstructor()
       : _dio = Dio(
@@ -85,974 +88,139 @@ class DioClient {
             sendTimeout: const Duration(seconds: 20),
           ),
         ) {
-    _initialize();
-  }
-
-  void _initialize() {
     if (!kIsWeb) {
       (_dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
           (HttpClient client) {
-        client.badCertificateCallback = (cert, host, port) => true;
+        client.badCertificateCallback = (_, __, ___) => true;
         return client;
       };
     }
   }
 
-  Future<Response?> _makePostRequest(String url, Map<String, dynamic> data,
-      {bool isBytes = false}) async {
-    print(URLs.BaseUrl + url);
-    print(data);
+  String _token() {
+    String? token = StorageHelper().getShortToken();
+    return token ?? "";
+  }
 
+  /// Builds the standard request body, merging caller-supplied [extra] fields.
+  Future<Map<String, dynamic>> _buildBody(Map<String, dynamic> extra) async {
+    return {
+      'version': await getVersion(),
+      ...extra,
+    };
+  }
+
+  /// POST wrapper — handles auth header, byte vs JSON response, and errors.
+  Future<Response?> _post(
+    String url,
+    Map<String, dynamic> data, {
+    bool asBytes = false,
+  }) async {
+    try{
+
+    if (JwtDecoder.isExpired(_token() ?? '')) {
+      Get.toNamed(RouteName.auth);
+    }}catch(e){
+      print(e);
+    }
     try {
-      final token = await _getToken();
 
-      Response response = await _dio.post(
+      var response = await _dio.post(
         url,
         data: jsonEncode(data),
         options: Options(
-            headers: {'Authorization': 'Bearer $token'},
-            responseType: isBytes ? ResponseType.bytes : ResponseType.json),
+          headers: {
+            'Authorization':
+                url.contains('public') || _token().isEmpty ? 'null' : _token()
+          },
+          responseType: asBytes ? ResponseType.bytes : ResponseType.json,
+        ),
       );
-      print(response);
-      // if(response.data['message']=='INVALID_TOKEN'){
-      //   showToast(ToastState.ERROR, response.data['persianMessage']);
-      // }
       return response;
     } catch (e) {
-      print(e);
-      debugPrint("Error making POST request: $e");
+      debugPrint('POST $url error: $e');
       return null;
     }
   }
 
-  Future<BannersResponse?> getBanners() async {
-    final response = await _makePostRequest(URLs.GetApplicationBannersUrl, {
-      'token': getShortToken(),
-      'version': await getVersion(),
-    });
+  /// Parses a 200 response with [fromJson], shows an error toast otherwise.
+  T? _parse<T>(Response? response, T Function(Map<String, dynamic>) fromJson) {
 
-    if (response?.statusCode == 200) {
-      showMessage(response!.data);
-      return BannersResponse.fromJson(response.data);
+    if (response?.statusCode != 200) return null;
+    _showErrorIfNeeded(response!.data as Map<String, dynamic>);
+    return fromJson(response.data as Map<String, dynamic>);
+  }
+
+  void _showErrorIfNeeded(Map<String, dynamic> data) {
+    if ((data['status'] as int? ?? 0) != 0) {
+      showToast(ToastState.ERROR, data['persianMessage']);
     }
-
-    return null;
   }
 
-  Future<ChangePriceResponse?> getPriceChange(String id, String year) async {
-    final response = await _makePostRequest(URLs.GetChangePriceReportUrl, {
-      'carTypeId': id,
-      'year': year,
-      'token': getShortToken(),
-      'version': await getVersion(),
-    });
-
-    if (response?.statusCode == 200) {
-      showMessage(response!.data);
-      return ChangePriceResponse.fromJson(response.data);
-    }
-
-    return null;
-  }
-
-  Future<BaseResponse?> insertSuggestion({
-    required String id,
-    required String comment,
-  }) async {
-    final response = await _makePostRequest(URLs.GetInsertSuggestionUrl, {
-      'suggestion': {
-        'comment': comment,
-        'typeId': id,
-      },
-      'token': getShortToken(),
-      'version': await getVersion(),
-    });
-
-    if (response?.statusCode == 200) {
-      showMessage(response!.data);
-      return BaseResponse.fromJson(response.data);
-    }
-
-    return null;
-  }
-
-  Future<SuggestionTypesResponse?> getSuggestionTypes() async {
-    final response = await _makePostRequest(URLs.GetSuggestionTypesUrl, {
-      'pn': '1',
-      'pl': '1000',
-      'token': getShortToken(),
-      'version': await getVersion(),
-    });
-
-    if (response?.statusCode == 200) {
-      showMessage(response!.data);
-      return SuggestionTypesResponse.fromJson(response.data);
-    }
-
-    return null;
-  }
-
-  Future<ConfirmPaymentResponse?> confirmPayment({
-    required String orderId,
-  }) async {
-    final response = await _makePostRequest(URLs.ConfirmPaymentUrl, {
-      'discountCode': '',
-      'orderId': orderId,
-      'payType': 'CREDIT',
-      'token': getShortToken(),
-      'version': await getVersion(),
-    });
-
-    if (response?.statusCode == 200) {
-      showMessage(response!.data);
-      return ConfirmPaymentResponse.fromJson(response.data);
-    }
-
-    return null;
-  }
-
-  Future<RulesResponse?> getPrivacyRules() async {
-    final response = await _makePostRequest(
-      URLs.GetPrivacyRulesUrl,
-      {
-        'token': getShortToken(),
-        'version': await getVersion(),
-      },
-    );
-
-    return response?.statusCode == 200
-        ? RulesResponse.fromJson(response?.data)
-        : null;
-  }
-
-  Future<BaseResponse?> hasActiveOrderWithChassisNumber(String id) async {
-    final response =
-        await _makePostRequest(URLs.GetHasActiveOrderWithChassisNumberUrl, {
-      'car': {'id': id},
-      'token': getShortToken(),
-      'version': await getVersion(),
-    });
-
-    if (response?.statusCode == 200) {
-      showMessage(response!.data);
-      return BaseResponse.fromJson(response.data);
-    }
-
-    return null;
-  }
-
-  Future<RulesResponse?> getRules() async {
-    final response = await _makePostRequest(
-      URLs.GetRegistrationRulesUrl,
-      {
-        'token': await getShortToken(),
-        // Changed from empty string to actual token
-        'version': await getVersion(),
-      },
-    );
-
-    return response?.statusCode == 200
-        ? RulesResponse.fromJson(response?.data)
-        : null;
-  }
-
-  Future<LoginResponse?> confirmRegister({
-    required String code,
-    required String cellNumber,
-    required String referralCode,
-  }) async {
-    final response = await _makePostRequest(
-      URLs.ConfirmRegisterUrl,
-      {
-        'account': {
-          'cellNumber': cellNumber.toEnglishDigit(),
-          'password': code.toEnglishDigit(),
-          'referralCode': referralCode.toEnglishDigit(),
-        },
-        'token': 'null', // Kept as string 'null' to match original behavior
-        'version': await getVersion(),
-      },
-    );
-
-    return response?.statusCode == 200
-        ? LoginResponse.fromJson(response?.data)
-        : null;
-  }
-
-  Future<BaseResponse?> changeLike({required String id}) async {
-    final response = await _makePostRequest(URLs.ChangeLikeUrl, {
-      'salesOrder': {
-        'id': id,
-      },
-      'token': getShortToken(),
-      'version': await getVersion(),
-    });
-    return response?.statusCode == 200
-        ? BaseResponse.fromJson(response?.data)
-        : null;
-  }
-
-  Future<PaymentsResponse?> getPayments() async {
-    final response = await _makePostRequest(URLs.GetMyPaymentssUrl, {
-      'pn': '1',
-      'pl': '100',
-      'token': getShortToken(),
-      'version': await getVersion(),
-    });
-    return response?.statusCode == 200
-        ? PaymentsResponse.fromJson(response?.data)
-        : null;
-  }
-
-  Future<SigmaSalesOrderResponse?> getFavourites() async {
-    final response = await _makePostRequest(URLs.FavouritesUrl, {
-      'token': getShortToken(),
-      'version': await getVersion(),
-    });
-    return response?.statusCode == 200
-        ? SigmaSalesOrderResponse.fromJson(response?.data)
-        : null;
-  }
-
-  Future<LoginResponse?> getTokenRequest() async {
-    Response response = await _dio.post(URLs.TokenUrl,
-        data: jsonEncode(UniversalPlatform.isAndroid
-            ? {
-                "username": "APP_ANDROID",
-                "password": "aPP@nd",
-              }
-            : {
-                "username": "APP_PWA",
-                "password": "App\$wa",
-              }));
-    if (response?.statusCode == 200) {
-      return LoginResponse.fromJson(response?.data);
-    }
-    return null;
-  }
-
-  Future<BlogResponse?> getBlogs({
-    required int pn,
-    required int pl,
-  }) async {
-    final response = await _makePostRequest(URLs.BlogsUrl, {
-      'pl': pl.toString(),
-      'pn': pn.toString(),
-      'version': await getVersion(),
-      'token': getShortToken(), // Added missing token parameter
-    });
-
-    return response?.statusCode == 200
-        ? BlogResponse.fromJson(response?.data)
-        : null;
-  }
-
-  Future<PublishedTransactionsResponse?> getPublishedTransactions({
-    required int pn,
-    required int pl,
-  }) async {
-    final response = await _makePostRequest(URLs.PublishedTransactionsUrl, {
-      'pl': pl.toString(),
-      'pn': pn.toString(),
-      'token': await getShortToken(),
-      'version': await getVersion(),
-    });
-
-    return response?.statusCode == 200
-        ? PublishedTransactionsResponse.fromJson(response?.data)
-        : null;
-  }
-
-  Future<CancelReasonResponse?> getCancelReasons() async {
-    final response = await _makePostRequest(URLs.CancelReasonUrl, {
-      'token': getShortToken(),
-      'version': await getVersion(),
-    });
-
-    return response?.statusCode == 200
-        ? CancelReasonResponse.fromJson(response?.data)
-        : null;
-  }
-
-  Future<GetAvailebleTimeResponse?> getAvailebleTimeForShowRoom({
-    required String id,
-  }) async {
-    final response =
-        await _makePostRequest('${URLs.GetAvailebleTimeUrl}ForShowRoom', {
-      'token': await getShortToken(),
-      'unit': {'id': id},
-      'version': await getVersion(),
-    });
-
-    return response?.statusCode == 200
-        ? GetAvailebleTimeResponse.fromJson(response?.data)
-        : null;
-  }
-
-  Future<SigmaSalesOrderResponse?> getSalesOrdersWithFilter({
-    String? brandId = '',
-    String? carModelId = '',
-    String? carTypeId = '',
-    String? carTypeIds = '',
-    String? colorId = '',
-    String? cityId = '',
-    String? state,
-    String? cityIds = '',
-    String? fromAmount = '',
-    String? fromYear = '',
-    String? toAmount = '',
-    String? toYear = '',
-    String? trimColorId = '',
-    required int pn,
-    required int pl,
-  }) async {
-    var data = {
-      'brandIds': brandId ?? '',
-      'carModelId': carModelId ?? '',
-      'carModelIds': carModelId ?? '',
-      'carTypeIds': carTypeIds ?? '',
-      'colorId': colorId ?? "",
-      'fromAmount': fromAmount,
-      'fromYear': fromYear,
-      'cityId': cityId ?? '',
-      'carState': state ?? '',
-      'cityIds': cityIds ?? '',
-      'toAmount': toAmount,
-      'toYear': toYear,
-      'trimColorId': trimColorId,
-      'pl': pl.toString(),
-      'pn': pn.toString(),
-      'token': await getShortToken(),
-      'version': await getVersion(),
-    };
+  Future<LoginResponse?> _fetchAppToken() async {
+    final credentials = UniversalPlatform.isAndroid
+        ? {'username': 'APP_ANDROID', 'password': 'aPP@nd'}
+        : {'username': 'APP_PWA', 'password': r'App$wa'};
 
     final response =
-        await _makePostRequest(URLs.GetSalesOrdersWithFilterUrl, data);
-    return response?.statusCode == 200
-        ? SigmaSalesOrderResponse.fromJson(response?.data)
-        : null;
-  }
-
-  Future<InsertOrderResponse?> insertOrderData({
-    required String carId,
-    required String milageStatus,
-    required String mileage,
-    required String comment,
-    required String referredId,
-    required String amount,
-    required bool IwillTakeCar,
-    required String? referredName,
-    required String? referredLastName,
-    required String isSwap,
-    required String commentSwap,
-    required String? accountManagerId,
-    required String? referredNationalId,
-    required Map bodies,
-    required List<Map> documents,
-  }) async {
-    final response = await _makePostRequest(URLs.InsertOrderUrl, {
-      'salesOrder': {
-        'carId': carId,
-        'comment': comment.toEnglishDigit(),
-        'declaredAmount': amount.toEnglishDigit(),
-        'mileage': mileage.toEnglishDigit(),
-        'documents': documents,
-        'carSwap': isSwap,
-        'carSwapComment': commentSwap,
-        'accountManagerId': accountManagerId,
-        'mileageState': milageStatus,
-        'referredId': referredId,
-        'referred': IwillTakeCar ? '0' : '1',
-        'referredLastName': referredLastName,
-        'referredName': referredName,
-        'referredNationalId': referredNationalId?.toEnglishDigit(),
-        'bodyDetails': bodies,
-      },
-      'token': await getShortToken(),
-      'version': await getVersion(),
-    });
-
-    return response?.statusCode == 200
-        ? InsertOrderResponse.fromJson(response?.data)
-        : null;
-  }
-
-  Future<UpdateInsertOrderResponse?> insertPhotos({
-    required InsertImageBody body,
-  }) async {
-    final response = await _makePostRequest(
-      '/salesorders/updateSalesOrderWithDocuments',
-      body.toJson(),
-    );
-
-    return response?.statusCode == 200
-        ? UpdateInsertOrderResponse.fromJson(response?.data)
-        : null;
-  }
-
-  Future<GetExpertAmountResponse?> getExpertAmountResponse({
-    required String id,
-  }) async {
-    final response = await _makePostRequest('/salesorders/getOrderAmount', {
-      'token': await getShortToken(),
-      'salesOrder': {'carId': id},
-      'version': await getVersion(),
-    });
-
-    return response?.statusCode == 200
-        ? GetExpertAmountResponse.fromJson(response?.data)
-        : null;
-  }
-
-  Future<AddNewCarResponse?> addNewCar({
-    required String carTypeId,
-    required String chassisNumber,
-    required String colorId,
-    required String manufactureYearId,
-    required String trimColorId,
-  }) async {
-    final response = await _makePostRequest(URLs.AddNewCardUrl, {
-      'car': {
-        'id': '',
-        'carTypeId': carTypeId,
-        'chassisNumber': chassisNumber.toEnglishDigit(),
-        'colorId': colorId,
-        'trimColorId': trimColorId,
-        'manufactureYearId': manufactureYearId,
-      },
-      'token': getShortToken(),
-      'version': await getVersion(),
-    });
-
-    if (response?.statusCode == 200) {
-      showMessage(response!.data);
-      return AddNewCarResponse.fromJson(response.data);
-    }
-    return null;
-  }
-
-  Future<ChassiInquiryResponse?> getInquiryChassisNumber({
-    required String chassisNumber,
-  }) async {
-    final response = await _makePostRequest(URLs.GetInquiryChassisNumberUrl, {
-      'chassisNumber': chassisNumber.toEnglishDigit(),
-      'token': getShortToken(),
-      'version': await getVersion(),
-    });
-
-    if (response?.statusCode == 200) {
-      // showMessage(response!.data);
-      return ChassiInquiryResponse.fromJson(response?.data);
-    }
-
-    return null;
-  }
-
-  Future<TrackingSalesOrderResponse?> trackSalesOrder({
-    required String id,
-  }) async {
-    final response = await _makePostRequest(URLs.TrackingSalesOrderUrl, {
-      'salesOrder': {'id': id},
-      'token': getShortToken(),
-      'version': await getVersion(),
-    });
-
-    if (response?.statusCode == 200) {
-      showMessage(response!.data);
-      return TrackingSalesOrderResponse.fromJson(response.data);
-    }
-
-    return null;
-  }
-
-  Future<String?> getExpertReportInTracking(String id) async {
-    final response = await _makePostRequest(
-      URLs.ExpertOrderPrintUrl,
-      {
-        'expertOrder': {'id': id},
-        'version': await getVersion(),
-      },
-      isBytes: true,
-    );
-
-    if (response?.statusCode == 200) {
-      return await saveFile(id, response!.data);
-    }
-
-    return null;
-  }
-
-  Future<String?> getContractReportInTracking(String orderNumber) async {
-    final response = await _makePostRequest(
-      URLs.ContractPrintUrl,
-      {
-        'salesOrder': {'orderNumber': orderNumber},
-        'version': await getVersion(),
-      },
-      isBytes: true,
-    );
-
-    if (response?.statusCode == 200) {
-      return await saveFile(orderNumber, response!.data);
-    }
-
-    return null;
-  }
-
-  Future<AddNewCarResponse?> updateNewCar({
-    required String carTypeId,
-    required String id,
-    required String chassisNumber,
-    required String colorId,
-    required String manufactureYearId,
-    required String trimColorId,
-  }) async {
-    final response = await _makePostRequest(URLs.UpdateCardUrl, {
-      'car': {
-        'id': id,
-        'carTypeId': carTypeId,
-        'chassisNumber': chassisNumber.toEnglishDigit(),
-        'colorId': colorId,
-        'trimColorId': trimColorId,
-        'manufactureYearId': manufactureYearId,
-      },
-      'token': getShortToken(),
-      'version': await getVersion(),
-    });
-
-    if (response?.statusCode == 200) {
-      showMessage(response!.data);
-      return AddNewCarResponse.fromJson(response.data);
-    }
-    return null;
-  }
-
-  Future<AddNewCarResponse?> deleteCar({
-    required String id,
-  }) async {
-    final response = await _makePostRequest(URLs.DeleteCarUrl, {
-      'car': {'id': id},
-      'token': getShortToken(),
-      'version': await getVersion(),
-    });
-
-    if (response?.statusCode == 200) {
-      showMessage(response!.data);
-      return AddNewCarResponse.fromJson(response.data);
-    }
-    return null;
-  }
-
-  Future<CarDetailResponse?> getCarDetail({required String id}) async {
-    final response = await _makePostRequest(URLs.GetSalesOrderInfoUrl, {
-      'orderId': id,
-      'token': getShortToken(), // Added token that was missing
-      'version': await getVersion(),
-    });
-
-    return response?.statusCode == 200
-        ? CarDetailResponse.fromJson(response?.data)
-        : null;
-  }
-
-  Future<CarInfoResponse?> getCarInfo({required String id}) async {
-    final response = await _makePostRequest(URLs.GetCarInfoUrl, {
-      'car': {'id': id},
-      'token': await getShortToken(), // Added token that was missing
-      'version': await getVersion(),
-    });
-
-    return response?.statusCode == 200
-        ? CarInfoResponse.fromJson(response?.data)
-        : null;
-  }
-
-  Future<GetLoanDurationResponse?> getLoanDuration() async {
-    final response = await _makePostRequest(
-      URLs.GetLoanDurationsUrl,
-      {
-        'token': await getShortToken(), // Added token for consistency
-        'version': await getVersion(), // Added version for consistency
-      },
-    );
-
-    return response?.statusCode == 200
-        ? GetLoanDurationResponse.fromJson(response?.data)
-        : null;
-  }
-
-  Future<GetLoanPaymentResponse?> calculateLoanPayment(
-    String amount,
-    String id,
-  ) async {
-    final response = await _makePostRequest(
-      URLs.GetCalculateLoanPaymentsUrl,
-      {
-        'loanDurationId': id,
-        'amount': amount,
-        'token': await getShortToken(),
-        'version': await getVersion(),
-      },
-    );
-
-    return response?.statusCode == 200
-        ? GetLoanPaymentResponse.fromJson(response?.data)
-        : null;
-  }
-
-  Future<ExpertiseResponse?> showExpertSummary(
-    String id,
-  ) async {
-    final response = await _makePostRequest(
-      URLs.GetExpertSummaryUrl,
-      {
-        'salesOrder': {'id': id},
-        'version': await getVersion(),
-        'token': getShortToken(),
-      },
-    );
-    return response?.statusCode == 200
-        ? ExpertiseResponse.fromJson(response?.data)
-        : null;
-  }
-
-  Future<ReserveShowRoomResponse?> reserveShowRoom({
-    required String salesOrderId,
-    required String timespanCapacityId,
-  }) async {
-    final response = await _makePostRequest(URLs.ReservationForShowRoomUrl, {
-      'reservation': {
-        'salesOrderId': salesOrderId,
-        'timespanCapacityId': timespanCapacityId,
-      },
-      'token': await getShortToken(),
-      'version': await getVersion(),
-    });
-
-    return response?.statusCode == 200
-        ? ReserveShowRoomResponse.fromJson(response?.data)
-        : null;
-  }
-
-  Future<String?> downloadFileFromUrl(String url, String fileName) async {
-    try {
-      final response = await Dio().get(
-        url,
-        options: Options(responseType: ResponseType.bytes),
-      );
-
-      if (response.statusCode == 200 && response.data != null) {
-        return await saveFileToDownloads(
-          '${fileName}_${DateTime.now().millisecondsSinceEpoch}',
-          response.data,
-        );
+        await _dio.post(URLs.TokenUrl, data: jsonEncode(credentials));
+    if (response.statusCode == 200) {
+      final loginResponse =
+          LoginResponse.fromJson(response.data as Map<String, dynamic>);
+      if (loginResponse.token != null) {
+        StorageHelper().setToken(loginResponse.token!);
       }
-      return null;
-    } catch (e) {
-      print('Error downloading file: $e');
-      return null;
-    }
-  }
-
-  Future<String?> getExpertReport(String id) async {
-    final response = await _makePostRequest(
-        URLs.GetExpertReportUrl,
-        {
-          'salesOrder': {'id': id},
-          'version': await getVersion(),
-          'token': getShortToken(),
-        },
-        isBytes: true);
-
-    if (response?.statusCode == 200 && response?.data != null) {
-      if (kIsWeb) {
-        return await FileSaver.instance.saveFile(
-          name: 'expert_report_$id',
-          bytes: response!.data,
-          ext: 'pdf',
-          mimeType: MimeType.pdf,
-        );
-      } else {
-        return await saveFileToDownloads(
-            'expert_report_$id' + Random.secure().nextInt(100).toString(),
-            response!.data);
-      }
+      return loginResponse;
     }
     return null;
   }
 
-  Future<String?> getExpertReportInCarDetail(String id) async {
-    final response = await _makePostRequest(
-        URLs.GetExpertDownloadUrl,
-        {
-          'salesOrder': {'id': id},
-          'version': await getVersion(),
-          'token': getShortToken(),
-        },
-        isBytes: true);
-    print(response);
-
-    if (response?.statusCode == 200 && response?.data != null) {
-      if (kIsWeb) {
-        return await FileSaver.instance.saveFile(
-          name: 'expert_report_$id',
-          bytes: response!.data,
-          ext: 'pdf',
-          mimeType: MimeType.pdf,
-        );
-      } else {
-        return await saveFileToDownloads(
-            'expert_report_$id' + Random.secure().nextInt(100).toString(),
-            response!.data);
-      }
-    }
-    return null;
-  }
-
-  Future<InsertPurchaseOrderResponse?> insertPurchaseOrder({
-    required String brandId,
-    required String budget,
-    required String carModelId,
-    required String carTypeId,
-    required String colorId,
-    required String cityId,
-    required String fromManufactureYear,
-    required String fromMileage,
-    required String toManufactureYear,
-    required String similarItems,
-    required String isSwap,
-    required String wantsLoan,
-    required String commentSwap,
-    required String toMileage,
-    required String trimColorId,
-  }) async {
-    final response = await _makePostRequest(URLs.InsertPurchaseOrderUrl, {
-      'purchaseOrder': {
-        'brandId': brandId,
-        'cityId': cityId,
-        'budget': budget.toEnglishDigit(),
-        'carModelId': carModelId,
-        'carSwap': isSwap,
-        'wantsLoan': wantsLoan,
-        'carSwapComment': commentSwap,
-        'carTypeId': carTypeId,
-        'colorId': colorId,
-        'similarItems': similarItems,
-        'fromManufactureYear': fromManufactureYear,
-        'fromMileage': fromMileage,
-        'toMileage': toMileage,
-        'trimColorId': trimColorId,
-        'toManufactureYear': toManufactureYear,
-      },
-      'token': await getShortToken(),
-      'version': await getVersion(),
+  Future<LoginResponse?> sendOTP({required String cellNumber}) async {
+    final response = await _post(URLs.SendOTPUrl, {
+      'account': {'cellNumber': cellNumber.toEnglishDigit()},
     });
-
-    return response?.statusCode == 200
-        ? InsertPurchaseOrderResponse.fromJson(response?.data)
-        : null;
-  }
-
-  Future<SigmaSalesOrderResponse?> getAccountsSalesOrder({
-    required int pn,
-    required int pl,
-  }) async {
-    final response = await _makePostRequest(URLs.GetAccountsSalesOrderUrl, {
-      'token': getShortToken(),
-      'pl': pl.toString(),
-      'pn': pn.toString(),
-      'version': await getVersion(),
-    });
-
-    return response?.statusCode == 200
-        ? SigmaSalesOrderResponse.fromJson(response?.data)
-        : null;
-  }
-
-  Future<String> _getToken() async {
-    _token = StorageHelper().getToken();
-
-    if (_token == null || JwtDecoder.isExpired(_token ?? '')) {
-      var response = await getTokenRequest();
-      if (response?.token != null) {
-        _token = response!.token?.replaceAll('Bearer ', '');
-        StorageHelper().setToken(response.token ?? "");
-      }
-      _token = StorageHelper().getToken();
-    }
-
-    return (_token ?? "");
-  }
-
-  Future<QuestionsResponse?> getAllQuestions() async {
-    final response = await _makePostRequest(URLs.GetAllFaqContentsUrl, {
-      'token': getShortToken(),
-      'version': await getVersion(),
-    });
-
-    return response?.statusCode == 200
-        ? QuestionsResponse.fromJson(response?.data)
-        : null;
-  }
-
-  Future<String?> _refreshToken() async {
-    try {
-      var response = await _dio.post(URLs.TokenUrl, data: {
-        "username": kIsWeb ? "APP_PWA" : "APP_ANDROID",
-        "password": kIsWeb ? "App\$wa" : "aPP@nd",
-      });
-      if (response.statusCode == 200) {
-        String? newToken = response.data["token"]?.replaceAll('Bearer ', '');
-        StorageHelper().setToken(newToken ?? "");
-        return newToken;
-      }
-    } catch (e) {
-      debugPrint("Error refreshing token: $e");
-    }
-    return null;
-  }
-
-  Future<UpdateResponse?> checkVersion() async {
-    final response = await _makePostRequest(URLs.GetVersionUrl, {
-      'token': '',
-      'version': await getVersion(),
-    });
-    return response?.statusCode == 200
-        ? UpdateResponse.fromJson(response?.data)
-        : null;
-  }
-
-  Future<NotifCountResponse?> getNotifCount() async {
-    final response = await _makePostRequest(URLs.GetAppAccountNotifsCountUrl, {
-      'token': getShortToken(),
-      'version': await getVersion(),
-    });
-    return response?.statusCode == 200
-        ? NotifCountResponse.fromJson(response?.data)
-        : null;
-  }
-
-  Future<NotifListResponse?> getNotifList() async {
-    final response = await _makePostRequest(URLs.GetNotifsListUrl, {
-      'token': getShortToken(),
-      'version': await getVersion(),
-    });
-    return response?.statusCode == 200
-        ? NotifListResponse.fromJson(response?.data)
-        : null;
-  }
-
-  Future<LoginResponse?> setSeenNotifs() async {
-    final response = await _makePostRequest(URLs.SeenNotifsUrl, {
-      'token': getShortToken(),
-      'version': await getVersion(),
-    });
-    return response?.statusCode == 200
-        ? LoginResponse.fromJson(response?.data)
-        : null;
-  }
-
-  Future<AllCarsJsonModel?> getAllCarsJson() async {
-    final response =
-        await _makePostRequest(URLs.AllCarsUrl, {'data-raw': '{}'});
-    return response?.statusCode == 200
-        ? AllCarsJsonModel.fromJson(response?.data)
-        : null;
-  }
-
-  Future<LoginResponse?> verifyResetPassword({
-    required String password,
-    required String cellNumber,
-  }) async {
-    final response = await _makePostRequest(
-      URLs.VerifyResetPasswordUrl,
-      {
-        'account': {
-          'cellNumber': cellNumber.toEnglishDigit(),
-          'password': password.toEnglishDigit(),
-        },
-        'token': 'null', // Maintained original behavior
-        'version': await getVersion(),
-      },
-    );
-
-    return _handleAuthResponse(response);
-  }
-
-  Future<LoginResponse?> confirmNewPassword({
-    required String newPassword,
-    required String cellNumber,
-    required String code,
-  }) async {
-    final response = await _makePostRequest(
-      URLs.ConfirmNewPasswordUrl,
-      {
-        'cellNumber': cellNumber.toEnglishDigit(),
-        'verificationCode': code.toEnglishDigit(),
-        'newPassword': newPassword.toEnglishDigit(),
-        'token': 'null', // Maintained original behavior
-        'version': await getVersion(),
-      },
-    );
-
-    return _handleAuthResponse(response);
-  }
-
-  Future<LoginResponse?> sendOTP({
-    required String cellNumber,
-  }) async {
-    final response = await _makePostRequest(
-      URLs.SendOTPUrl,
-      {
-        'account': {'cellNumber': cellNumber.toEnglishDigit()},
-        'token': ''
-      },
-    );
-
-    return _handleAuthResponse(response);
+    return _parse(response, LoginResponse.fromJson);
   }
 
   Future<LoginResponse?> confirmOTP({
     required String cellNumber,
     required String password,
   }) async {
-    final response = await _makePostRequest(
-      URLs.ConfirmOTPUrl,
-      {
-        'account': {
-          'cellNumber': cellNumber.toEnglishDigit(),
-          'password': password
-        }
+    final response = await _post(URLs.ConfirmOTPUrl, {
+      'account': {
+        'cellNumber': cellNumber.toEnglishDigit(),
+        'password': password,
       },
-    );
-
-    return _handleAuthResponse(response);
+    });
+    return _parse(response, LoginResponse.fromJson);
   }
 
-// Shared response handler for auth endpoints
-  LoginResponse? _handleAuthResponse(Response? response) {
-    if (response?.statusCode == 200) {
-      return LoginResponse.fromJson(response!.data);
-    } else {
-      //Get.log('Password reset error: ${response?.data}', isError: true);
-      return null;
-    }
+  Future<LoginResponse?> login(String cellNumber, String password) async {
+    final body = await _buildBody({
+      'account': {
+        'cellNumber': cellNumber.toEnglishDigit(),
+        'password': password,
+      },
+    });
+    final response = await _post(URLs.LoginUrl, body);
+    return _parse(response, LoginResponse.fromJson);
   }
 
-  Future<BaseResponse?> register(
-      {required String lastName,
-      required String name,
-      required String orgName,
-      required String gender,
-      required String email,
-      required String orgNationalId,
-      required String geoNameId,
-      required String nationalId,
-      required String password,
-      required String cellNumber,
-      required bool isReal,
-      required String referralCode}) async {
-    var formData = {
+  Future<BaseResponse?> register({
+    required String name,
+    required String lastName,
+    required String orgName,
+    required String gender,
+    required String email,
+    required String orgNationalId,
+    required String geoNameId,
+    required String nationalId,
+    required String password,
+    required String cellNumber,
+    required bool isReal,
+    required String referralCode,
+  }) async {
+    final body = await _buildBody({
       'account': {
         'cellNumber': cellNumber.toEnglishDigit(),
         'nationalId': nationalId.toEnglishDigit(),
@@ -1065,62 +233,68 @@ class DioClient {
         'orgNationalId': orgNationalId.toEnglishDigit(),
         'orgName': orgName,
         'lastName': lastName,
-        'isReal': isReal ? '1' : '0'
+        'isReal': isReal ? '1' : '0',
       },
-      'token': 'null',
-      'version': await getVersion()
-    };
-
-    final response = await _makePostRequest(URLs.RegisterUrl, formData);
-    return response?.statusCode == 200
-        ? BaseResponse.fromJson(response?.data)
-        : null;
+    });
+    final response = await _post(URLs.RegisterUrl, body);
+    return _parse(response, BaseResponse.fromJson);
   }
 
-  Future<LoginResponse?> login(String cellNumber, String password) async {
-    final response = await _makePostRequest(URLs.LoginUrl, {
+  Future<LoginResponse?> confirmRegister({
+    required String code,
+    required String cellNumber,
+    required String referralCode,
+  }) async {
+    final body = await _buildBody({
       'account': {
         'cellNumber': cellNumber.toEnglishDigit(),
-        'password': password,
+        'password': code.toEnglishDigit(),
+        'referralCode': referralCode.toEnglishDigit(),
       },
-      'token': '',
-      'version': await getVersion(),
     });
-    if (response?.statusCode == 200) {
-      showMessage(response?.data);
-      return LoginResponse.fromJson(response?.data);
-    }
-    return null;
-  }
-
-  Future<ColorResponse?> getColors() async {
-    final response =
-        await _makePostRequest(URLs.ColorsUrl, {'token': await _getToken()});
-    return response?.statusCode == 200
-        ? ColorResponse.fromJson(response?.data)
-        : null;
-  }
-
-  Future<DiscountResponse?> calculateDiscount(
-      String orderId, String discountCode) async {
-    final response = await _makePostRequest(URLs.CalculateDiscountAmountUrl, {
-      'discountCode': discountCode,
-      'orderId': orderId,
-      'token': await _getToken(),
-    });
-    return response?.statusCode == 200
-        ? DiscountResponse.fromJson(response?.data)
-        : null;
+    final response = await _post(URLs.ConfirmRegisterUrl, body);
+    return _parse(response, LoginResponse.fromJson);
   }
 
   Future<LoginResponse?> forgetPassword({required String cellNumber}) async {
-    return _makePostRequest(URLs.ResetPasswordUrl, {
+    final body = await _buildBody({
       'account': {'cellNumber': cellNumber.toEnglishDigit()},
-      'token': 'null',
-      'version': await getVersion(),
-    }).then((response) => response?.statusCode == 200
-        ? LoginResponse.fromJson(response?.data)
-        : null);
+    });
+    final response = await _post(URLs.ResetPasswordUrl, body);
+    return _parse(response, LoginResponse.fromJson);
+  }
+
+  Future<LoginResponse?> verifyResetPassword({
+    required String password,
+    required String cellNumber,
+  }) async {
+    final body = await _buildBody({
+      'account': {
+        'cellNumber': cellNumber.toEnglishDigit(),
+        'password': password.toEnglishDigit(),
+      },
+    });
+    final response = await _post(URLs.VerifyResetPasswordUrl, body);
+    return _parse(response, LoginResponse.fromJson);
+  }
+
+  Future<LoginResponse?> confirmNewPassword({
+    required String newPassword,
+    required String cellNumber,
+    required String code,
+  }) async {
+    final body = await _buildBody({
+      'cellNumber': cellNumber.toEnglishDigit(),
+      'verificationCode': code.toEnglishDigit(),
+      'newPassword': newPassword.toEnglishDigit(),
+    });
+    final response = await _post(URLs.ConfirmNewPasswordUrl, body);
+    return _parse(response, LoginResponse.fromJson);
+  }
+
+  Future<UserInfoResponse?> getUserInfo() async {
+    final response = await _post(URLs.GetUserInfoUrl, await _buildBody({}));
+    return _parse(response, UserInfoResponse.fromJson);
   }
 
   Future<BaseResponse?> updateUserInfo({
@@ -1128,6 +302,7 @@ class DioClient {
     required String lastName,
     required String cellNumber,
     required String nationalId,
+    required bool isReal,
     String? address,
     String? gender,
     String? orgNationalId,
@@ -1135,154 +310,407 @@ class DioClient {
     String? email,
     String? postalCode,
     String? geoNameId,
-    required bool isReal,
   }) async {
-    print(gender);
-    return _makePostRequest(URLs.UpdateUserInfoUrl, {
+    final body = await _buildBody({
       'account': {
         'name': name,
-        'geoNameId': geoNameId,
+        'lastName': lastName,
+        'cellNumber': cellNumber.toEnglishDigit(),
+        'nationalId': nationalId.toEnglishDigit(),
+        'isReal': isReal ? '1' : '0',
         'sex': gender,
         'email': email,
-        'cellNumber': cellNumber.toEnglishDigit(),
-        'lastName': lastName,
+        'geoNameId': geoNameId,
         'orgName': orgName,
         'orgNationalId': orgNationalId,
         'accountAddress': address?.toEnglishDigit(),
         'postalCode': postalCode?.toEnglishDigit(),
-        'isReal': isReal ? '1' : '0',
-        'nationalId': nationalId.toEnglishDigit(),
       },
-      'token': getShortToken(),
-      'version': await getVersion(),
-    }).then((response) => response?.statusCode == 200
-        ? BaseResponse.fromJson(response?.data)
-        : null);
-  }
-
-  Future<AboutUsModel?> getAboutUs() async {
-    final response = await _makePostRequest(URLs.GetAboutUsContentUrl, {
-      'token': getShortToken(),
-      'version': await getVersion(),
     });
-    return response?.statusCode == 200
-        ? AboutUsModel.fromJson(response?.data)
-        : null;
+    final response = await _post(URLs.UpdateUserInfoUrl, body);
+    return _parse(response, BaseResponse.fromJson);
   }
 
-  Future<TelephoneResponse?> getSupportTelephone() async {
-    final response = await _makePostRequest(URLs.GetSupportTelephoneUrl, {
-      'token': getShortToken(),
-      'version': await getVersion(),
-    });
-    return response?.statusCode == 200
-        ? TelephoneResponse.fromJson(response?.data)
-        : null;
+  Future<NotifCountResponse?> getNotifCount() async {
+    final response =
+        await _post(URLs.GetAppAccountNotifsCountUrl, await _buildBody({}));
+    return _parse(response, NotifCountResponse.fromJson);
   }
 
-  Future<UserInfoResponse?> getUserInfo() async {
-    final response = await _makePostRequest(URLs.GetUserInfoUrl, {
-      'token': getShortToken(),
-      'version': await getVersion(),
-    });
-    return response?.statusCode == 200
-        ? UserInfoResponse.fromJson(response?.data)
-        : null;
+  Future<NotifListResponse?> getNotifList() async {
+    final response = await _post(URLs.GetNotifsListUrl, await _buildBody({}));
+    return _parse(response, NotifListResponse.fromJson);
   }
 
-  Future<MyReservationsResponse?> getMyReservations({
-    required int pn,
-    required int pl,
-  }) async {
-    final response = await _makePostRequest(URLs.GetMyReservationsUrl, {
-      'token': getShortToken(),
-      'pl': pl.toString(),
-      'pn': pn.toString(),
-      'version': await getVersion(),
-    });
-    return response?.statusCode == 200
-        ? MyReservationsResponse.fromJson(response?.data)
-        : null;
+  Future<LoginResponse?> setSeenNotifs() async {
+    final response = await _post(URLs.SeenNotifsUrl, await _buildBody({}));
+    return _parse(response, LoginResponse.fromJson);
   }
 
-  Future<MyCarsResponse?> getMycars({
+  Future<MyCarsResponse?> getMyCars({
     String query = '',
     required int pn,
     required int pl,
   }) async {
-    final response = await _makePostRequest(URLs.GetMyCarsUrl, {
-      'token': getShortToken(),
+    final body = await _buildBody({
       'car': {'chassisNumber': query},
-      'pl': pl.toString(),
       'pn': pn.toString(),
-      'version': await getVersion(),
+      'pl': pl.toString(),
     });
-    return response?.statusCode == 200
-        ? MyCarsResponse.fromJson(response?.data)
-        : null;
+    final response = await _post(URLs.GetMyCarsUrl, body);
+    return _parse(response, MyCarsResponse.fromJson);
   }
 
-  Future<MyExpertOrdersResponse?> getMyExpertOrders({
-    required int pl,
-    required int pn,
+  Future<MySellCarsResponse?> getCars() async {
+    final body = await _buildBody({'pn': '1', 'pl': '100'});
+    final response = await _post(URLs.GetMyCarsUrl, body);
+    return _parse(response, MySellCarsResponse.fromJson);
+  }
+
+  Future<AddNewCarResponse?> addNewCar({
+    required String carTypeId,
+    required String chassisNumber,
+    required String colorId,
+    required String manufactureYearId,
+    required String trimColorId,
   }) async {
-    final response = await _makePostRequest(URLs.GetExpertOrderUrl, {
-      'token': getShortToken(),
-      'pl': pl.toString(),
-      'pn': pn.toString(),
-      'version': await getVersion(),
+    final body = await _buildBody({
+      'car': {
+        'id': '',
+        'carTypeId': carTypeId,
+        'chassisNumber': chassisNumber.toEnglishDigit(),
+        'colorId': colorId,
+        'trimColorId': trimColorId,
+        'manufactureYearId': manufactureYearId,
+      },
     });
-    return response?.statusCode == 200
-        ? MyExpertOrdersResponse.fromJson(response?.data)
-        : null;
+    final response = await _post(URLs.AddNewCardUrl, body);
+    return _parse(response, AddNewCarResponse.fromJson);
+  }
+
+  Future<AddNewCarResponse?> updateCar({
+    required String id,
+    required String carTypeId,
+    required String chassisNumber,
+    required String colorId,
+    required String manufactureYearId,
+    required String trimColorId,
+  }) async {
+    final body = await _buildBody({
+      'car': {
+        'id': id,
+        'carTypeId': carTypeId,
+        'chassisNumber': chassisNumber.toEnglishDigit(),
+        'colorId': colorId,
+        'trimColorId': trimColorId,
+        'manufactureYearId': manufactureYearId,
+      },
+    });
+    final response = await _post(URLs.UpdateCardUrl, body);
+    return _parse(response, AddNewCarResponse.fromJson);
+  }
+
+  Future<AddNewCarResponse?> deleteCar({required String id}) async {
+    final body = await _buildBody({
+      'car': {'id': id}
+    });
+    final response = await _post(URLs.DeleteCarUrl, body);
+    return _parse(response, AddNewCarResponse.fromJson);
+  }
+
+  Future<CarDetailResponse?> getCarDetail({required String id}) async {
+    final body = await _buildBody({'orderId': id});
+    final response = await _post(URLs.GetSalesOrderInfoUrl, body);
+    return _parse(response, CarDetailResponse.fromJson);
+  }
+
+  Future<CarInfoResponse?> getCarInfo({required String id}) async {
+    final body = await _buildBody({
+      'car': {'id': id}
+    });
+    final response = await _post(URLs.GetCarInfoUrl, body);
+    return _parse(response, CarInfoResponse.fromJson);
+  }
+
+  Future<bool> checkChassisNumber(String chassisNumber) async {
+    final body =
+        await _buildBody({'chassisNumber': chassisNumber.toEnglishDigit()});
+    final response = await _post(URLs.GetIsValidChassisNumberUrl, body);
+    return response?.statusCode == 200 && response?.data['message'] == 'OK';
+  }
+
+  Future<ChassiInquiryResponse?> getInquiryChassisNumber({
+    required String chassisNumber,
+  }) async {
+    final body =
+        await _buildBody({'chassisNumber': chassisNumber.toEnglishDigit()});
+    final response = await _post(URLs.GetInquiryChassisNumberUrl, body);
+    return _parse(response, ChassiInquiryResponse.fromJson);
+  }
+
+  Future<BaseResponse?> hasActiveOrderWithChassisNumber(String id) async {
+    final body = await _buildBody({
+      'car': {'id': id}
+    });
+    final response =
+        await _post(URLs.GetHasActiveOrderWithChassisNumberUrl, body);
+    return _parse(response, BaseResponse.fromJson);
+  }
+
+  Future<AllCarsJsonModel?> getAllCarsJson() async {
+    final response = await _post(URLs.AllCarsUrl, {'data-raw': '{}'});
+    return _parse(response, AllCarsJsonModel.fromJson);
+  }
+
+  Future<SigmaSalesOrderResponse?> getSalesOrdersWithFilter({
+    String? brandId,
+    String? carModelId,
+    String? carTypeId,
+    String? carTypeIds,
+    String? colorId,
+    String? cityId,
+    String? state,
+    String? cityIds,
+    String? fromAmount,
+    String? fromYear,
+    String? toAmount,
+    String? toYear,
+    String? trimColorId,
+    required int pn,
+    required int pl,
+  }) async {
+    final body = await _buildBody({
+      'brandIds': brandId ?? '',
+      'carModelId': carModelId ?? '',
+      'carModelIds': carModelId ?? '',
+      'carTypeIds': carTypeIds ?? '',
+      'colorId': colorId ?? '',
+      'cityId': cityId ?? '',
+      'cityIds': cityIds ?? '',
+      'carState': state ?? '',
+      'fromAmount': fromAmount,
+      'fromYear': fromYear,
+      'toAmount': toAmount,
+      'toYear': toYear,
+      'trimColorId': trimColorId,
+      'pn': pn.toString(),
+      'pl': pl.toString(),
+    });
+    final response = await _post(URLs.GetSalesOrdersWithFilterUrl, body);
+    return _parse(response, SigmaSalesOrderResponse.fromJson);
+  }
+
+  Future<SigmaSalesOrderResponse?> getAccountsSalesOrder({
+    required int pn,
+    required int pl,
+  }) async {
+    final body = await _buildBody({'pn': pn.toString(), 'pl': pl.toString()});
+    final response = await _post(URLs.GetAccountsSalesOrderUrl, body);
+    return _parse(response, SigmaSalesOrderResponse.fromJson);
+  }
+
+  Future<SigmaSalesOrderResponse?> getFavourites() async {
+    final response = await _post(URLs.FavouritesUrl, await _buildBody({}));
+    return _parse(response, SigmaSalesOrderResponse.fromJson);
+  }
+
+  Future<BaseResponse?> changeLike({required String id}) async {
+    final body = await _buildBody({
+      'salesOrder': {'id': id}
+    });
+    final response = await _post(URLs.ChangeLikeUrl, body);
+    return _parse(response, BaseResponse.fromJson);
+  }
+
+  Future<TrackingSalesOrderResponse?> trackSalesOrder(
+      {required String id}) async {
+    final body = await _buildBody({
+      'salesOrder': {'id': id}
+    });
+    final response = await _post(URLs.TrackingSalesOrderUrl, body);
+    return _parse(response, TrackingSalesOrderResponse.fromJson);
+  }
+
+  Future<InsertOrderResponse?> insertOrderData({
+    required String carId,
+    required String milageStatus,
+    required String mileage,
+    required String comment,
+    required String referredId,
+    required String amount,
+    required bool iwillTakeCar,
+    required String? referredName,
+    required String? referredLastName,
+    required String isSwap,
+    required String commentSwap,
+    required String? accountManagerId,
+    required String? referredNationalId,
+    required Map<String, dynamic> bodies,
+    required List<Map<String, dynamic>> documents,
+  }) async {
+    final body = await _buildBody({
+      'salesOrder': {
+        'carId': carId,
+        'comment': comment.toEnglishDigit(),
+        'declaredAmount': amount.toEnglishDigit(),
+        'mileage': mileage.toEnglishDigit(),
+        'mileageState': milageStatus,
+        'documents': documents,
+        'carSwap': isSwap,
+        'carSwapComment': commentSwap,
+        'accountManagerId': accountManagerId,
+        'referredId': referredId,
+        'referred': iwillTakeCar ? '0' : '1',
+        'referredName': referredName,
+        'referredLastName': referredLastName,
+        'referredNationalId': referredNationalId?.toEnglishDigit(),
+        'bodyDetails': bodies,
+      },
+    });
+    final response = await _post(URLs.InsertOrderUrl, body);
+    return _parse(response, InsertOrderResponse.fromJson);
+  }
+
+  Future<UpdateInsertOrderResponse?> insertPhotos({
+    required InsertImageBody body,
+  }) async {
+    final response = await _post(
+      '/salesorders/updateSalesOrderWithDocuments',
+      body.toJson(),
+    );
+    return _parse(response, UpdateInsertOrderResponse.fromJson);
   }
 
   Future<BaseResponse?> cancelOrder(
-      String id, String reasonId, String description) async {
-    final response = await _makePostRequest(URLs.CancelOrdersUrl, {
+    String id,
+    String reasonId,
+    String description,
+  ) async {
+    final body = await _buildBody({
       'orderId': id,
       'reasonId': reasonId,
       'description': description,
-      'token': getShortToken(),
-      'version': await getVersion(),
     });
-    return response?.statusCode == 200
-        ? BaseResponse.fromJson(response?.data)
-        : null;
+    final response = await _post(URLs.CancelOrdersUrl, body);
+    return _parse(response, BaseResponse.fromJson);
+  }
+
+  Future<CancelReasonResponse?> getCancelReasons() async {
+    final response = await _post(URLs.CancelReasonUrl, await _buildBody({}));
+    return _parse(response, CancelReasonResponse.fromJson);
+  }
+
+  Future<PublishedTransactionsResponse?> getPublishedTransactions({
+    required int pn,
+    required int pl,
+  }) async {
+    final body = await _buildBody({'pn': pn.toString(), 'pl': pl.toString()});
+    final response = await _post(URLs.PublishedTransactionsUrl, body);
+    return _parse(response, PublishedTransactionsResponse.fromJson);
+  }
+
+  Future<InsertPurchaseOrderResponse?> insertPurchaseOrder({
+    required String brandId,
+    required String budget,
+    required String carModelId,
+    required String carTypeId,
+    required String colorId,
+    required String cityId,
+    required String fromManufactureYear,
+    required String fromMileage,
+    required String toManufactureYear,
+    required String toMileage,
+    required String trimColorId,
+    required String similarItems,
+    required String isSwap,
+    required String wantsLoan,
+    required String commentSwap,
+  }) async {
+    final body = await _buildBody({
+      'purchaseOrder': {
+        'brandId': brandId,
+        'cityId': cityId,
+        'budget': budget.toEnglishDigit(),
+        'carModelId': carModelId,
+        'carTypeId': carTypeId,
+        'colorId': colorId,
+        'trimColorId': trimColorId,
+        'similarItems': similarItems,
+        'carSwap': isSwap,
+        'wantsLoan': wantsLoan,
+        'carSwapComment': commentSwap,
+        'fromManufactureYear': fromManufactureYear,
+        'toManufactureYear': toManufactureYear,
+        'fromMileage': fromMileage,
+        'toMileage': toMileage,
+      },
+    });
+    final response = await _post(URLs.InsertPurchaseOrderUrl, body);
+    return _parse(response, InsertPurchaseOrderResponse.fromJson);
   }
 
   Future<MyBuyOrdersResponse?> getMyPurchaseOrders({
-    required int pl,
     required int pn,
+    required int pl,
   }) async {
-    final response = await _makePostRequest(URLs.GetPurchaseOrderUrl, {
-      'token': getShortToken(),
-      'pl': pl.toString(),
-      'pn': pn.toString(),
-      'version': await getVersion(),
-    });
-    return response?.statusCode == 200
-        ? MyBuyOrdersResponse.fromJson(response?.data)
-        : null;
+    final body = await _buildBody({'pn': pn.toString(), 'pl': pl.toString()});
+    final response = await _post(URLs.GetPurchaseOrderUrl, body);
+    return _parse(response, MyBuyOrdersResponse.fromJson);
   }
 
-  Future<BaseResponse?> cancelShowRoom({required String id}) async {
-    final response = await _makePostRequest(URLs.CancelShowroomUrl, {
-      'reservation': {'id': id},
-      'token': getShortToken(),
-      'version': await getVersion(),
-    });
-    return response?.statusCode == 200
-        ? BaseResponse.fromJson(response?.data)
-        : null;
+  Future<MyExpertOrdersResponse?> getMyExpertOrders({
+    required int pn,
+    required int pl,
+  }) async {
+    final body = await _buildBody({'pn': pn.toString(), 'pl': pl.toString()});
+    final response = await _post(URLs.GetExpertOrderUrl, body);
+    return _parse(response, MyExpertOrdersResponse.fromJson);
   }
 
-  Future<OnlinePayResponse?> _handlePayment(
-      String url, Map<String, dynamic> baseFormData) async {
-    final response = await _makePostRequest(url, baseFormData);
-    return response?.statusCode == 200
-        ? OnlinePayResponse.fromJson(response?.data)
-        : null;
+  Future<GetExpertAmountResponse?> getExpertAmount(
+      {required String carId}) async {
+    final body = await _buildBody({
+      'salesOrder': {'carId': carId}
+    });
+    final response = await _post('/salesorders/getOrderAmount', body);
+    return _parse(response, GetExpertAmountResponse.fromJson);
+  }
+
+  Future<ExpertiseResponse?> showExpertSummary(String id) async {
+    final body = await _buildBody({
+      'salesOrder': {'id': id}
+    });
+    final response = await _post(URLs.GetExpertSummaryUrl, body);
+    return _parse(response, ExpertiseResponse.fromJson);
+  }
+
+  Future<PaymentsResponse?> getPayments() async {
+    final body = await _buildBody({'pn': '1', 'pl': '100'});
+    final response = await _post(URLs.GetMyPaymentssUrl, body);
+    return _parse(response, PaymentsResponse.fromJson);
+  }
+
+  Future<ConfirmPaymentResponse?> confirmPayment(
+      {required String orderId}) async {
+    final body = await _buildBody({
+      'orderId': orderId,
+      'discountCode': '',
+      'payType': 'CREDIT',
+    });
+    final response = await _post(URLs.ConfirmPaymentUrl, body);
+    return _parse(response, ConfirmPaymentResponse.fromJson);
+  }
+
+  Future<DiscountResponse?> calculateDiscount(
+    String orderId,
+    String discountCode,
+  ) async {
+    final body = await _buildBody({
+      'orderId': orderId,
+      'discountCode': discountCode,
+    });
+    final response = await _post(URLs.CalculateDiscountAmountUrl, body);
+    return _parse(response, DiscountResponse.fromJson);
   }
 
   Future<OnlinePayResponse?> payOnline({
@@ -1291,152 +719,188 @@ class DioClient {
     required String useCredit,
     required String payType,
   }) async {
-    String failureUrl, successUrl;
+    final String successUrl, failureUrl;
+
     if (UniversalPlatform.isAndroid) {
-      failureUrl = URLs.BankCallBackFailureUrl;
       successUrl = URLs.BankCallBackSuccessUrl;
+      failureUrl = URLs.BankCallBackFailureUrl;
     } else if (!kIsWeb) {
-      failureUrl = URLs.IosBankCallBackFailureUrl;
       successUrl = URLs.IosBankCallBackSuccessUrl;
+      failureUrl = URLs.IosBankCallBackFailureUrl;
     } else {
-      failureUrl = URLs.PWAError;
       successUrl = URLs.PWASuccess;
+      failureUrl = URLs.PWAError;
     }
 
-    return await _handlePayment(URLs.OnlinePaymentUrl, {
-      'discountCode': discountCode.toEnglishDigit(),
+    final body = await _buildBody({
       'orderId': orderId,
+      'discountCode': discountCode.toEnglishDigit(),
       'payType': payType,
       'useCredit': useCredit,
-      'callBackUrlFailure': failureUrl,
       'callBackUrlSuccess': successUrl,
-      'token': getShortToken(),
-      'version': await getVersion(),
+      'callBackUrlFailure': failureUrl,
     });
+    final response = await _post(URLs.OnlinePaymentUrl, body);
+    return _parse(response, OnlinePayResponse.fromJson);
   }
 
-  void showMessage(Map<String, dynamic> data) {
-    if (data!['status'] != 0) {
-      showToast(ToastState.ERROR, data['persianMessage']);
-      return;
-    }
+  Future<MyReservationsResponse?> getMyReservations({
+    required int pn,
+    required int pl,
+  }) async {
+    final body = await _buildBody({'pn': pn.toString(), 'pl': pl.toString()});
+    final response = await _post(URLs.GetMyReservationsUrl, body);
+    return _parse(response, MyReservationsResponse.fromJson);
   }
 
-  Future<MySellCarsResponse?> getCars() async {
-    final response = await _makePostRequest(URLs.GetMyCarsUrl, {
-      'pn': '1',
-      'pl': '100',
-      'token': getShortToken(),
-      'version': await getVersion(),
+  Future<GetAvailebleTimeResponse?> getAvailableTimesForShowRoom({
+    required String unitId,
+  }) async {
+    final body = await _buildBody({
+      'unit': {'id': unitId}
     });
-    return response?.statusCode == 200
-        ? MySellCarsResponse.fromJson(response?.data)
-        : null;
+    final response = await _post('${URLs.GetAvailebleTimeUrl}', body);
+    return _parse(response, GetAvailebleTimeResponse.fromJson);
   }
 
-  Future<AvailableAccountManagersResponse?> getAvailabeAccountManagers(
-      String id) async {
+  Future<ReserveShowRoomResponse?> reserveShowRoom({
+    required String salesOrderId,
+    required String timespanCapacityId,
+  }) async {
+    final body = await _buildBody({
+      'reservation': {
+        'salesOrderId': salesOrderId,
+        'timespanCapacityId': timespanCapacityId,
+      },
+    });
+    final response = await _post(URLs.ReservationForShowRoomUrl, body);
+    return _parse(response, ReserveShowRoomResponse.fromJson);
+  }
+
+  Future<BaseResponse?> cancelShowRoom({required String id}) async {
+    final body = await _buildBody({
+      'reservation': {'id': id}
+    });
+    final response = await _post(URLs.CancelShowroomUrl, body);
+    return _parse(response, BaseResponse.fromJson);
+  }
+
+  Future<ShowroomsUniteResponse?> getShowRoomUnites(String geoNameId) async {
+    final body = await _buildBody({
+      'unit': {'geoNameId': geoNameId}
+    });
+    final response = await _post(URLs.GetShowRoomsUnitesUrl, body);
+    return _parse(response, ShowroomsUniteResponse.fromJson);
+  }
+
+  Future<ShowroomsCitiesResponse?> getShowroomCities() async {
     final response =
-        await _makePostRequest(URLs.GetAvailableAccountManagersUrl, {
-      'unit': {'id': id},
+        await _post(URLs.GetAvailableCitiesUrl, await _buildBody({}));
+    return _parse(response, ShowroomsCitiesResponse.fromJson);
+  }
+
+  Future<AvailableAccountManagersResponse?> getAvailableAccountManagers(
+      String unitId) async {
+    final body = await _buildBody({
+      'unit': {'id': unitId},
       'pn': '1',
       'pl': '1000',
-      'token': getShortToken(),
-      'version': await getVersion(),
     });
+    final response = await _post(URLs.GetAvailableAccountManagersUrl, body);
+    return _parse(response, AvailableAccountManagersResponse.fromJson);
+  }
 
-    if (response?.statusCode == 200) {
-      showMessage(response!.data);
-      return AvailableAccountManagersResponse.fromJson(response.data);
+  Future<String?> getExpertReport(String id) => _downloadBytesReport(
+      URLs.GetExpertReportUrl,
+      {
+        'salesOrder': {'id': id}
+      },
+      fileName: 'expert_report_$id');
+
+  Future<String?> getExpertReportInCarDetail(String id) => _downloadBytesReport(
+      URLs.GetExpertDownloadUrl,
+      {
+        'salesOrder': {'id': id}
+      },
+      fileName: 'expert_report_$id');
+
+  Future<String?> getExpertReportInTracking(String id) => _downloadBytesReport(
+      URLs.ExpertOrderPrintUrl,
+      {
+        'expertOrder': {'id': id}
+      },
+      fileName: id);
+
+  Future<String?> getContractReportInTracking(String orderNumber) =>
+      _downloadBytesReport(
+          URLs.ContractPrintUrl,
+          {
+            'salesOrder': {'orderNumber': orderNumber}
+          },
+          fileName: orderNumber);
+
+  Future<String?> _downloadBytesReport(
+    String url,
+    Map<String, dynamic> extra, {
+    required String fileName,
+  }) async {
+    final body = await _buildBody(extra);
+    final response = await _post(url, body, asBytes: true);
+    if (response?.statusCode != 200 || response?.data == null) return null;
+
+    // if (kIsWeb) {
+    //   return FileSaver.instance.saveFile(
+    //     name: fileName,
+    //     bytes: response!.data!! as List<int>,
+    //     ext: 'pdf',
+    //     mimeType: MimeType.pdf,
+    //   );
+    // }
+    final uniqueName = '$fileName${Random.secure().nextInt(10000)}';
+    return saveFileToDownloads(uniqueName, response!.data);
+  }
+
+  Future<String?> downloadFileFromUrl(String url, String fileName) async {
+    try {
+      final response = await Dio().get<List<int>>(
+        url,
+        options: Options(responseType: ResponseType.bytes),
+      );
+      if (response.statusCode == 200 && response.data != null) {
+        return saveFileToDownloads(
+          '${fileName}_${DateTime.now().millisecondsSinceEpoch}',
+          response.data ?? [],
+        );
+      }
+    } catch (e) {
+      debugPrint('Error downloading file: $e');
     }
     return null;
   }
 
-  Future<bool?> checkChassiNumber(String chassisNumber) async {
-    final response = await _makePostRequest(URLs.GetIsValidChassisNumberUrl, {
-      'chassisNumber': chassisNumber.toEnglishDigit(),
-      'token': getShortToken(),
-      'version': await getVersion(),
-    });
-
-    if (response?.statusCode == 200 && response!.data['message'] == 'OK') {
-      return true;
-    }
-    return false;
+  Future<GetLoanDurationResponse?> getLoanDuration() async {
+    final response =
+        await _post(URLs.GetLoanDurationsUrl, await _buildBody({}));
+    return _parse(response, GetLoanDurationResponse.fromJson);
   }
 
-  Future<AllProvincesResponse?> getProvinces() async {
-    final response = await _makePostRequest(URLs.GetAllProvincesUrl, {
-      'pl': '10000',
-      'pn': '1',
-      'token': null,
-      'version': await getVersion(),
+  Future<GetLoanPaymentResponse?> calculateLoanPayment(
+    String amount,
+    String loanDurationId,
+  ) async {
+    final body = await _buildBody({
+      'amount': amount,
+      'loanDurationId': loanDurationId,
     });
-
-    return response?.statusCode == 200
-        ? AllProvincesResponse.fromJson(response?.data)
-        : null;
+    final response = await _post(URLs.GetCalculateLoanPaymentsUrl, body);
+    return _parse(response, GetLoanPaymentResponse.fromJson);
   }
 
-  Future<ContactUsResponse?> getContactUs() async {
-    final response = await _makePostRequest(URLs.GetContactUsContentUrl, {
-      'token': null,
-      'version': await getVersion(),
-    });
-
-    return response?.statusCode == 200
-        ? ContactUsResponse.fromJson(response?.data)
-        : null;
-  }
-
-  Future<StocksResponse?> getStocks(String total,
-      {String? brandId,
-      String? carModelId,
-      String? carTypeId,
-      //String? colorId,
-      String? manufactureYearId,
-      String? mileageState}) async {
-    final response = await _makePostRequest(URLs.GetStockUrl, {
-      'pl': '10000',
-      'pn': '1',
-      'brandId': brandId,
-      'carModelId': carModelId,
-      'carTypeId': carTypeId,
-      //'colorId': colorId,
-      'manufactureYearId': manufactureYearId,
-      'mileageState': mileageState,
-      'total': total,
-      'token': null,
-      'version': await getVersion(),
-    });
-
-    return response?.statusCode == 200
-        ? StocksResponse.fromJson(response?.data)
-        : null;
-  }
-
-  Future<ManaPricesResponse?> getManaPrices() async {
-    final response = await _makePostRequest(URLs.ManaPricesUrl, {
-      'pl': '50',
-      'token': getShortToken(),
-      'version': await getVersion(),
-    });
-
-    return response?.statusCode == 200
-        ? ManaPricesResponse.fromJson(response?.data)
-        : null;
-  }
-
-  Future<ManaPricesResponse?> getManaTechnicalPrices() async {
-    final response = await _makePostRequest(URLs.AllManaPricesUrl, {
-      'pl': '50',
-      'token': getShortToken(),
-      'version': await getVersion(),
-    });
-
-    return response?.statusCode == 200
-        ? ManaPricesResponse.fromJson(response?.data)
-        : null;
+  Future<ChangePriceResponse?> getPriceChange(
+      String carTypeId, String year) async {
+    final body = await _buildBody({'carTypeId': carTypeId, 'year': year});
+    final response = await _post(URLs.GetChangePriceReportUrl, body);
+    return _parse(response, ChangePriceResponse.fromJson);
   }
 
   Future<EstimateResponse?> estimatePrice({
@@ -1446,186 +910,226 @@ class DioClient {
     required String mileage,
     required List<String> itemValueIds,
   }) async {
-    final response = await _makePostRequest(URLs.EstimateUrl, {
+    final body = await _buildBody({
       'carTypeId': carTypeId,
       'colorId': colorId,
       'yearId': yearId,
       'mileage': mileage.toEnglishDigit(),
       'itemValueIds': itemValueIds,
-      'token': getShortToken(),
-      'version': await getVersion(),
     });
-
-    return response?.statusCode == 200
-        ? EstimateResponse.fromJson(response?.data)
-        : null;
+    final response = await _post(URLs.EstimateUrl, body);
+    return _parse(response, EstimateResponse.fromJson);
   }
 
   Future<PriceItemsResponse?> getPriceItems() async {
-    final response = await _makePostRequest(URLs.EstimatePriceItemsUrl, {
-      'token': getShortToken(),
-      'version': await getVersion(),
-    });
-
-    return response?.statusCode == 200
-        ? PriceItemsResponse.fromJson(response?.data)
-        : null;
+    final response =
+        await _post(URLs.EstimatePriceItemsUrl, await _buildBody({}));
+    return _parse(response, PriceItemsResponse.fromJson);
   }
 
-  Future<AllCitiesResponse?> getCities(String id) async {
-    final response = await _makePostRequest(URLs.GetProvinceCitiesUrl, {
-      'parentId': id,
-      'pl': '10000',
+  Future<ManaPricesResponse?> getManaPrices() async {
+    final body = await _buildBody({'pl': '50'});
+    final response = await _post(URLs.ManaPricesUrl, body);
+    return _parse(response, ManaPricesResponse.fromJson);
+  }
+
+  Future<ManaPricesResponse?> getManaTechnicalPrices() async {
+    final body = await _buildBody({'pl': '50'});
+    final response = await _post(URLs.AllManaPricesUrl, body);
+    return _parse(response, ManaPricesResponse.fromJson);
+  }
+
+  Future<BannersResponse?> getBanners() async {
+    final response =
+        await _post(URLs.GetApplicationBannersUrl, await _buildBody({}));
+    return _parse(response, BannersResponse.fromJson);
+  }
+
+  Future<BlogResponse?> getBlogs({required int pn, required int pl}) async {
+    final body = await _buildBody({'pn': pn.toString(), 'pl': pl.toString()});
+    final response = await _post(URLs.BlogsUrl, body);
+    return _parse(response, BlogResponse.fromJson);
+  }
+
+  Future<QuestionsResponse?> getAllQuestions() async {
+    final response =
+        await _post(URLs.GetAllFaqContentsUrl, await _buildBody({}));
+    return _parse(response, QuestionsResponse.fromJson);
+  }
+
+  Future<AboutUsModel?> getAboutUs() async {
+    final response =
+        await _post(URLs.GetAboutUsContentUrl, await _buildBody({}));
+    return _parse(response, AboutUsModel.fromJson);
+  }
+
+  Future<ContactUsResponse?> getContactUs() async {
+    final response =
+        await _post(URLs.GetContactUsContentUrl, await _buildBody({}));
+    return _parse(response, ContactUsResponse.fromJson);
+  }
+
+  Future<TelephoneResponse?> getSupportTelephone() async {
+    final response =
+        await _post(URLs.GetSupportTelephoneUrl, await _buildBody({}));
+    return _parse(response, TelephoneResponse.fromJson);
+  }
+
+  Future<RulesResponse?> getRules() async {
+    final response =
+        await _post(URLs.GetRegistrationRulesUrl, await _buildBody({}));
+    return _parse(response, RulesResponse.fromJson);
+  }
+
+  Future<RulesResponse?> getPrivacyRules() async {
+    final response = await _post(URLs.GetPrivacyRulesUrl, await _buildBody({}));
+    return _parse(response, RulesResponse.fromJson);
+  }
+
+  Future<SuggestionTypesResponse?> getSuggestionTypes() async {
+    final body = await _buildBody({'pn': '1', 'pl': '1000'});
+    final response = await _post(URLs.GetSuggestionTypesUrl, body);
+    return _parse(response, SuggestionTypesResponse.fromJson);
+  }
+
+  Future<BaseResponse?> insertSuggestion({
+    required String id,
+    required String comment,
+  }) async {
+    final body = await _buildBody({
+      'suggestion': {'typeId': id, 'comment': comment},
+    });
+    final response = await _post(URLs.GetInsertSuggestionUrl, body);
+    return _parse(response, BaseResponse.fromJson);
+  }
+
+  Future<ColorResponse?> getColors() async {
+    final response = await _post(URLs.ColorsUrl, await _buildBody({}));
+    return _parse(response, ColorResponse.fromJson);
+  }
+
+  Future<AllProvincesResponse?> getProvinces() async {
+    final body = await _buildBody({'pn': '1', 'pl': '10000'});
+    final response = await _post(URLs.GetAllProvincesUrl, body);
+    return _parse(response, AllProvincesResponse.fromJson);
+  }
+
+  Future<AllCitiesResponse?> getCities(String provinceId) async {
+    final body = await _buildBody({
+      'parentId': provinceId,
       'pn': '1',
-      'token': null,
-      'version': await getVersion(),
-    });
-
-    return response?.statusCode == 200
-        ? AllCitiesResponse.fromJson(response?.data)
-        : null;
-  }
-
-  Future<CarTypeEquipmentInfoResponse?> getCarEquipments(String id) async {
-    final response = await _makePostRequest(URLs.GetCarTypeEquipmentInfoUrl, {
-      'carTypeId': id,
       'pl': '10000',
-      'pn': '1',
-      'token': getShortToken(),
-      'version': await getVersion(),
     });
-
-    return response?.statusCode == 200
-        ? CarTypeEquipmentInfoResponse.fromJson(response?.data)
-        : null;
+    final response = await _post(URLs.GetProvinceCitiesUrl, body);
+    return _parse(response, AllCitiesResponse.fromJson);
   }
 
-  Future<CarTypeSpecTypeResponse?> getCarSpecTypes(String id) async {
-    final response = await _makePostRequest(URLs.GetCarTypeSpecTypesUrl, {
-      'carType': {'id': id},
+  Future<StocksResponse?> getStocks(
+    String total, {
+    String? brandId,
+    String? carModelId,
+    String? carTypeId,
+    String? manufactureYearId,
+    String? mileageState,
+  }) async {
+    final body = await _buildBody({
+      'pn': '1',
       'pl': '10000',
+      'total': total,
+      'brandId': brandId,
+      'carModelId': carModelId,
+      'carTypeId': carTypeId,
+      'manufactureYearId': manufactureYearId,
+      'mileageState': mileageState,
+    });
+    final response = await _post(URLs.GetStockUrl, body);
+    return _parse(response, StocksResponse.fromJson);
+  }
+
+  Future<CarTypeEquipmentInfoResponse?> getCarEquipments(
+      String carTypeId) async {
+    final body = await _buildBody({
+      'carTypeId': carTypeId,
       'pn': '1',
-      'token': getShortToken(),
-      'version': await getVersion(),
+      'pl': '10000',
     });
-
-    return response?.statusCode == 200
-        ? CarTypeSpecTypeResponse.fromJson(response?.data)
-        : null;
+    final response = await _post(URLs.GetCarTypeEquipmentInfoUrl, body);
+    return _parse(response, CarTypeEquipmentInfoResponse.fromJson);
   }
 
-  Future<ShowroomsUniteResponse?> getShowRoomUnites(String id) async {
-    final response = await _makePostRequest(URLs.GetShowRoomsUnitesUrl, {
-      'unit': {'geoNameId': id},
-      'token': null,
-      'version': await getVersion(),
+  Future<CarTypeSpecTypeResponse?> getCarSpecTypes(String carTypeId) async {
+    final body = await _buildBody({
+      'carType': {'id': carTypeId},
+      'pn': '1',
+      'pl': '10000',
     });
-
-    return response?.statusCode == 200
-        ? ShowroomsUniteResponse.fromJson(response?.data)
-        : null;
-  }
-
-  Future<ShowroomsCitiesResponse?> getShowroomCities() async {
-    final response = await _makePostRequest(URLs.GetAvailableCitiesUrl, {
-      'token': getShortToken(),
-      'version': await getVersion(),
-    });
-
-    return response?.statusCode == 200
-        ? ShowroomsCitiesResponse.fromJson(response?.data)
-        : null;
+    final response = await _post(URLs.GetCarTypeSpecTypesUrl, body);
+    return _parse(response, CarTypeSpecTypeResponse.fromJson);
   }
 
   Future<ApplicationsInfoResponse?> getInfo() async {
-    final response = await _makePostRequest(URLs.GetApplicationsInfoUrl, {
-      'pl': '10000',
-      'pn': '1',
-      'token': null,
-      'version': await getVersion(),
-    });
-
-    return response?.statusCode == 200
-        ? ApplicationsInfoResponse.fromJson(response?.data)
-        : null;
+    final body = await _buildBody({'pn': '1', 'pl': '10000'});
+    final response = await _post(URLs.GetApplicationsInfoUrl, body);
+    return _parse(response, ApplicationsInfoResponse.fromJson);
   }
 
-  String getShortToken() {
-    var token = StorageHelper().getShortToken() ?? '';
-    return token;
-  }
-
-  Future<BaseResponse?> updateAnnouncments(
-      String all, String carModelIds) async {
-    final response = await _makePostRequest(URLs.UpdateAccountAnnouncementUrl, {
-      'all': all,
-      'carModelIds': carModelIds,
-      'token': getShortToken(),
-      'version': await getVersion(),
-    });
-
-    return response?.statusCode == 200
-        ? BaseResponse.fromJson(response?.data)
-        : null;
+  Future<UpdateResponse?> checkVersion() async {
+    final response = await _post(URLs.GetVersionUrl, await _buildBody({}));
+    return _parse(response, UpdateResponse.fromJson);
   }
 
   Future<AccountAnnouncmentModel?> getAccountAnnouncementStatus() async {
     final response =
-        await _makePostRequest(URLs.GetAccountAnnouncementInfoUrl, {
-      'token': getShortToken(),
-      'version': await getVersion(),
-    });
+        await _post(URLs.GetAccountAnnouncementInfoUrl, await _buildBody({}));
+    return _parse(response, AccountAnnouncmentModel.fromJson);
+  }
 
-    return response?.statusCode == 200
-        ? AccountAnnouncmentModel.fromJson(response?.data)
-        : null;
+  Future<BaseResponse?> updateAnnouncements(
+      String all, String carModelIds) async {
+    final body = await _buildBody({'all': all, 'carModelIds': carModelIds});
+    final response = await _post(URLs.UpdateAccountAnnouncementUrl, body);
+    return _parse(response, BaseResponse.fromJson);
   }
 }
 
 class InsertImageBody {
-  List<Documents>? documents;
+  final List<DocumentItem> documents;
 
-  InsertImageBody({this.documents});
+  const InsertImageBody({this.documents = const []});
 
-  InsertImageBody.fromJson(Map<String, dynamic> json) {
-    if (json['documents'] != null) {
-      documents = <Documents>[];
-      json['documents'].forEach((v) {
-        documents!.add(new Documents.fromJson(v));
-      });
-    }
+  factory InsertImageBody.fromJson(Map<String, dynamic> json) {
+    final list = json['documents'] as List<dynamic>? ?? [];
+    return InsertImageBody(
+      documents: list
+          .map((e) => DocumentItem.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.documents != null) {
-      data['documents'] = this.documents!.map((v) => v.toJson()).toList();
-    }
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+        'documents': documents.map((d) => d.toJson()).toList(),
+      };
 }
 
-class Documents {
-  int? index;
-  String? content;
-  String? fileName;
-  String? fileType;
+class DocumentItem {
+  final int? index;
+  final String? content;
+  final String? fileName;
+  final String? fileType;
 
-  Documents({this.index, this.content, this.fileName, this.fileType});
+  const DocumentItem({this.index, this.content, this.fileName, this.fileType});
 
-  Documents.fromJson(Map<String, dynamic> json) {
-    index = json['index'];
-    content = json['content'];
-    fileName = json['fileName'];
-    fileType = json['fileType'];
-  }
+  factory DocumentItem.fromJson(Map<String, dynamic> json) => DocumentItem(
+        index: json['index'] as int?,
+        content: json['content'] as String?,
+        fileName: json['fileName'] as String?,
+        fileType: json['fileType'] as String?,
+      );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['index'] = this.index;
-    data['content'] = this.content;
-    data['fileName'] = this.fileName;
-    data['fileType'] = this.fileType;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+        'index': index,
+        'content': content,
+        'fileName': fileName,
+        'fileType': fileType,
+      };
 }

@@ -174,7 +174,7 @@ class SellPageController extends GetxController {
     isLoading.value = true;
     cars.clear();
     myCarsResponse = await DioClient.instance
-        .getMycars(query: searchController.text, pn: 1, pl: 100);
+        .getMyCars(query: searchController.text, pn: 1, pl: 100);
     isLoading.value = false;
 
     if (myCarsResponse?.cars != null && myCarsResponse!.cars!.isNotEmpty) {
@@ -263,7 +263,7 @@ class SellPageController extends GetxController {
 
     isLoading.value = true;
     karshenasResponse = await DioClient.instance
-        .getAvailabeAccountManagers(selectedAddress.value ?? '');
+        .getAvailableAccountManagers(selectedAddress.value ?? '');
     isLoading.value = false;
 
     if (karshenasResponse?.users != null) {
@@ -309,7 +309,7 @@ class SellPageController extends GetxController {
 
     print(carId.value); // Assuming carId is being used instead of _carId
     final response = await DioClient.instance
-        .getExpertAmountResponse(id: carId.value.toString());
+        .getExpertAmount(carId: carId.value.toString());
 
     isLoading.value = false;
     update();
@@ -410,7 +410,7 @@ class SellPageController extends GetxController {
       comment: commentController.text,
       carId: carId.value.toString(),
       milageStatus: milageStatus.value == 0 ? 'NEW' : 'USED',
-      IwillTakeCar: otherWillTakeCar.value,
+      iwillTakeCar: otherWillTakeCar.value,
       referredLastName: !otherWillTakeCar.value
           ? account?.lastName ?? ''
           : lastNameController.text,

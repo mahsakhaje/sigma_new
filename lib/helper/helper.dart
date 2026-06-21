@@ -638,3 +638,79 @@ class NetworkChecker {
     return false;
   }
 }
+
+String? validatePassword(String? value) {
+  print('here3');
+  print(value);
+
+  if (value == null || value.isEmpty) {
+    return 'پسورد نمی‌تواند خالی باشد';
+  }
+  if (value.length<8) {
+    print('here4');
+
+    return 'پسورد نمی‌تواند کمتر از 8 رقم باشد.'.usePersianNumbers();
+  }
+
+  // ۱. رمزهای ساده شناخته‌شده (blacklist)
+  const List<String> blacklist = [
+    'qwertyuiop', 'asdfghjkl', '12345678',
+    '123456789', '1234567890', 'password',
+  ];
+  if (blacklist.contains(value.toLowerCase())) {
+    return 'این پسورد بسیار ساده است';
+  }
+
+  // ۲. اعداد پشت‌سر‌هم صعودی یا نزولی (مثلاً 12345 یا 98765)
+  if (_hasConsecutiveSequence(value)) {
+    return 'پسورد نباید شامل اعداد پشت‌سر‌هم باشد';
+  }
+
+  // ۳. کاراکتر تکراری متوالی (مثلاً 0000000000 یا aaaaaaaaaa)
+  if (_hasRepeatedChars(value)) {
+    return 'پسورد نباید شامل کاراکترهای تکراری باشد';
+  }
+
+  return null; // معتبر است
+}
+
+/// بررسی دنباله عددی پشت‌سر‌هم (حداقل ۵ رقم)
+bool _hasConsecutiveSequence(String value) {
+  const int minLen = 5;
+  int upCount = 1, downCount = 1;
+
+  for (int i = 1; i < value.length; i++) {
+    final int curr = value.codeUnitAt(i);
+    final int prev = value.codeUnitAt(i - 1);
+
+    if (curr == prev + 1) {
+      upCount++;
+      downCount = 1;
+    } else if (curr == prev - 1) {
+      downCount++;
+      upCount = 1;
+    } else {
+      upCount = 1;
+      downCount = 1;
+    }
+
+    if (upCount >= minLen || downCount >= minLen) return true;
+  }
+  return false;
+}
+
+/// بررسی کاراکتر تکراری متوالی (حداقل ۵ کاراکتر یکسان)
+bool _hasRepeatedChars(String value) {
+  const int minLen = 5;
+  int count = 1;
+
+  for (int i = 1; i < value.length; i++) {
+    if (value[i] == value[i - 1]) {
+      count++;
+      if (count >= minLen) return true;
+    } else {
+      count = 1;
+    }
+  }
+  return false;
+}
