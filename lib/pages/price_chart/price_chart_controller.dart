@@ -9,11 +9,12 @@ class PriceChartController extends GetxController {
   final RxBool isLoading = true.obs;
   final String id;
   final RxString error = ''.obs;
-  final List<int> years = [1402, 1403, 1404];
+  final List<int> years = [1402, 1403, 1404,1405];
   final List<Color> yearColors = [
     AppColors.blue,
     AppColors.orange,
     AppColors.greenChart,
+    AppColors.pinkchart,
   ];
 
   PriceChartController({required this.id});
@@ -58,6 +59,12 @@ class PriceChartController extends GetxController {
             year: 1404,
             data: response?.prices1404?.toChartDataList() ?? [],
             color: yearColors[2],
+          ));
+        }if (response?.prices1405 != null) {
+          tempYearDataList.add(YearData(
+            year: 1405,
+            data: response?.prices1405?.toChartDataList() ?? [],
+            color: yearColors[3],
           ));
         }
 

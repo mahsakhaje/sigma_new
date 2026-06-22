@@ -18,6 +18,7 @@ class AppColors {
   static const Color darkBlue = Color(0xFF0D47A1);
 
   static const Color greenChart = Color(0xFF24B8A6);
+  static const Color pinkchart = Color(0xFFF59794);
 
 
 }

@@ -27,29 +27,35 @@ class ReserveShowRoom extends StatelessWidget {
                 ? Center(child: loading())
                 : Padding(
                   padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    children: [
-                      ListView(
-                        shrinkWrap: true,
-                        children: [
-
-
-
-                          SizedBox(height: 32),
-                          _buildTimeSelectionSection(controller),
-                          SizedBox(height: 22),
-                          _buildHourSelectionSection(controller),
-                          SizedBox(height: 12),
-                          _buildKarshenasSelectionSection(controller),
-                          SizedBox(height: 10),
-                          _buildMapSection(),  SizedBox(height: 4),
-                          _buildAddressContainer(controller),
-                        ],
-                      ),
-                      _buildNavigationButton(controller),
-                      _buildConfirmButton(controller),
-                      SizedBox(height: 10),
-                    ],
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        SizedBox(height: 12),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: _buildTimeSelectionSection(controller),
+                        ),
+                        SizedBox(height: 12),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: _buildHourSelectionSection(controller),
+                        ),
+                        SizedBox(height: 12),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: _buildKarshenasSelectionSection(controller),
+                        ),
+                        SizedBox(height: 10),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: _buildMapSection(),
+                        ),  SizedBox(height: 4),
+                        _buildAddressContainer(controller),
+                        _buildNavigationButton(controller),
+                        _buildConfirmButton(controller),
+                        SizedBox(height: 10),
+                      ],
+                    ),
                   ),
                 )),
 
@@ -60,7 +66,7 @@ class ReserveShowRoom extends StatelessWidget {
 
   Widget _buildAddressContainer(ReserveShowRoomController controller) {
     return Container(
-      margin: EdgeInsets.all(15),
+      margin: EdgeInsets.all(12),
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
           color: AppColors.lightGrey,

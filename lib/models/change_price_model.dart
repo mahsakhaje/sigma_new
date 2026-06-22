@@ -7,6 +7,7 @@ class ChangePriceResponse {
   final MonthlyPrices? prices1402;
   final MonthlyPrices? prices1403;
   final MonthlyPrices? prices1404;
+  final MonthlyPrices? prices1405;
 
   ChangePriceResponse({
     this.status,
@@ -15,6 +16,7 @@ class ChangePriceResponse {
     this.prices1402,
     this.prices1403,
     this.prices1404,
+    this.prices1405,
   });
 
   factory ChangePriceResponse.fromJson(Map<String, dynamic> json) {
@@ -30,6 +32,9 @@ class ChangePriceResponse {
           : null,
       prices1404: json['prices1404'] != null
           ? MonthlyPrices.fromJson(json['prices1404'])
+          : null,
+      prices1405: json['prices1405'] != null
+          ? MonthlyPrices.fromJson(json['prices1405'])
           : null,
     );
   }

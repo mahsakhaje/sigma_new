@@ -133,7 +133,7 @@ class PricePage extends StatelessWidget {
 
   Widget _buildPriceItem(ManaPrices price) {
     return Container(
-      height: 200,
+      height: 220,
       width: Get.width,
       child: Card(
         color: Colors.white,
@@ -141,6 +141,7 @@ class PricePage extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             price.imagePath == null
                 ? ClipRRect(
@@ -164,10 +165,10 @@ class PricePage extends StatelessWidget {
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(
-                              left: 56.0, right: 56, top: 42),
+                              left: 56.0, right: 56, top: 38),
                           child: Image.network(
                             price.imagePath ?? "",
-                            fit: BoxFit.contain,
+                            fit: BoxFit.cover,
                             width: Get.width,
                           ),
                         ),

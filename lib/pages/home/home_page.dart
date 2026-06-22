@@ -205,55 +205,57 @@ class _HomePgeState extends State<HomePge> {
               width: 120,
               child: Material(
                 color: AppColors.grey,
-                child: Column(
-                  children: [
-                    const SizedBox(height: 8),
-                    drawerIcon(
-                        path: 'assets/advretise.svg',
-                        route: RouteName.advertiseMenu),
-                    drawerIcon(
-                        path: 'assets/buy_car.svg', route: RouteName.buy_menue),
-                    drawerIcon(
-                        path: 'assets/sell_car.svg', route: RouteName.sell),
-                    drawerIcon(
-                        path: 'assets/price_car.svg', route: RouteName.prices),
-                    drawerIcon(
-                        path: 'assets/car_info.svg',
-                        route: RouteName.technicalMenu),
-
-                    Obx(() => Stack(children: [
-                          drawerIcon(
-                              path: 'assets/etelaie.svg',
-                              route: RouteName.info,
-                              isItsSize: false),
-                          if (controller.hasNewNotidf.value)
-                            Positioned(
-                              child: SvgPicture.asset(
-                                'assets/info.svg',
-                                color: AppColors.orange,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 8),
+                      drawerIcon(
+                          path: 'assets/advretise.svg',
+                          route: RouteName.advertiseMenu),
+                      drawerIcon(
+                          path: 'assets/buy_car.svg', route: RouteName.buy_menue),
+                      drawerIcon(
+                          path: 'assets/sell_car.svg', route: RouteName.sell),
+                      drawerIcon(
+                          path: 'assets/price_car.svg', route: RouteName.prices),
+                      drawerIcon(
+                          path: 'assets/car_info.svg',
+                          route: RouteName.technicalMenu),
+                  
+                      Obx(() => Stack(children: [
+                            drawerIcon(
+                                path: 'assets/etelaie.svg',
+                                route: RouteName.info,
+                                isItsSize: false),
+                            if (controller.hasNewNotidf.value)
+                              Positioned(
+                                child: SvgPicture.asset(
+                                  'assets/info.svg',
+                                  color: AppColors.orange,
+                                ),
+                                // child: Container(
+                                //   padding: EdgeInsets.all(7),
+                                //   decoration: BoxDecoration(
+                                //       color: AppColors.orange,
+                                //       shape: BoxShape.circle),
+                                //   child: CustomText(
+                                //       controller.unreadCount
+                                //           .toString()
+                                //           .usePersianNumbers(),
+                                //       size: 15),
+                                // )
                               ),
-                              // child: Container(
-                              //   padding: EdgeInsets.all(7),
-                              //   decoration: BoxDecoration(
-                              //       color: AppColors.orange,
-                              //       shape: BoxShape.circle),
-                              //   child: CustomText(
-                              //       controller.unreadCount
-                              //           .toString()
-                              //           .usePersianNumbers(),
-                              //       size: 15),
-                              // )
-                            ),
-                        ])),
-
-                    drawerIcon(
-                        path: 'assets/branches.svg',
-                        route: RouteName.showroomsAddress),
-                    drawerIcon(
-                        path: 'assets/sigma_transactions.svg',
-                        route: RouteName.allTransactionsSales),
-                    // drawerIcon(path: 'assets/news_car.svg', route: RouteName.allBlogs),
-                  ],
+                          ])),
+                  
+                      drawerIcon(
+                          path: 'assets/branches.svg',
+                          route: RouteName.showroomsAddress),
+                      drawerIcon(
+                          path: 'assets/sigma_transactions.svg',
+                          route: RouteName.allTransactionsSales),
+                      // drawerIcon(path: 'assets/news_car.svg', route: RouteName.allBlogs),
+                    ],
+                  ),
                 ),
               ),
             ),

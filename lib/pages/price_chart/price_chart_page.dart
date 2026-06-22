@@ -42,15 +42,14 @@ class PriceChartPage extends StatelessWidget {
          padding: const EdgeInsets.all(12.0),
          child: Image.network(
             imagePath ?? "",
-            fit: BoxFit.contain,
-            width: Get.width,
+           height: 90,
           ),
        ),
-        SizedBox(height: 16,),
+        SizedBox(height: 10,),
         CustomText(carModel,size: 16,fontWeight: FontWeight.bold),
         // Chart
         SizedBox(
-          height: 450,
+          height: 380,
           child: SfCartesianChart(
 
             legend: Legend(isVisible: false),
