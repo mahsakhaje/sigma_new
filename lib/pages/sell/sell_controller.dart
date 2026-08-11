@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart' show ImagePicker, XFile;
+import 'package:sigma/helper/analytics_helper.dart';
 import 'package:sigma/helper/dio_repository.dart';
 import 'package:sigma/helper/helper.dart';
 import 'package:sigma/models/available_account_manager.dart';
@@ -308,8 +309,8 @@ class SellPageController extends GetxController {
     update();
 
     print(carId.value); // Assuming carId is being used instead of _carId
-    final response = await DioClient.instance
-        .getExpertAmount(carId: carId.value.toString());
+    final response =
+        await DioClient.instance.getExpertAmount(carId: carId.value.toString());
 
     isLoading.value = false;
     update();
@@ -435,9 +436,11 @@ class SellPageController extends GetxController {
       showToast(ToastState.ERROR, 'خطا در ثبت اطلاعات');
       return;
     }
-
     if (response.message == "OK") {
       final order = response.salesOrder;
+      await AnalyticsService.instance.sellOrderSubmitted(
+          carModel: order?.carModelDescription ?? "", city: cityId.value ?? "");
+
       orderId.value = order?.id ?? '';
       date.value = order?.registerDate ?? '';
       factorNumber.value = order?.expertOrderId ?? '';

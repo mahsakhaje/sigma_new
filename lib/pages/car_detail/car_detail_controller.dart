@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:open_file_plus/open_file_plus.dart';
 import 'package:sigma/global_custom_widgets/confirm_button.dart';
 import 'package:sigma/global_custom_widgets/custom_text.dart';
+import 'package:sigma/helper/analytics_helper.dart';
 import 'package:sigma/helper/dio_repository.dart';
 import 'package:sigma/helper/helper.dart';
 import 'package:sigma/helper/route_names.dart';
@@ -66,6 +67,9 @@ class CarDetailController extends GetxController {
         isAdvertised.value =
             saleOrder.value?.advertised?.contains('1') ?? false;
         carSpecs.value = saleOrder.value?.carTypeDefaultSpecTypes ?? [];
+        await AnalyticsService.instance.viewCar(
+            carModel: saleOrder.value?.carModelDescription ?? '',
+            city: saleOrder.value?.cityDescription ?? '');
         _updateSpecCategories();
       } else {
         errorMessage.value = 'خطا در دریافت اطلاعات';
@@ -187,7 +191,7 @@ class CarDetailController extends GetxController {
 
       isExpertLoading.value = true;
       final response =
-          await DioClient.instance.getExpertReportInCarDetail(carId.toString());
+      await DioClient.instance.getExpertReportInCarDetail(carId.toString());
 
 
       if (response != null) {
@@ -226,7 +230,7 @@ class CarDetailController extends GetxController {
       if (catalogUrl != null) {
         // Download the file instead of launching URL
         final filePath =
-            await DioClient.instance.downloadFileFromUrl(catalogUrl, 'catalog');
+        await DioClient.instance.downloadFileFromUrl(catalogUrl, 'catalog');
 
         if (filePath != null) {
           showToast(ToastState.SUCCESS, 'با موفقیت ذخیره شد');

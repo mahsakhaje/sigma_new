@@ -64,7 +64,8 @@ class CarDetailPage extends StatelessWidget {
 // Content Widget
 class _CarDetailContent extends StatelessWidget {
   final CarDetailController controller;
-
+  final TechnicalInfoController controllerTechnical =
+  Get.put(TechnicalInfoController(technicalPageState.info));
   _CarDetailContent({required this.controller});
 
   @override
@@ -75,7 +76,7 @@ class _CarDetailContent extends StatelessWidget {
       physics: const ScrollPhysics(),
       padding: EdgeInsets.all(10),
       children: [
-        _buildTopMenu(context, order),
+        _buildTopMenu(context, order,controllerTechnical),
         const SizedBox(height: 10),
         _buildImageSlider(context),
         _buildCarDetails(order),
@@ -85,7 +86,7 @@ class _CarDetailContent extends StatelessWidget {
     );
   }
 
-  Widget _buildTopMenu(BuildContext context, SalesOrder order) {
+  Widget _buildTopMenu(BuildContext context, SalesOrder order,TechnicalInfoController controllerTechnical) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -96,7 +97,7 @@ class _CarDetailContent extends StatelessWidget {
                 size: 10)
             : SizedBox(),
         InkWell(
-          onTap: () => _showBottomSheet(context),
+          onTap: () => _showBottomSheet(context,controllerTechnical),
           child: Container(
             decoration: BoxDecoration(
               shape: BoxShape.circle,
@@ -114,7 +115,7 @@ class _CarDetailContent extends StatelessWidget {
     );
   }
 
-  void _showBottomSheet(BuildContext context) {
+  void _showBottomSheet(BuildContext context,TechnicalInfoController controllerTechnical) {
     CustomBottomSheet.show(
       context: Get.context!,
       initialChildSize: 0.4,
@@ -152,8 +153,8 @@ class _CarDetailContent extends StatelessWidget {
             _buildBottomSheetItem(
               'assets/spec.svg',
               'مشخصات فنی',
-              () => Get.toNamed(RouteName.technicalInfo,
-                  arguments: technicalPageState.info),
+              () => controllerTechnical.showCarSpecsDialog(controller.saleOrder.value?.carTypeId??'',(controller.saleOrder.value?.brandDescription??'')+' '+(controller.saleOrder.value?.carModelDescription??''),controller.images.length>0? controller.images[0]:''),
+
               isLoading: false,
             ),
             const SizedBox(height: 20),

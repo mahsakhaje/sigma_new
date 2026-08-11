@@ -37,9 +37,9 @@ class EditProfileInfo extends StatelessWidget {
                 padding: const EdgeInsets.all(16.0),
                 child: ListView(
                   children: [
-                    const SizedBox(height: 34),
+                    const SizedBox(height: 16),
                     _buildProfileHeader(),
-                    const SizedBox(height: 34),
+                    const SizedBox(height: 20),
                     controller.isLegal.value
                         ? SizedBox(key: ValueKey('empty'))
                         : Directionality(
@@ -56,7 +56,7 @@ class EditProfileInfo extends StatelessWidget {
                                   onChanged: controller.setUserGender,
                                   values: Gender.values,
                                 ),
-                                const SizedBox(width: 36),
+                                const SizedBox(width: 16),
                                 buildRadioTile<Gender>(
                                   label: Strings.female,
                                   enabled: controller.isEnabled.value,
@@ -69,9 +69,9 @@ class EditProfileInfo extends StatelessWidget {
                             ),
                           ),
                     _buildForm(),
-                    const SizedBox(height: 34),
+                    const SizedBox(height: 16),
                     _buildSubmitButton(),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 16),
                   ],
                 ),
               ),

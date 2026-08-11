@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "445634122479",
+    "project_id": "sigmatec-d86ad",
+    "storage_bucket": "sigmatec-d86ad.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:445634122479:android:fa5ec9ff9856a571b2411a",
+        "android_client_info": {
+          "package_name": "ir.sigmatec.sigma"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmiyjYlSx2FMFy-JqH6zyAXNxgbqBzFKc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

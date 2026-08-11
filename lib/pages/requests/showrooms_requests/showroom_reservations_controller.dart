@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -5,6 +6,7 @@ import 'package:sigma/global_custom_widgets/bottom_sheet.dart';
 import 'package:sigma/global_custom_widgets/confirm_button.dart';
 import 'package:sigma/global_custom_widgets/custom_text.dart';
 import 'package:sigma/global_custom_widgets/detail_widget.dart';
+import 'package:sigma/global_custom_widgets/loading.dart';
 import 'package:sigma/helper/colors.dart';
 import 'package:sigma/helper/dio_repository.dart';
 import 'package:sigma/helper/helper.dart';
@@ -17,6 +19,7 @@ class MyReservationsController extends GetxController {
   final RxInt pl = 10.obs;
   final RxInt total = 0.obs;
   final RxBool hasMore = true.obs;
+  final RxBool isCanselling = false.obs;
   final RxBool isLoading = true.obs;
   final ScrollController scrollController = ScrollController();
 
@@ -129,8 +132,8 @@ class MyReservationsController extends GetxController {
                 ),
                 SizedBox(width: 8),
                 Expanded(
-                  child: ConfirmButton(
-                    () => _confirmCancel(order),
+                  child:  ConfirmButton(
+                    () => isCanselling.value ? null: _confirmCancel(order),
                     'بله',
                     borderRadius: 8,
                     txtColor: Colors.white,
@@ -145,19 +148,22 @@ class MyReservationsController extends GetxController {
   }
 
   Future<void> _confirmCancel(Reservations order) async {
+    isCanselling.value=true;
     var response = await DioClient.instance.cancelShowRoom(id: order.id ?? "");
+    isCanselling.value=false;
 
     if (response?.message == 'OK') {
-      await refreshData();
       Get.back();
+      Get.back();
+      await Future.delayed(
+        Duration(milliseconds: 100),
+            () => showToast(ToastState.SUCCESS, 'با موفقیت لغو شد'),
+      );
+      await refreshData();
     }
 
-    await Future.delayed(
-      Duration(milliseconds: 500),
-      () => showToast(ToastState.SUCCESS, 'با موفقیت لغو شد'),
-    );
 
-    Get.back();
+
   }
 
   String getReservationStatus(Reservations order) {

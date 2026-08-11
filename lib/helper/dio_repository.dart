@@ -116,15 +116,16 @@ class DioClient {
     Map<String, dynamic> data, {
     bool asBytes = false,
   }) async {
-    try{
-
-    if (JwtDecoder.isExpired(_token() ?? '')) {
-      Get.toNamed(RouteName.auth);
-    }}catch(e){
+    try {
+      if (JwtDecoder.isExpired(_token() ?? '')) {
+        Get.toNamed(RouteName.auth);
+      }
+    } catch (e) {
       print(e);
     }
     try {
-
+      print(jsonEncode(data));
+      print(url);
       var response = await _dio.post(
         url,
         data: jsonEncode(data),
@@ -136,6 +137,7 @@ class DioClient {
           responseType: asBytes ? ResponseType.bytes : ResponseType.json,
         ),
       );
+      print(response);
       return response;
     } catch (e) {
       debugPrint('POST $url error: $e');
@@ -145,7 +147,6 @@ class DioClient {
 
   /// Parses a 200 response with [fromJson], shows an error toast otherwise.
   T? _parse<T>(Response? response, T Function(Map<String, dynamic>) fromJson) {
-
     if (response?.statusCode != 200) return null;
     _showErrorIfNeeded(response!.data as Map<String, dynamic>);
     return fromJson(response.data as Map<String, dynamic>);

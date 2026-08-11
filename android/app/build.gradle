@@ -2,6 +2,8 @@ plugins {
     id "com.android.application"
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
+    id "com.google.gms.google-services"
+
 }
 
 // بارگذاری تنظیمات local.properties
@@ -50,7 +52,7 @@ android {
 
     defaultConfig {
         applicationId "ir.sigmatec.sigma"
-        minSdkVersion flutter.minSdkVersion
+        minSdkVersion 23
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -113,7 +115,7 @@ android {
             signingConfig signingConfigs.release
 
             // بهینه‌سازی
-            minifyEnabled false
+            minifyEnabled true
             shrinkResources false
 
             // ProGuard
@@ -126,8 +128,6 @@ android {
         }
 
         debug {
-            applicationIdSuffix ".debug"
-            versionNameSuffix "-debug"
             debuggable true
         }
     }

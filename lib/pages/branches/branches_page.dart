@@ -24,7 +24,7 @@ class BranchesPage extends StatelessWidget {
       });
     }
     return DarkBackgroundWidget(
-      title: 'شعب سیگما',
+      title: 'نمایندگی های سیگما',
       child: Obx(() {
         if (controller.isLoading.value) {
           return Center(child: loading());
@@ -90,7 +90,7 @@ class BranchesPage extends StatelessWidget {
             color: isSelected ? AppColors.blue : AppColors.grey,
           ),
           child: Center(
-            child: CustomText('شعبه $cityName',
+            child: CustomText('نمایندگی های $cityName',
                 color: isSelected ? Colors.white : Colors.black87,
                 fontWeight: FontWeight.bold),
           ),
@@ -111,7 +111,7 @@ class BranchesPage extends StatelessWidget {
       final selectedBranch = controller.selectedBranch;
 
       if (selectedBranch == null) {
-        return CustomText('شعبه ای انتخاب نشد');
+        return CustomText('نماینده ای انتخاب نشد');
       }
 
       return Column(
@@ -207,7 +207,7 @@ class BranchesPage extends StatelessWidget {
                       color: Colors.black87,
                       size: 20,
                     ),
-                    CustomText('انتخاب سایر شعب',
+                    CustomText('انتخاب سایر نمایندگی ها',
                         color: Colors.black87,
                         fontWeight: FontWeight.bold,
                         size: 14),

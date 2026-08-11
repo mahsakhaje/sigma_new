@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
 import 'package:pinput/pinput.dart';
 import 'package:sigma/global_custom_widgets/CustomPinCodeField.dart';
+import 'package:sigma/helper/analytics_helper.dart';
 import 'package:sigma/helper/dio_repository.dart';
 import 'package:sigma/helper/helper.dart';
 import 'package:sigma/helper/route_names.dart';
@@ -332,6 +333,7 @@ class AuthController extends GetxController {
       StorageHelper().setShortToken(response?.token ?? '');
       StorageHelper().setIsLogedIn(true);
       StorageHelper().setPhoneNumber(loginMobileNumberController.text);
+      await AnalyticsService.instance.login();
       Get.offAllNamed(RouteName.home);
     } else {}
   }
@@ -498,7 +500,7 @@ class AuthController extends GetxController {
             : haMobileNumberController.text);
 
         codeConfirmationSuccess.value = true;
-
+        await AnalyticsService.instance.signUp(signupMethod: 'sign up successfully');
         // Navigate to home
         Get.offAllNamed(RouteName.home);
 

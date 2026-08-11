@@ -33,6 +33,23 @@ class CarSpecsDialog extends StatelessWidget {
         color: Colors.white,
         child: Column(
           children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                InkWell(
+                  onTap: () {
+                    Get.back();
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Icon(
+                      Icons.close,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ),
+              ],
+            ),
             ClipRRect(
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(8),
@@ -53,16 +70,14 @@ class CarSpecsDialog extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(),
                 CustomText(
                   carName,
                   color: Colors.black,
                   size: 16,
                   fontWeight: FontWeight.bold,
                 ),
-                SizedBox(width: 80, child: Container())
               ],
             ),
             const SizedBox(height: 10),
@@ -166,7 +181,8 @@ class CarSpecsDialog extends StatelessWidget {
                                                   ':' +
                                                   (spec?.description?.trim() ??
                                                           "")
-                                                      .usePersianNumbers(),
+                                                      .usePersianNumbers()
+                                                      .replaceAll('\n', ' '),
                                               size: 12,
                                               maxLine: 2,
                                               color: Colors.black,
@@ -194,7 +210,8 @@ class CarSpecsDialog extends StatelessWidget {
                     padding: const EdgeInsets.all(16),
                     itemCount: controller.carEquipments.length,
                     itemBuilder: (context, index) {
-                      String equipment = controller.carEquipments[index] ?? '';
+                      String equipment = (controller.carEquipments[index] ?? '')
+                          .replaceAll('\n', ' ');
                       if (equipment.isEmpty) {
                         return SizedBox();
                       }
@@ -209,7 +226,7 @@ class CarSpecsDialog extends StatelessWidget {
                           children: [
                             Expanded(
                               child: CustomText(
-                                  equipment?.usePersianNumbers() ?? '',
+                                  equipment.trim().usePersianNumbers() ?? '',
                                   size: 12,
                                   color: Colors.black,
                                   isRtl: true),

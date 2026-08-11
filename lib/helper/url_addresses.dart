@@ -1,12 +1,12 @@
 class URLs {
   // static const String BaseAddress = 'https://sigmatec.ir:8083/';
-
+  //
   // static const String BaseUrl = 'https://sigmatec.ir:8083/api/v1';
-
+  //
   // static const String TokenUrl = 'https://sigmatec.ir:8083/token';
-
+  //
   // static const String PWAError = 'https://pwa.sigmatec.ir/error';
-
+  //
   // static const String PWASuccess = 'https://pwa.sigmatec.ir/success';
 
   static const String BaseAddress = 'https://test.sigmatec.ir:8081/';

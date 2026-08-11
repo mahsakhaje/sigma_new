@@ -122,6 +122,7 @@ class SalesOrder {
   String? platePart2;
   String? platePart3;
   String? platePart4;
+  String? cityDescription;
   String? advertised;
   String? showTransaction;
   String? carId;
@@ -142,6 +143,7 @@ class SalesOrder {
       this.state,
       this.stateText,
       this.orderNumber,
+      this.cityDescription,
       this.comment,
       this.advertiseComment,
       this.adaptiveAmount,
@@ -262,6 +264,7 @@ class SalesOrder {
     orderAmount = json['orderAmount'];
     expertAmount = json['expertAmount'];
     catalogUrl = json['catalogUrl'];
+    cityDescription = json['cityDescription'];
     expertConfirmAmount = json['expertConfirmAmount'];
     advertiseAmount = json['advertiseAmount'];
     declaredAmount = json['declaredAmount'];
@@ -377,6 +380,7 @@ class SalesOrder {
     data['id'] = this.id;
     data['state'] = this.state;
     data['stateText'] = this.stateText;
+    data['cityDescription'] = this.cityDescription;
     data['orderNumber'] = this.orderNumber;
     data['comment'] = this.comment;
     data['advertiseComment'] = this.advertiseComment;

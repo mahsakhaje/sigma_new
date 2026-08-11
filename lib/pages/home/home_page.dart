@@ -21,7 +21,7 @@ class HomePge extends StatefulWidget {
   State<HomePge> createState() => _HomePgeState();
 }
 
-class _HomePgeState extends State<HomePge> {
+class _HomePgeState extends State<HomePge> with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   double _logoOffsetX = 0.0;
   HomeController controller = Get.put(HomeController());
@@ -30,11 +30,26 @@ class _HomePgeState extends State<HomePge> {
   double _leftIconOffset = 0.0;
   double _rightIconOffset = 0.0;
   String version = '';
+  late final AnimationController _controller;
+  late final Animation<double> _scaleAnimation;
 
   @override
   void initState() {
     super.initState();
     // Auto-open left drawer after 2 seconds
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    )..repeat(reverse: true);
+    _scaleAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.4,
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeInOut,
+      ),
+    );
     Future.delayed(const Duration(seconds: 1), () async {
       final _packageInfo = await PackageInfo.fromPlatform();
       version = await _packageInfo.version;
@@ -213,40 +228,38 @@ class _HomePgeState extends State<HomePge> {
                           path: 'assets/advretise.svg',
                           route: RouteName.advertiseMenu),
                       drawerIcon(
-                          path: 'assets/buy_car.svg', route: RouteName.buy_menue),
+                          path: 'assets/buy_car.svg',
+                          route: RouteName.buy_menue),
                       drawerIcon(
                           path: 'assets/sell_car.svg', route: RouteName.sell),
                       drawerIcon(
-                          path: 'assets/price_car.svg', route: RouteName.prices),
+                          path: 'assets/price_car.svg',
+                          route: RouteName.prices),
                       drawerIcon(
                           path: 'assets/car_info.svg',
                           route: RouteName.technicalMenu),
-                  
-                      Obx(() => Stack(children: [
-                            drawerIcon(
+
+                      Obx(() => Stack(
+                            children: [
+                              drawerIcon(
                                 path: 'assets/etelaie.svg',
                                 route: RouteName.info,
-                                isItsSize: false),
-                            if (controller.hasNewNotidf.value)
-                              Positioned(
-                                child: SvgPicture.asset(
-                                  'assets/info.svg',
-                                  color: AppColors.orange,
-                                ),
-                                // child: Container(
-                                //   padding: EdgeInsets.all(7),
-                                //   decoration: BoxDecoration(
-                                //       color: AppColors.orange,
-                                //       shape: BoxShape.circle),
-                                //   child: CustomText(
-                                //       controller.unreadCount
-                                //           .toString()
-                                //           .usePersianNumbers(),
-                                //       size: 15),
-                                // )
+                                isItsSize: false,
                               ),
-                          ])),
-                  
+                              if (controller.hasNewNotidf.value)
+                                Positioned(
+                                  top: 0,
+                                  right: 0,
+                                  child: ScaleTransition(
+                                    scale: _scaleAnimation,
+                                    child: SvgPicture.asset(
+                                      'assets/info.svg',
+                                      color: AppColors.orange,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          )),
                       drawerIcon(
                           path: 'assets/branches.svg',
                           route: RouteName.showroomsAddress),

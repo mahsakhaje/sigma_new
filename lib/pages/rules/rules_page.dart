@@ -22,7 +22,7 @@ class RulesPage extends StatelessWidget {
     final controller = Get.put(PdfController());
 
     return DarkBackgroundWidget(
-      title: 'قوانین و مقررات',
+      title: 'قوانین و شرایط',
       child: Obx(() {
         if (controller.isLoading) {
           return Row(

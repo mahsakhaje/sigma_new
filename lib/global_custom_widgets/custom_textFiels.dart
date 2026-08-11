@@ -141,11 +141,13 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: TextFormField(
+
         autovalidateMode: widget.autovalidateMode,
         onEditingComplete: widget.onEditingComplete,
         focusNode: widget.focusNode,
         enabled: widget.enabled,
         cursorColor: widget.isDark ? Colors.black87 : Colors.white,
+
         obscureText: _isPasswordField ? !_isPasswordVisible : false,
         inputFormatters: getFormatter(),
         keyboardType: widget.isEmail

@@ -45,7 +45,7 @@ class CarWidget extends StatelessWidget {
         // validator: controller.validate,
         autovalidateMode: controller.shasiController.text.length == 17
             ? AutovalidateMode.always
-            : AutovalidateMode.disabled,
+            : AutovalidateMode.onUserInteraction,
         onChanged: controller.onShasiChanged,
         //errorText: 'شماره شاسی را به صورت صحیح وارد نمایید',
       ),

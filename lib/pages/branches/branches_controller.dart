@@ -65,7 +65,7 @@ class BranchesController extends GetxController {
       _initializeDefaultSelection();
       showDialog.value = true;
     } catch (e) {
-      Get.snackbar('خطا', 'خطا در بارگذاری اطلاعات شعب');
+      Get.snackbar('خطا', 'خطا در بارگذاری اطلاعات نمایندگی ها');
       print('Error loading branches: $e');
     } finally {
       isLoading.value = false;

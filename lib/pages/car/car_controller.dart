@@ -158,7 +158,6 @@ class CarController extends GetxController {
   }
 
   void onModelChanged(String? str) {
-
     selectedCarModel.value = str ?? '';
     carModels.forEach((key, value) {
       if (value == str) modelId = key;
@@ -180,9 +179,8 @@ class CarController extends GetxController {
     selectedFromYear.value = null;
     colorsCars.clear();
     trimColors.clear();
-    selectedTrimColors.value=null;
-    selectedColors.value=null;
-
+    selectedTrimColors.value = null;
+    selectedColors.value = null;
   }
 
   void onTypeChanged(String? str) {
@@ -193,8 +191,8 @@ class CarController extends GetxController {
     turn.value = 5;
     colorsCars.clear();
     trimColors.clear();
-    selectedTrimColors.value=null;
-    selectedColors.value=null;
+    selectedTrimColors.value = null;
+    selectedColors.value = null;
     carTypeManufactureYears.clear();
 
     allCarsJsonModel?.brands?.forEach((brand) {
@@ -259,7 +257,7 @@ class CarController extends GetxController {
 
   void confirm() async {
     hideKeyboard(Get.context!);
-    if( shasiController.text.length!=17){
+    if (shasiController.text.length != 17) {
       showToast(ToastState.ERROR, 'شماره شاسی وارد شده صحیح نیست!');
       return;
     }
@@ -302,64 +300,66 @@ class CarController extends GetxController {
   }
 
   void inquiry() async {
-    if (shasiController.text.length==17) {
-      isLoading.value = true;
-      final response = await DioClient.instance.getInquiryChassisNumber(
-        chassisNumber: shasiController.text,
-      );
-      isLoading.value = false;
+    if (formKey.currentState!.validate()) {
+      if (shasiController.text.length == 17) {
+        isLoading.value = true;
+        final response = await DioClient.instance.getInquiryChassisNumber(
+          chassisNumber: shasiController.text,
+        );
+        isLoading.value = false;
 
-      if (response?.status == 0) {
-        print(brands.entries);
+        if (response?.status == 0) {
+          print(brands.entries);
 
-        brandId = response?.brandId ?? '';
-        print(brandId);
-        print(brands[brandId] ?? '');
-        modelId = response?.carModelId ?? '';
-        typeId = response?.carTypeId ?? '';
-        colorId = response?.colorId ?? '';
-        trimColorId = response?.trimColorId ?? '';
-        fromYearId = response?.manufactureYearId ?? '';
+          brandId = response?.brandId ?? '';
+          print(brandId);
+          print(brands[brandId] ?? '');
+          modelId = response?.carModelId ?? '';
+          typeId = response?.carTypeId ?? '';
+          colorId = response?.colorId ?? '';
+          trimColorId = response?.trimColorId ?? '';
+          fromYearId = response?.manufactureYearId ?? '';
 
-        selectedBrand.value = brandId ?? '';
-        selectedCarModel.value = modelId ?? '';
-        selectedCarType.value =typeId ?? '';
+          selectedBrand.value = brandId ?? '';
+          selectedCarModel.value = modelId ?? '';
+          selectedCarType.value = typeId ?? '';
 
-        _fillModelTypeColorData();
+          _fillModelTypeColorData();
 
-        selectedFromYear.value = fromYearId ?? '';
-        selectedColors.value = colorId ?? '';
-        selectedTrimColors.value = trimColorId ?? '';
+          selectedFromYear.value = fromYearId ?? '';
+          selectedColors.value = colorId ?? '';
+          selectedTrimColors.value = trimColorId ?? '';
 
-        pageState.value = PageState.Confirm;
-      } else { await Get.dialog(AlertDialog(
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            CustomText(
-              'کاربر گرامی متاسفانه اطلاعات خودروی شما در بانک اطلاعات کرمان موتور یافت نشد.',
-              color: Colors.black87,
-              isRtl: true,
-              size: 15,
-              textAlign: TextAlign.center,
-              fontWeight: FontWeight.bold,
+          pageState.value = PageState.Confirm;
+        } else {
+          await Get.dialog(AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                CustomText(
+                  'کاربر گرامی متاسفانه اطلاعات خودروی شما در بانک اطلاعات کرمان موتور یافت نشد.',
+                  color: Colors.black87,
+                  isRtl: true,
+                  size: 15,
+                  textAlign: TextAlign.center,
+                  fontWeight: FontWeight.bold,
+                ),
+                SizedBox(height: 12),
+                CustomText('لطفا اطلاعات خودروی خود را وارد نمائید.',
+                    color: Colors.black87, size: 14, isRtl: true),
+                SizedBox(height: 34),
+                ConfirmButton(() {
+                  Get.back();
+                  pageState.value = PageState.Confirm;
+                }, 'تایید', borderRadius: 8, fontSize: 12)
+              ],
             ),
-            SizedBox(height: 12),
-            CustomText('لطفا اطلاعات خودروی خود را وارد نمائید.',
-                color: Colors.black87, size: 14, isRtl: true),
-            SizedBox(height: 34),
-            ConfirmButton(() {
-              Get.back();
-              pageState.value = PageState.Confirm;
-            }, 'تایید', borderRadius: 8, fontSize: 12)
-          ],
-        ),
-      ));
-
+          ));
+        }
+      } else {
+        showToast(ToastState.ERROR, 'شماره شاسی وارد شده صحیح نمی باشد.');
       }
-    }else{
-      showToast(ToastState.ERROR, 'شماره شاسی وارد شده صحیح نمی باشد.');
     }
   }
 }

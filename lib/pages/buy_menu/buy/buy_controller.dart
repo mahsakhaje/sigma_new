@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
 import 'package:sigma/global_custom_widgets/confirm_button.dart';
 import 'package:sigma/global_custom_widgets/custom_text.dart';
+import 'package:sigma/helper/analytics_helper.dart';
 import 'package:sigma/helper/colors.dart';
 import 'package:sigma/helper/dio_repository.dart';
 import 'package:sigma/helper/helper.dart';
@@ -437,7 +438,7 @@ class BuyController extends GetxController {
       selectedBrand.value = null;
       selectedCity.value = null;
       //clearFields();
-
+      await AnalyticsService.instance.buyRequestSubmitted(desiredModel: selectedCarModel.value??"", city: selectedCity.value??'');
       // Show success dialog
       if (response?.message == 'OK') {
         carModels.clear();
@@ -508,12 +509,12 @@ class BuyController extends GetxController {
           ),
           insetPadding: EdgeInsets.all(16),
               content: Column(
-                mainAxisSize: MainAxisSize.max,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Row(
                     children: [
                       SizedBox(
-                        height: 26,
+                        height: 16,
                       ),
                       InkWell(
                           onTap: () {
@@ -529,7 +530,7 @@ class BuyController extends GetxController {
                   Image.asset('assets/pelaksefid.png'),
 
                   SizedBox(
-                    height: 36,
+                    height: 16,
                   ),
                   CustomText(
                       'اگر مایل هستید آگهی های پلاک سفید را هم مشاهده نمائید.',
@@ -537,7 +538,9 @@ class BuyController extends GetxController {
                       isRtl: true,
                       color: Colors.black,
                       fontWeight: FontWeight.bold),
-                  SizedBox(height: 92),
+                  SizedBox(
+                    height: 16,
+                  ),
                   ConfirmButton(
                       () => {
                             launchUrl(

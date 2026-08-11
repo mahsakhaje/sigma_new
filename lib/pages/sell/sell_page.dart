@@ -491,6 +491,7 @@ class UploadPhotoForm extends StatelessWidget {
             CustomTextFormField(controller.commentController,
                 autovalidateMode: AutovalidateMode.disabled,
                 maxLen: 200,
+                acceptAll: true,
                 hintText: 'توضیحات شما'),
 
             SizedBox(

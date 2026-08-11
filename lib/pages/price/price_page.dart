@@ -871,7 +871,10 @@ class PricePage extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const SizedBox(height: 24),
+            const SizedBox(height: 12),
+            CustomText('محاسبه در تاریخ ${DateTime.now().toPersianDate()} انجام شده است.'.usePersianNumbers(),isRtl: true,color: AppColors.containerBg),
+            const SizedBox(height: 12),
+
             _buildPriceInfoRow('قیمت تخمینی:',
                 '${controller.price.value.usePersianNumbers()} تومان'),
             const SizedBox(height: 16),
